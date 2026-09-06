@@ -17,6 +17,8 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    // El Worker sirve dist entero: con sourcemap: true se publicaba el .map
+    // y con él todo el TypeScript original del editor.
+    sourcemap: false,
   },
 });

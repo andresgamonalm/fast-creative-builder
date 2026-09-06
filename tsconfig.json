@@ -1,0 +1,13 @@
+{
+  // Raíz de la comprobación de tipos del monorepo. `npm run typecheck` la
+  // usa y antes fallaba con TS6053 porque este archivo no existía.
+  // Cada workspace es un proyecto referenciado, así que el editor y el
+  // servidor se comprueban contra las fuentes del núcleo, no contra un
+  // dist compilado que puede estar desfasado.
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./apps/server" },
+    { "path": "./apps/editor" }
+  ]
+}

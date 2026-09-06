@@ -2,7 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    // Necesario para que los demás workspaces lo referencien y se
+    // comprueben contra sus fuentes, no contra un dist desfasado.
+    "composite": true
   },
   "include": ["src/**/*"]
 }

@@ -44,8 +44,33 @@ Requiere Node 22 o superior.
 
 ```bash
 npm install
+npm run build
+npm run bd:local --workspace=@fcb/servidor
 npm run dev
 ```
+
+`npm run build` compila el núcleo y el editor. Hace falta antes de `npm run dev`
+porque el Worker sirve `apps/editor/dist`, que no se versiona: sin ese paso
+wrangler aborta diciendo que el directorio no existe.
+
+`bd:local` aplica `esquema/0001_inicial.sql` a la base D1 local. Sin ese paso el
+primer acceso devuelve un 500 y no llega a crearse la cuenta de administrador.
+
+`npm run dev` levanta el Worker en `http://127.0.0.1:8787`, que sirve la API y el
+editor ya compilado. **Para trabajar en la interfaz**, en otra terminal:
+
+```bash
+npm run dev:editor
+```
+
+Eso abre Vite en `http://localhost:5173` con recarga en caliente y reenvía `/api`
+al Worker, así que el navegador ve un solo origen y la sesión funciona igual que
+en producción. El Worker tiene que estar corriendo.
+
+La primera vez, el servidor crea la cuenta de administrador con el correo de
+`CORREO_ADMINISTRADOR` (en `apps/server/wrangler.jsonc`) e imprime en la consola
+el enlace para definir la contraseña. Si no hay `CLAVE_RESEND` en
+`apps/server/.dev.vars`, todos los correos salen por consola en vez de enviarse.
 
 ---
 

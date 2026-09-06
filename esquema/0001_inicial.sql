@@ -1,7 +1,8 @@
 -- Fast Creative Builder — esquema inicial (Cloudflare D1 / SQLite)
 --
--- Aplicar en local:  npx wrangler d1 execute fast-creative-builder --local  --file=./esquema/0001_inicial.sql
--- Aplicar en remoto: npx wrangler d1 execute fast-creative-builder --remote --file=./esquema/0001_inicial.sql
+-- wrangler necesita su configuración, que vive en apps/server. Desde la raíz:
+--   Local:  npm run bd:local  --workspace=@fcb/servidor
+--   Remoto: npm run bd:remoto --workspace=@fcb/servidor
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- Personas y acceso

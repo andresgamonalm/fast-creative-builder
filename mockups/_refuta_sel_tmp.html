@@ -1,65 +1,65 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8">
+<html lang="es"><head><meta charset="utf-8"><title>refuta-sel</title>
 <link rel="stylesheet" href="sistema_mockups_fast_creative_builder.css">
 <link rel="stylesheet" href="propuestas_mockups_fast_creative_builder.css">
-<style>html,body{margin:0}#marco{overflow:hidden;background:#fff}</style>
+<style>html,body{margin:0}#marco{overflow:hidden;background:#fff}
+#out{position:fixed;left:0;top:0;right:0;bottom:0;background:#000;color:#0f0;font:12px monospace;z-index:99999;overflow:auto;margin:0;padding:8px;white-space:pre-wrap}</style>
 </head><body>
 <div id="marco" class="p"></div>
-<pre id="out" style="position:fixed;right:0;top:0;background:#000;color:#0f0;font:11px monospace;z-index:9999;max-height:100vh;overflow:auto"></pre>
+<pre id="out">midiendo...</pre>
 <script src="base_mockups_fast_creative_builder.js"></script>
 <script src="pantallas_mockups_fast_creative_builder.js"></script>
 <script src="editor_mockups_fast_creative_builder.js"></script>
 <script src="interiores_mockups_fast_creative_builder.js"></script>
 <script>
 var TAMX = { escritorio:{w:1440,h:900}, tableta:{w:834,h:1100}, movil:{w:390,h:844} };
-function render(prop, modo, disp) {
-  disp = disp || 'escritorio';
-  var m = document.getElementById('marco'), t = TAMX[disp];
-  m.className = 'p' + (disp==='movil'?' movil':'') + (disp==='tableta'?' tableta':'');
-  m.style.width = t.w+'px'; m.style.height = t.h+'px';
-  m.innerHTML = EDITOR[prop](modo);
-  if (typeof ajustarLienzos === 'function') ajustarLienzos(m);
+function rend(prop, modo, disp) {
+  var mk = document.getElementById('marco'), t = TAMX[disp];
+  mk.className = 'p' + (disp==='movil'?' movil':'') + (disp==='tableta'?' tableta':'');
+  mk.style.width = t.w+'px'; mk.style.height = t.h+'px';
+  mk.innerHTML = EDITOR[prop](modo);
+  ajustarLienzos(mk);
 }
-function medir(prop, modo, disp) {
-  render(prop, modo, disp);
-  var m = document.getElementById('marco');
-  var lienzo = m.querySelector('.ed__lienzo');
-  var pz = PIEZA[modo];
-  var hojaEl = lienzo.querySelector('.hoja');
-  var hojaR = hojaEl.getBoundingClientRect();
-  var caja = lienzo.querySelector('.hoja-escala').getBoundingClientRect();
-  var escala = caja.width / pz.ancho;
-  var selEl = lienzo.querySelector('.sel');
-  var r = { prop:prop, modo:modo, disp:disp, escala:+escala.toFixed(4) };
-  if (selEl) {
-    var s = selEl.getBoundingClientRect();
-    r.selClase = selEl.className.replace(' sel','');
-    r.elemPieza = {
-      x: +((s.left - caja.left)/escala).toFixed(1),
-      y: +((s.top - caja.top)/escala).toFixed(1),
-      w: +(s.width/escala).toFixed(1),
-      h: +(s.height/escala).toFixed(1)
-    };
-  }
-  var crudo = lienzo.getAttribute('data-sel');
-  r.literal = crudo ? JSON.parse(crudo) : null;
-  // banda de la regla, reconvertida a pixeles de pieza
-  var bh = lienzo.querySelector('.regla-h .regla-sel');
-  var bv = lienzo.querySelector('.regla-v .regla-sel');
-  if (bh) r.bandaH = { xPieza: +(parseFloat(bh.style.left)/escala).toFixed(1), wPieza: +(parseFloat(bh.style.width)/escala).toFixed(1) };
-  if (bv) r.bandaV = { yPieza: +(parseFloat(bv.style.top)/escala).toFixed(1), hPieza: +(parseFloat(bv.style.height)/escala).toFixed(1) };
-  var lect = lienzo.querySelector('.lectura');
-  if (lect) r.lectura = lect.textContent.replace(/\s+/g,' ').trim();
-  // recorte de la banda horizontal contra el ancho de la regla
-  var rh = lienzo.querySelector('.regla-h');
-  if (rh && bh) r.reglaHancho = +rh.getBoundingClientRect().width.toFixed(1),
-                r.bandaHfinPx = +(parseFloat(bh.style.left)+parseFloat(bh.style.width)).toFixed(1);
-  return r;
+function esperaImgs(mk){
+  var imgs = Array.prototype.slice.call(mk.querySelectorAll('img'));
+  return Promise.all(imgs.map(function(i){ return i.complete ? null : new Promise(function(r){ i.onload=i.onerror=r; }); }));
 }
-var res = [];
-['a','b','c'].forEach(function(p){ ['web','email','libre'].forEach(function(mo){ res.push(medir(p,mo,'escritorio')); }); });
-res.push(medir('b','web','tableta'));
-res.push(medir('b','web','movil'));
-window.RES = res;
-document.getElementById('out').textContent = JSON.stringify(res,null,1);
+function medir(prop,modo,disp){
+  var mk=document.getElementById('marco');
+  rend(prop,modo,disp);
+  return esperaImgs(mk).then(function(){
+    return new Promise(function(r){ setTimeout(r,120); });
+  }).then(function(){
+    ajustarLienzos(mk);
+    var l=mk.querySelector('.ed__lienzo'), pz=PIEZA[modo];
+    var caja=l.querySelector('.hoja-escala').getBoundingClientRect();
+    var esc=caja.width/pz.ancho;
+    var o={ caso:prop+'/'+modo+'/'+disp, escala:+esc.toFixed(4) };
+    var s=l.querySelector('.sel');
+    if(s){ var r=s.getBoundingClientRect();
+      o.elemento=s.className.replace(' sel','').trim();
+      o.elem_en_pieza=[+((r.left-caja.left)/esc).toFixed(1),+((r.top-caja.top)/esc).toFixed(1),+(r.width/esc).toFixed(1),+(r.height/esc).toFixed(1)];
+    } else { o.elemento='NINGUNO — no hay .sel en el DOM'; }
+    var lit=JSON.parse(l.getAttribute('data-sel'));
+    o.literal_sel=[lit.x,lit.y,lit.ancho,lit.alto];
+    var bh=l.querySelector('.regla-h .regla-sel'), bv=l.querySelector('.regla-v .regla-sel');
+    if(bh) o.banda_h_px=[+parseFloat(bh.style.left).toFixed(1), +(parseFloat(bh.style.left)+parseFloat(bh.style.width)).toFixed(1)];
+    if(bv) o.banda_v_px=[+parseFloat(bv.style.top).toFixed(1), +(parseFloat(bv.style.top)+parseFloat(bv.style.height)).toFixed(1)];
+    var rh=l.querySelector('.regla-h'); if(rh) o.regla_h_ancho_px=+rh.getBoundingClientRect().width.toFixed(1);
+    var lec=l.querySelector('.lectura'); if(lec) o.lectura=lec.textContent.replace(/\s+/g,' ').trim();
+    var h2=l.querySelector('.hoja__portada-txt h2');
+    if(h2){ var q=h2.getBoundingClientRect(); o.h2_en_pieza=[+((q.left-caja.left)/esc).toFixed(1),+((q.top-caja.top)/esc).toFixed(1),+(q.width/esc).toFixed(1),+(q.height/esc).toFixed(1)]; }
+    return o;
+  });
+}
+var casos=[];
+['a','b','c'].forEach(function(p){ ['web','email','libre'].forEach(function(mo){ casos.push([p,mo,'escritorio']); }); });
+casos.push(['b','web','tableta']); casos.push(['b','web','movil']);
+var res=[];
+casos.reduce(function(cad,c){
+  return cad.then(function(){ return medir(c[0],c[1],c[2]); }).then(function(o){ res.push(o); });
+}, Promise.resolve()).then(function(){
+  window.RES=res;
+  document.getElementById('out').textContent='RESULTADO\n'+JSON.stringify(res,null,1);
+}).catch(function(e){ document.getElementById('out').textContent='ERROR '+e; });
 </script></body></html>

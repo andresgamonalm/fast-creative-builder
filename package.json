@@ -12,9 +12,11 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "npm run dev --workspace=@fcb/servidor",
-    "build": "npm run build --workspace=@fcb/nucleo && npm run build --workspace=@fcb/editor",
+    "dev": "npm run build && npm run dev --workspace=@fcb/servidor",
+    "dev:editor": "npm run dev --workspace=@fcb/editor",
+    "build": "tsc --build && npm run build --workspace=@fcb/editor",
     "typecheck": "tsc --build --force",
+    "bd:local": "npm run bd:local --workspace=@fcb/servidor",
     "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
