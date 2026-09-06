@@ -21,89 +21,117 @@
    ═══════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Azules de marca ─────────────────────────────────────────────────
-     El héroe manda en botones, enlaces y datos. El navy es el color del
-     texto y de los titulares sobre cualquier banda pastel. */
-  --heroe: #2167ae;
-  --heroe-hover: #1b558f;
-  --navy: #23366f;
-  --azul-medio: #5495cf;
-  --azul-claro: #91bfe3;
-  --celeste: #1fb1e6;
+  /* ═══════════════════════════════════════════════════════════════════
+     TOKENS AJUSTABLES
+     Todos los colores, la tipografía y la forma del aplicativo salen de
+     aquí. El panel de la derecha los escribe en vivo, así que cualquier
+     elemento se puede recolorear sin tocar una línea de código.
+     ═══════════════════════════════════════════════════════════════════ */
 
-  /* ── Bandas de sección. Todas dan AA o AAA con titular navy ─────────
-     rosa 7,89 · celeste 5,89 · menta 8,13 · ámbar 5,97
-     arenisca 7,62 · paloma 8,90 · hueso 9,87 · lima 10,28            */
-  --banda-rosa: #ffc5ea;
-  --banda-celeste: #91bfe3;
-  --banda-menta: #a6e9ab;
-  --banda-ambar: #e4b273;
-  --banda-arenisca: #dad2bd;
-  --banda-paloma: #dde4e3;
-  --banda-hueso: #eceeef;
-  --banda-lima: #fff773;
+  /* ── Superficies ─────────────────────────────────────────────────── */
+  --fondo-app: #ECEEEF;
+  --superficie: #FFFFFF;
+  --neutra: #ECEEEF;
 
-  /* Acción de conversión. El coral de campaña de Zurich es #F16F6D, que
-     con texto blanco da 2,90 y no cumple AA. Se oscurece a 4,82.
-     [Convención declarada] */
-  --coral: #cc4038;
-  --coral-hover: #b8362f;
+  /* ── Bandas de sección ───────────────────────────────────────────── */
+  --banda-a: #DAD2BD;
+  --banda-b: #91BFE3;
+  --banda-c: #A6E9AB;
+  --banda-d: #DDE4E3;
+  --banda-e: #DDE4E3;
 
-  --papel: #ffffff;
-  --pagina: #f7f8f8;
+  /* ── Estructura: lateral, barras y fondos oscuros ────────────────── */
+  --estructura: #23366F;
+  --sobre-estructura: #FFFFFF;
+  --sobre-estructura-suave: #91BFE3;
 
   /* ── Texto ───────────────────────────────────────────────────────── */
-  --tinta: #23366f;
-  --tinta-suave: #4a5570;
-  --tinta-tenue: #68717f;
+  --titular: #23366F;
+  --texto: #23366F;
+  --texto-suave: #4A5570;
+  --texto-tenue: #68717F;
 
-  /* ── Estados ─────────────────────────────────────────────────────── */
-  --exito: #1e6b3a;
-  --exito-fondo: #e4f1e9;
-  --aviso: #7a5a12;
-  --aviso-fondo: #f8f1dd;
-  --error: #a52a20;
-  --error-fondo: #fae9e7;
+  /* ── Botones ─────────────────────────────────────────────────────── */
+  --accion: #2167AE;
+  --accion-texto: #FFFFFF;
+  --conversion: #CC4038;
+  --conversion-texto: #FFFFFF;
+  --secundario-linea: #2167AE;
+  --secundario-texto: #2167AE;
 
-  /* Contorno de control. 3,53:1 sobre blanco, cumple WCAG 1.4.11 */
-  --contorno: #7d8a97;
-  --contorno-tenue: #dde1e5;
+  /* ── Acentos y estados ───────────────────────────────────────────── */
+  --acento: #FFF773;
+  --exito: #1E6B3A;
+  --exito-fondo: #E4F1E9;
+  --aviso: #7A5A12;
+  --aviso-fondo: #F8F1DD;
+  --error: #A52A20;
+  --error-fondo: #FAE9E7;
 
-  /* ── Forma ───────────────────────────────────────────────────────────
-     8 px en cajas, campos y contenedores.
-     Los CTA van en píldora: es la firma reconocible de Zurich y entra en
-     la excepción funcional que permite Gamonal.                       */
+  /* ── Detalle ─────────────────────────────────────────────────────── */
+  --contorno: #7D8A97;
+  --contorno-tenue: #DDE1E5;
+  --seleccion: #2167AE;
+  --cota: #CC4038;
+
+  /* ── Tipografía ──────────────────────────────────────────────────── */
+  --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
+  --base: 16px;
+  --escala: 1;
+  --peso-titular: 400;
+  --peso-texto: 400;
+
+  /* ── Forma ───────────────────────────────────────────────────────── */
   --radio: 8px;
-  --pildora: 999px;
+  --radio-cta: 999px;
+  --pildora: var(--radio-cta);
 
-  /* ── Escala de 8 ─────────────────────────────────────────────────── */
+  /* ── Derivados. No se ajustan a mano ─────────────────────────────── */
+  --accion-hover: color-mix(in srgb, var(--accion) 86%, #000);
+  --conversion-hover: color-mix(in srgb, var(--conversion) 86%, #000);
+
+  --t-micro: calc(var(--base) * 0.75);
+  --t-menor: calc(var(--base) * 0.875);
+  --t-cuerpo: var(--base);
+  --t-lead: calc(var(--base) * 1.125);
+  --t-h4: calc(var(--base) * 1.25 * var(--escala));
+  --t-h3: calc(var(--base) * 1.625 * var(--escala));
+  --t-h2: calc(var(--base) * 2.125 * var(--escala));
+  --t-h1: calc(var(--base) * 2.875 * var(--escala));
+
+  /* Escala de espacio, base 8 */
   --e1: 4px;  --e2: 8px;  --e3: 12px; --e4: 16px; --e5: 24px;
   --e6: 32px; --e7: 40px; --e8: 48px; --e9: 64px; --e10: 80px;
   --e11: 96px; --e12: 128px;
 
-  /* ── Tipografía ──────────────────────────────────────────────────── */
-  --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
-  --t-micro: 12px;
-  --t-menor: 14px;
-  --t-cuerpo: 16px;
-  --t-lead: 18px;
-  --t-h4: 20px;
-  --t-h3: 26px;
-  --t-h2: 34px;
-  --t-h1: 46px;
-
   --canal: 24px;
   --margen: 48px;
+
+  /* Alias heredados, para no romper el CSS ya escrito */
+  --papel: var(--superficie);
+  --pagina: var(--fondo-app);
+  --navy: var(--estructura);
+  --heroe: var(--accion);
+  --heroe-hover: var(--accion-hover);
+  --coral: var(--conversion);
+  --coral-hover: var(--conversion-hover);
+  --tinta: var(--texto);
+  --tinta-suave: var(--texto-suave);
+  --tinta-tenue: var(--texto-tenue);
+  --azul-claro: var(--sobre-estructura-suave);
+  --banda-lima: var(--acento);
 }
+
 
 /* ── Base ────────────────────────────────────────────────────────────── */
 
 .p {
   font-family: var(--fuente);
+  font-weight: var(--peso-texto);
   font-size: var(--t-cuerpo);
   line-height: 1.55;
-  color: var(--tinta);
-  background: var(--papel);
+  color: var(--texto);
+  background: var(--superficie);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -117,10 +145,10 @@
 .p img { display: block; max-width: 100%; }
 
 /* Titulares grandes y de peso normal, como en la referencia */
-.p h1 { font-size: var(--t-h1); font-weight: 400; line-height: 1.12; letter-spacing: -0.015em; }
-.p h2 { font-size: var(--t-h2); font-weight: 400; line-height: 1.18; letter-spacing: -0.01em; }
-.p h3 { font-size: var(--t-h3); font-weight: 500; line-height: 1.25; }
-.p h4 { font-size: var(--t-h4); font-weight: 600; line-height: 1.35; }
+.p h1 { font-size: var(--t-h1); font-weight: var(--peso-titular); line-height: 1.12; letter-spacing: -0.015em; color: var(--titular); }
+.p h2 { font-size: var(--t-h2); font-weight: var(--peso-titular); line-height: 1.18; letter-spacing: -0.01em; color: var(--titular); }
+.p h3 { font-size: var(--t-h3); font-weight: calc(var(--peso-titular) + 100); line-height: 1.25; color: var(--titular); }
+.p h4 { font-size: var(--t-h4); font-weight: calc(var(--peso-titular) + 200); line-height: 1.35; color: var(--titular); }
 
 .etiqueta { font-size: var(--t-micro); font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; }
 .lead { font-size: var(--t-lead); line-height: 1.6; color: var(--tinta-suave); }
@@ -139,7 +167,7 @@
   height: 44px;
   padding: 0 var(--e5);
   border: 0;
-  border-radius: var(--pildora);
+  border-radius: var(--radio-cta);
   font-family: inherit;
   font-size: var(--t-menor);
   font-weight: 600;
@@ -153,21 +181,21 @@
 .cta--bajo { height: 36px; padding: 0 var(--e4); }
 .cta--ancho { width: 100%; }
 
-.cta--principal { background: var(--heroe); color: #fff; }
+.cta--principal { background: var(--accion); color: var(--accion-texto); }
 .cta--principal:hover { background: var(--heroe-hover); }
 
 /* Acción de conversión */
-.cta--conversion { background: var(--coral); color: #fff; }
+.cta--conversion { background: var(--conversion); color: var(--conversion-texto); }
 .cta--conversion:hover { background: var(--coral-hover); }
 
-.cta--secundario { background: var(--papel); color: var(--heroe); box-shadow: inset 0 0 0 1px var(--heroe); }
-.cta--secundario:hover { background: #eef4fa; }
+.cta--secundario { background: transparent; color: var(--secundario-texto); box-shadow: inset 0 0 0 1px var(--secundario-linea); }
+.cta--secundario:hover { background: color-mix(in srgb, var(--secundario-linea) 10%, transparent); }
 
-.cta--terciario { background: transparent; color: var(--heroe); padding: 0 var(--e2); }
+.cta--terciario { background: transparent; color: var(--secundario-texto); padding: 0 var(--e2); }
 .cta--terciario:hover { color: var(--heroe-hover); }
 
-.cta--sobre-color { background: var(--navy); color: #fff; }
-.cta--peligro { background: var(--papel); color: var(--error); box-shadow: inset 0 0 0 1px var(--error); }
+.cta--sobre-color { background: var(--estructura); color: var(--sobre-estructura); }
+.cta--peligro { background: transparent; color: var(--error); box-shadow: inset 0 0 0 1px var(--error); }
 
 .cta .ico { width: 16px; height: 16px; }
 
@@ -197,16 +225,15 @@
 .banda { padding: var(--e11) var(--margen); }
 .banda--corta { padding: var(--e9) var(--margen); }
 
-.banda--rosa { background: var(--banda-rosa); }
-.banda--celeste { background: var(--banda-celeste); }
-.banda--menta { background: var(--banda-menta); }
-.banda--ambar { background: var(--banda-ambar); }
-.banda--arenisca { background: var(--banda-arenisca); }
-.banda--paloma { background: var(--banda-paloma); }
-.banda--hueso { background: var(--banda-hueso); }
-.banda--blanca { background: var(--papel); }
-.banda--navy { background: var(--navy); color: #fff; }
-.banda--navy h1, .banda--navy h2, .banda--navy h3 { color: #fff; }
+.banda--a { background: var(--banda-a); }
+.banda--b { background: var(--banda-b); }
+.banda--c { background: var(--banda-c); }
+.banda--d { background: var(--banda-d); }
+.banda--e { background: var(--banda-e); }
+.banda--neutra { background: var(--neutra); }
+.banda--superficie { background: var(--superficie); }
+.banda--estructura { background: var(--estructura); color: var(--sobre-estructura); }
+.banda--estructura h1, .banda--estructura h2, .banda--estructura h3 { color: var(--sobre-estructura); }
 
 .contenedor { max-width: 1120px; margin: 0 auto; }
 

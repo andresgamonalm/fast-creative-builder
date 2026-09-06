@@ -17,7 +17,7 @@ function envolver(prop, cfg) {
 
   var contenido =
     cabecera +
-    '<section class="banda banda--corta banda--blanca"><div class="contenedor">' +
+    '<section class="banda banda--corta banda--superficie"><div class="contenedor">' +
       (cfg.pestanas || '') + cfg.cuerpo +
     '</div></section>';
 
@@ -27,11 +27,11 @@ function envolver(prop, cfg) {
 }
 
 function pestanas(items, activa) {
-  return '<div class="fila g1" style="background:var(--banda-hueso);padding:4px;border-radius:var(--pildora);margin-bottom:var(--e6);display:inline-flex">' +
+  return '<div class="fila g1" style="background:var(--neutra);padding:4px;border-radius:var(--pildora);margin-bottom:var(--e6);display:inline-flex">' +
     items.map(function (t) {
       var on = t === activa;
-      return '<span class="cta cta--bajo" style="background:' + (on ? 'var(--papel)' : 'transparent') +
-        ';color:' + (on ? 'var(--navy)' : 'var(--tinta-suave)') + '">' + esc(t) + '</span>';
+      return '<span class="cta cta--bajo" style="background:' + (on ? 'var(--superficie)' : 'transparent') +
+        ';color:' + (on ? 'var(--estructura)' : 'var(--texto-suave)') + '">' + esc(t) + '</span>';
     }).join('') + '</div>';
 }
 
@@ -55,7 +55,7 @@ function ladoVisual(prop, mensaje) {
   var v = VISUAL_LOGIN[prop];
   return (
     '<div class="login__visual login__visual--' + v.clase + '">' +
-      circuloFoto(FOTO[v.foto], 300, 'var(--papel)') +
+      circuloFoto(FOTO[v.foto], 300, 'var(--superficie)') +
       (mensaje
         ? '<div class="login__pie-msg"><span class="etiqueta">' + mensaje.et + '</span>' +
           '<h3 style="margin-top:var(--e2)">' + mensaje.t + '</h3></div>'
@@ -67,7 +67,7 @@ function ladoVisual(prop, mensaje) {
 function panelAcceso(prop, titulo, intro, campos, boton, pie) {
   return (
     '<div class="login__panel"><div class="login__forma">' +
-      '<div style="margin-bottom:var(--e4)">' + LOGOS[prop](46, '#2167ae', '#ffffff') + '</div>' +
+      '<div style="margin-bottom:var(--e4)">' + LOGOS[prop](46, 'var(--accion)', 'var(--superficie)') + '</div>' +
       '<h2>' + esc(titulo) + '</h2>' +
       '<p class="suave" style="margin-bottom:var(--e2)">' + esc(intro) + '</p>' +
       campos +
@@ -82,7 +82,7 @@ function pLogin(prop) {
   var panel = panelAcceso(prop, 'Entrar', 'Escribe tu correo y tu contraseña.',
     campo('Correo', 'email', 'andres@zurich.cl') + campo('Contraseña', 'password', '••••••••••'),
     'Entrar',
-    '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--heroe)">¿Olvidaste tu contraseña?</a></p>');
+    '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--accion)">¿Olvidaste tu contraseña?</a></p>');
   var orden = prop === 'b' ? visual + panel : panel + visual;
   return '<div class="login login--' + prop + '">' + orden + '</div>';
 }
@@ -104,7 +104,7 @@ function pRecuperar(prop) {
   var panel = panelAcceso(prop, 'Recuperar acceso',
     'Escribe tu correo y te enviamos un enlace para elegir una contraseña nueva.',
     campo('Correo', 'email', ''), 'Enviarme el enlace',
-    '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--heroe)">Volver a entrar</a></p>');
+    '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--accion)">Volver a entrar</a></p>');
   var orden = prop === 'b' ? visual + panel : panel + visual;
   return '<div class="login login--' + prop + '">' + orden + '</div>';
 }
@@ -152,12 +152,12 @@ function pFicha(prop) {
           '</tbody></table></div>' +
       '</div>' +
       '<div style="grid-column:span 4" class="col g4">' +
-        '<div style="background:var(--banda-menta);border-radius:var(--radio);padding:var(--e5)">' +
+        '<div style="background:var(--banda-c);border-radius:var(--radio);padding:var(--e5)">' +
           '<span class="etiqueta">Estado</span>' +
           '<h4 style="margin:var(--e2) 0 var(--e2);font-weight:400;font-size:22px">Aprobado</h4>' +
           '<p class="micro suave" style="margin-bottom:var(--e4)">Por Andrés Gamonal el 4 de septiembre.</p>' +
           '<button class="cta cta--conversion cta--ancho">' + ico('exportar', 'ico--16') + 'Exportar</button></div>' +
-        '<div style="background:var(--banda-hueso);border-radius:var(--radio);padding:var(--e5)">' +
+        '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e5)">' +
           '<span class="etiqueta tenue">Ficha</span>' +
           '<div class="col g3 menor" style="margin-top:var(--e3)">' +
             [['Modo','Web'],['Creado','1 sept 2026'],['Editado','4 sept 2026'],['Dueño','Andrés Gamonal'],['Marca','Zurich']]
@@ -175,7 +175,7 @@ function pFicha(prop) {
 
 function pPapelera(prop) {
   var cuerpo =
-    '<div style="background:var(--banda-arenisca);padding:var(--e4) var(--e5);border-radius:var(--radio);margin-bottom:var(--e5)" class="fila g3">' +
+    '<div style="background:var(--banda-d);padding:var(--e4) var(--e5);border-radius:var(--radio);margin-bottom:var(--e5)" class="fila g3">' +
       ico('reloj', 'ico--16') + '<span class="menor">Lo que borras se guarda 30 días. Después se elimina de verdad.</span></div>' +
     '<table class="tabla"><thead><tr><th>Proyecto</th><th>Modo</th><th>Borrado</th><th></th></tr></thead><tbody>' +
       '<tr><td data-et="Proyecto"><b>Campaña invierno 2025</b></td><td data-et="Modo">Web</td>' +
@@ -198,7 +198,7 @@ function pBiblioteca(prop, tipo) {
     var fotos = [FOTO.pieza1, FOTO.pieza2, FOTO.home, FOTO.loginA, FOTO.loginB, FOTO.loginC];
     var celdas = '';
     for (var i = 0; i < 12; i++) {
-      celdas += '<figure style="border-radius:var(--radio);overflow:hidden;background:var(--banda-hueso)">' +
+      celdas += '<figure style="border-radius:var(--radio);overflow:hidden;background:var(--neutra)">' +
         '<img src="' + fotos[i % fotos.length] + '" alt="" style="width:100%;height:140px;object-fit:cover">' +
         '<figcaption class="menor" style="padding:var(--e3)">imagen_' + (i + 1) + '.jpg' +
         '<div class="micro tenue">1600 × 900 · 240 KB</div></figcaption></figure>';
@@ -207,8 +207,8 @@ function pBiblioteca(prop, tipo) {
   } else if (tipo === 'Logos') {
     cuerpo = '<div class="cuadro-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e4)">' +
       ['Zurich horizontal', 'Zurich vertical', 'Zurich negativo', 'Isotipo'].map(function (n) {
-        return '<figure style="border-radius:var(--radio);overflow:hidden;background:var(--banda-hueso)">' +
-          '<div style="height:140px;display:grid;place-items:center;background:var(--banda-paloma);color:var(--tinta-suave)">' +
+        return '<figure style="border-radius:var(--radio);overflow:hidden;background:var(--neutra)">' +
+          '<div style="height:140px;display:grid;place-items:center;background:var(--banda-e);color:var(--texto-suave)">' +
           ico('logo', 'ico--28') + '</div>' +
           '<figcaption class="menor" style="padding:var(--e3)">' + n +
           '<div class="micro tenue">SVG · vectorial</div></figcaption></figure>';
@@ -219,7 +219,7 @@ function pBiblioteca(prop, tipo) {
         return '<tr><td data-et="Familia"><b>Zurich Sans</b></td><td data-et="Peso">' + r[0] + '</td>' +
           '<td data-et="Formato">WOFF2</td><td><button class="cta cta--bajo cta--terciario">Quitar</button></td></tr>';
       }).join('') + '</tbody></table>' +
-      '<div style="background:var(--banda-arenisca);border-radius:var(--radio);padding:var(--e6);margin-top:var(--e5)">' +
+      '<div style="background:var(--banda-d);border-radius:var(--radio);padding:var(--e6);margin-top:var(--e5)">' +
       '<h4 style="margin-bottom:var(--e2)">Sin tipografías propias se usa Arial</h4>' +
       '<p class="menor suave" style="max-width:60ch">Es lo que autoriza el manual de marca cuando Zurich Sans no está disponible. Las que subas aquí se incrustan en los HTML exportados.</p></div>';
   }
@@ -238,7 +238,7 @@ function pBiblioteca(prop, tipo) {
 function pConfigGeneral(prop) {
   var cuerpo =
     '<div class="rejilla12">' +
-      '<div style="grid-column:span 7;background:var(--banda-hueso);border-radius:var(--radio);padding:var(--e6)">' +
+      '<div style="grid-column:span 7;background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
         '<h4 style="margin-bottom:var(--e5)">Marca de las creatividades</h4>' +
         '<div class="col g5">' +
           '<label class="campo"><span class="campo__et">Marca activa</span>' +
@@ -246,21 +246,21 @@ function pConfigGeneral(prop) {
             '<span class="campo__ayuda">Los proyectos nuevos nacen con sus colores y tipografías.</span></label>' +
           '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Paleta</span>' +
             '<div class="fila g2" style="flex-wrap:wrap">' +
-              ['#2167ae','#23366f','#5495cf','#91bfe3','#ffc5ea','#a6e9ab','#e4b273','#dad2bd','#fff773','#cc4038']
+              ['#23366F','#2167AE','#5495CF','#91BFE3','#1FB1E6','#DAD2BD','#DDE4E3','#ECEEEF','#A6E9AB','#FFF773','#FF7569']
                 .map(function (c) { return '<span class="muestra" style="background:' + c + '" title="' + c + '"></span>'; }).join('') +
             '</div></div>' +
         '</div>' +
       '</div>' +
       '<div style="grid-column:span 5" class="col g4">' +
-        '<div style="background:var(--banda-paloma);border-radius:var(--radio);padding:var(--e6)">' +
+        '<div style="background:var(--banda-e);border-radius:var(--radio);padding:var(--e6)">' +
           '<h4 style="margin-bottom:var(--e2)">Dominios permitidos</h4>' +
           '<p class="menor" style="margin-bottom:var(--e4)">Sólo se puede insertar contenido de estos servicios.</p>' +
           '<div class="fila g2" style="flex-wrap:wrap">' +
             ['YouTube','Vimeo','Spotify','Power BI','Looker Studio','Typeform','Calendly'].map(function (d) {
-              return '<span class="pastilla" style="background:var(--papel);color:var(--navy)">' + d + '</span>';
+              return '<span class="pastilla" style="background:var(--superficie);color:var(--estructura)">' + d + '</span>';
             }).join('') + '</div>' +
           '<button class="cta cta--secundario cta--bajo" style="margin-top:var(--e4)">' + ico('mas', 'ico--16') + 'Añadir</button></div>' +
-        '<div style="background:var(--banda-hueso);border-radius:var(--radio);padding:var(--e6)">' +
+        '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
           '<h4 style="margin-bottom:var(--e3)">Formatos de estilo libre</h4>' +
           '<div class="fila g2" style="flex-wrap:wrap">' +
             ['1080×1080','1080×1350','1080×1920','1200×628','Personalizado'].map(function (d) {
@@ -297,13 +297,13 @@ function pConfigUsuarios(prop) {
 function pConfigPermisos(prop) {
   var cuerpo =
     '<div class="rejilla12">' +
-      '<div style="grid-column:span 6;background:var(--banda-hueso);border-radius:var(--radio);padding:var(--e6)">' +
+      '<div style="grid-column:span 6;background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
         '<h4 style="margin-bottom:var(--e5)">Invitar a alguien</h4>' +
         '<div class="col g4">' + campo('Correo', 'email', '') + campo('Nombre', 'text', '') +
           '<label class="campo"><span class="campo__et">Permiso</span>' +
           '<select class="campo__in"><option>Usuario</option><option>Administrador</option></select></label>' +
           '<button class="cta cta--principal cta--alto">Enviar invitación</button></div></div>' +
-      '<div style="grid-column:span 6;background:var(--banda-menta);border-radius:var(--radio);padding:var(--e6)">' +
+      '<div style="grid-column:span 6;background:var(--banda-c);border-radius:var(--radio);padding:var(--e6)">' +
         '<h4 style="margin-bottom:var(--e5)">Qué puede hacer cada permiso</h4>' +
         '<div class="col g5">' +
           '<div><div style="font-weight:600;margin-bottom:4px">Administrador</div>' +
@@ -328,18 +328,18 @@ function conModal(fondo, modal) {
 
 function pExportar(prop) {
   var modal =
-    '<div style="background:var(--papel);border-radius:var(--radio);width:100%;max-width:720px;overflow:hidden">' +
-      '<div style="padding:var(--e5) var(--e6);background:var(--banda-hueso)" class="fila">' +
+    '<div style="background:var(--superficie);border-radius:var(--radio);width:100%;max-width:720px;overflow:hidden">' +
+      '<div style="padding:var(--e5) var(--e6);background:var(--neutra)" class="fila">' +
         '<h4 class="crece">Exportar la pieza</h4>' + ico('cerrar') + '</div>' +
       '<div style="padding:var(--e6)" class="col g5">' +
         '<div><div class="etiqueta tenue" style="margin-bottom:var(--e3)">Formato</div>' +
           '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e3)">' +
             [['HTML','Completo',1],['Fragmento','Para el CMS',0],['JPG','Tres tamaños',0],['PNG','Con transparencia',0]]
               .map(function (f) {
-                return '<div style="background:' + (f[2] ? 'var(--banda-celeste)' : 'var(--banda-hueso)') + ';padding:var(--e4);border-radius:var(--radio)">' +
+                return '<div style="background:' + (f[2] ? 'var(--banda-b)' : 'var(--neutra)') + ';padding:var(--e4);border-radius:var(--radio)">' +
                   '<div style="font-weight:600">' + f[0] + '</div><div class="micro suave">' + f[1] + '</div></div>';
               }).join('') + '</div></div>' +
-        '<div style="background:var(--banda-arenisca);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
+        '<div style="background:var(--banda-d);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
           ico('reloj', 'ico--16') + '<span class="menor">La portada lleva un carrusel. Elige qué diapositiva se congela en la imagen.</span></div>' +
         '<div><div class="etiqueta tenue" style="margin-bottom:var(--e3)">Estado que se congela</div>' +
           '<div class="opciones"><span class="opcion opcion--on">Diapositiva 1</span>' +
@@ -352,13 +352,13 @@ function pExportar(prop) {
 
 function pInsercion(prop) {
   var modal =
-    '<div style="background:var(--papel);border-radius:var(--radio);width:100%;max-width:620px;overflow:hidden">' +
-      '<div style="padding:var(--e5) var(--e6);background:var(--banda-hueso)" class="fila">' +
+    '<div style="background:var(--superficie);border-radius:var(--radio);width:100%;max-width:620px;overflow:hidden">' +
+      '<div style="padding:var(--e5) var(--e6);background:var(--neutra)" class="fila">' +
         '<h4 class="crece">Insertar contenido externo</h4>' + ico('cerrar') + '</div>' +
       '<div style="padding:var(--e6)" class="col g5">' +
         campo('Pega lo que sea', 'text', 'https://youtu.be/aB3xK9pQ2Lm') +
         '<p class="campo__ayuda" style="margin-top:-12px">Una dirección, un código de inserción o un identificador. Lo reconocemos solo.</p>' +
-        '<div style="background:var(--banda-menta);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
+        '<div style="background:var(--banda-c);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
           ico('ojo', 'ico--16') + '<span class="menor"><b>YouTube reconocido.</b> Proporción 16:9 y portada tomada del propio video.</span></div>' +
         '<div><div class="etiqueta tenue" style="margin-bottom:var(--e2)">Respaldo en correo y en imagen</div>' +
           '<p class="menor suave" style="margin-bottom:var(--e3)">Ningún marco insertado sobrevive a un cliente de correo ni a una captura.</p>' +

@@ -61,15 +61,15 @@ function hoja(e) {
     '<section class="hoja__portada' + (e.sel === 'portada' ? ' sel' : '') + '">' +
       (e.sel === 'portada' ? '<span class="sel__et">Portada · Contenido sobre imagen</span>' : '') +
       '<div class="hoja__portada-txt">' +
-        '<span class="etiqueta" style="color:var(--banda-lima)">Seguro de hogar</span>' +
-        '<h2 class="' + (e.editando === 'titular' ? 'editando' : '') + '" style="color:#fff;font-size:38px">' +
+        '<span class="etiqueta" style="color:var(--acento)">Seguro de hogar</span>' +
+        '<h2 class="' + (e.editando === 'titular' ? 'editando' : '') + '" style="color:var(--sobre-estructura);font-size:38px">' +
           'Tu casa protegida desde el primer día' +
           (e.editando === 'titular' ? '<span class="cursor"></span>' : '') +
         '</h2>' +
-        '<p style="color:var(--azul-claro);font-size:17px">Cobertura inmediata, sin trámites y con asistencia 24 horas en todo Chile.</p>' +
+        '<p style="color:var(--sobre-estructura-suave);font-size:17px">Cobertura inmediata, sin trámites y con asistencia 24 horas en todo Chile.</p>' +
         '<div class="fila g3" style="margin-top:10px">' +
           '<span class="cta cta--conversion">Cotizar en un minuto</span>' +
-          '<span class="cta" style="background:#fff;color:var(--navy)">Ver coberturas</span>' +
+          '<span class="cta" style="background:var(--sobre-estructura);color:var(--estructura)">Ver coberturas</span>' +
         '</div>' +
       '</div>' +
       '<img src="' + FOTO.pieza1 + '" alt="">' +
@@ -103,8 +103,8 @@ function hojaLibre(e) {
       '<img class="mesa__fondo" src="' + FOTO.pieza2 + '" alt="">' +
       '<div class="mesa__bloque' + (e.sel === 'bloque' ? ' sel' : '') + '">' +
         (e.sel === 'bloque' ? '<span class="sel__et">Bloque de texto · capa 3</span>' : '') +
-        '<span class="etiqueta" style="color:var(--navy)">Cobertura viaje</span>' +
-        '<h2 style="color:var(--navy);font-size:44px;line-height:1.05">Viaja sin pensar en lo que puede pasar</h2>' +
+        '<span class="etiqueta" style="color:var(--estructura)">Cobertura viaje</span>' +
+        '<h2 style="color:var(--estructura);font-size:44px;line-height:1.05">Viaja sin pensar en lo que puede pasar</h2>' +
         '<span class="cta cta--conversion" style="align-self:flex-start;margin-top:12px">Cotiza en un minuto</span>' +
       '</div>' +
       '<span class="mesa__burbuja mesa__burbuja--1"></span>' +
@@ -119,11 +119,11 @@ function hojaEmail(e) {
   return (
     '<div class="email">' +
       '<div class="email__cab"><span class="micro tenue">Ver en el navegador</span></div>' +
-      '<div class="email__logo">' + LOGOS.a(36, '#2167ae', '#ffffff') + '</div>' +
+      '<div class="email__logo">' + LOGOS.a(36, 'var(--accion)', 'var(--superficie)') + '</div>' +
       '<img class="email__foto" src="' + FOTO.pieza1 + '" alt="">' +
       '<div class="email__cuerpo' + (e.sel === 'texto' ? ' sel' : '') + '">' +
         (e.sel === 'texto' ? '<span class="sel__et">Texto enriquecido</span>' : '') +
-        '<h3 class="' + (e.editando === 'texto' ? 'editando' : '') + '" style="color:var(--navy)">' +
+        '<h3 class="' + (e.editando === 'texto' ? 'editando' : '') + '" style="color:var(--estructura)">' +
           'Tu renovación está lista' + (e.editando === 'texto' ? '<span class="cursor"></span>' : '') + '</h3>' +
         '<p class="menor suave" style="margin-top:10px">Revisa las condiciones de tu póliza y renueva en línea antes del 30 de septiembre.</p>' +
         '<span class="cta cta--conversion" style="margin-top:18px">Renovar ahora</span>' +
@@ -223,7 +223,7 @@ function panelSeccion(avanzado) {
       '<div class="col g5">' +
         '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Fondo</span>' +
           '<div class="fila g2" style="flex-wrap:wrap">' +
-            ['var(--navy)','var(--banda-rosa)','var(--banda-celeste)','var(--banda-menta)','var(--banda-ambar)','var(--banda-arenisca)','#ffffff']
+            ['var(--estructura)','var(--banda-b)','var(--banda-b)','var(--banda-c)','var(--banda-a)','var(--banda-d)','var(--superficie)']
               .map(function (c, i) { return '<span class="muestra' + (i === 0 ? ' muestra--on' : '') + '" style="background:' + c + '"></span>'; }).join('') +
           '</div></div>' +
         '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Imagen</span>' +
@@ -252,9 +252,9 @@ function panelCapas() {
 }
 
 function barraEditor(modo, oscuro) {
-  var sec = oscuro ? 'style="background:rgba(255,255,255,.16);color:#fff"' : '';
+  var sec = oscuro ? 'style="background:rgba(255,255,255,.16);color:var(--sobre-estructura)"' : '';
   return (
-    '<button class="cta cta--bajo cta--terciario" ' + (oscuro ? 'style="color:#fff"' : '') + '>' + ico('atras', 'ico--16') + 'Proyectos</button>' +
+    '<button class="cta cta--bajo cta--terciario" ' + (oscuro ? 'style="color:var(--sobre-estructura)"' : '') + '>' + ico('atras', 'ico--16') + 'Proyectos</button>' +
     '<div style="font-weight:600;font-size:14px">' + (modo === 'email' ? 'Renovación auto — correo' : modo === 'libre' ? 'Cobertura viaje — pieza' : 'Seguro de hogar — landing') + '</div>' +
     '<span class="pastilla pastilla--neutra"><span class="punto"></span>Guardado</span>' +
     '<div class="crece"></div>' +

@@ -3,253 +3,520 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fast Creative Builder · Tres propuestas de interfaz</title>
+<title>Fast Creative Builder · Editor de propuestas</title>
 <link rel="stylesheet" href="sistema_mockups_fast_creative_builder.css">
 <link rel="stylesheet" href="propuestas_mockups_fast_creative_builder.css">
 <style>
-/* Cromo del visor. Deliberadamente neutro y oscuro para no competir con
-   las propuestas ni contaminar la lectura del color de marca. */
+/* Cromo del visor. Neutro y oscuro para no contaminar la lectura del color. */
 :root {
-  --v-fondo: #16181c;
-  --v-panel: #1e2126;
-  --v-alto: #2a2e35;
-  --v-borde: #363b44;
-  --v-txt: #e7e9ec;
-  --v-txt2: #9aa2ae;
-  --v-acento: #5495cf;
+  --v-fondo: #15171b; --v-panel: #1d2025; --v-alto: #282c33; --v-borde: #343943;
+  --v-txt: #e9ebee; --v-txt2: #98a0ac; --v-acento: #5495cf; --v-ok: #6fca8c; --v-mal: #f08a80;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--v-fondo);
-  color: var(--v-txt);
-  font-size: 14px;
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif; background: var(--v-fondo); color: var(--v-txt);
+  font-size: 13px; display: grid; grid-template-columns: 264px 1fr 330px; overflow: hidden;
 }
-a { color: var(--v-acento); }
+button { font-family: inherit; cursor: pointer; }
 
-.v-lateral { background: var(--v-panel); display: flex; flex-direction: column; overflow: hidden; }
-.v-cab { padding: 20px; }
-.v-cab h1 { margin: 0 0 4px; font-size: 15px; }
-.v-cab p { margin: 0; font-size: 12px; color: var(--v-txt2); line-height: 1.5; }
+.col-lat { background: var(--v-panel); display: flex; flex-direction: column; overflow: hidden; }
+.cab { padding: 16px 16px 12px; }
+.cab h1 { margin: 0 0 3px; font-size: 14px; }
+.cab p { margin: 0; font-size: 11.5px; color: var(--v-txt2); line-height: 1.5; }
 
-.v-props { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px; }
-.v-prop {
-  text-align: left; padding: 12px 14px; border-radius: 8px; cursor: pointer;
-  background: var(--v-alto); color: var(--v-txt); border: 1px solid transparent;
-  font-family: inherit; font-size: 13px; line-height: 1.45;
+.props { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+.prop {
+  text-align: left; padding: 10px 12px; border-radius: 8px; background: var(--v-alto);
+  color: var(--v-txt); border: 1px solid transparent; font-size: 12.5px; line-height: 1.4;
 }
-.v-prop b { display: block; font-size: 13px; margin-bottom: 3px; }
-.v-prop span { color: var(--v-txt2); font-size: 12px; }
-.v-prop[aria-pressed="true"] { border-color: var(--v-acento); background: #24303d; }
-.v-prop[aria-pressed="true"] span { color: #bcd4ea; }
+.prop b { display: block; margin-bottom: 2px; }
+.prop span { color: var(--v-txt2); font-size: 11.5px; }
+.prop[aria-pressed="true"] { border-color: var(--v-acento); background: #22303e; }
 
-.v-lista { flex: 1; overflow: auto; padding: 8px 12px 24px; }
-.v-grupo { padding: 14px 8px 6px; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--v-txt2); }
-.v-item {
-  display: block; width: 100%; text-align: left; padding: 9px 10px; border-radius: 8px;
-  background: transparent; color: var(--v-txt); border: 0; cursor: pointer;
-  font-family: inherit; font-size: 13px; line-height: 1.35;
-}
-.v-item:hover { background: var(--v-alto); }
-.v-item[aria-current="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
-.v-item small { display: block; font-size: 11px; opacity: .7; font-weight: 400; }
+.lista { flex: 1; overflow: auto; padding: 4px 10px 20px; }
+.gr { padding: 12px 8px 4px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--v-txt2); }
+.it { display: block; width: 100%; text-align: left; padding: 7px 9px; border-radius: 7px;
+  background: transparent; color: var(--v-txt); border: 0; font-size: 12.5px; line-height: 1.3; }
+.it:hover { background: var(--v-alto); }
+.it[aria-current="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
+.it small { display: block; font-size: 10.5px; opacity: .72; font-weight: 400; }
 
-.v-main { display: flex; flex-direction: column; overflow: hidden; }
-.v-barra {
-  height: 56px; flex: none; display: flex; align-items: center; gap: 16px;
-  padding: 0 20px; background: var(--v-panel);
-}
-.v-titulo { font-size: 14px; font-weight: 700; }
-.v-ruta { font-size: 12px; color: var(--v-txt2); font-family: ui-monospace, Consolas, monospace; }
-.v-crece { flex: 1; }
-.v-grupo-btn { display: flex; gap: 2px; background: var(--v-alto); padding: 3px; border-radius: 8px; }
-.v-btn {
-  padding: 7px 12px; border: 0; border-radius: 6px; background: transparent;
-  color: var(--v-txt2); font-family: inherit; font-size: 12px; cursor: pointer;
-}
-.v-btn[aria-pressed="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
+.col-mid { display: flex; flex-direction: column; overflow: hidden; }
+.barra { height: 50px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: var(--v-panel); }
+.tit { font-size: 13px; font-weight: 700; }
+.ruta { font-size: 11px; color: var(--v-txt2); font-family: Consolas, monospace; }
+.x { flex: 1; }
+.gb { display: flex; gap: 2px; background: var(--v-alto); padding: 3px; border-radius: 7px; }
+.b { padding: 6px 10px; border: 0; border-radius: 5px; background: transparent; color: var(--v-txt2); font-size: 11.5px; }
+.b[aria-pressed="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
 
-.v-escena { flex: 1; overflow: auto; padding: 28px; display: flex; justify-content: center; align-items: flex-start; }
-.v-marco {
-  background: #fff; border-radius: 10px; overflow: hidden; flex: none;
-  transform-origin: top center; box-shadow: 0 8px 40px rgba(0,0,0,.45);
-}
+.escena { flex: 1; overflow: auto; padding: 22px; display: flex; justify-content: center; align-items: flex-start; }
+.marco { background: #fff; border-radius: 8px; overflow: hidden; flex: none; transform-origin: top center;
+  box-shadow: 0 6px 34px rgba(0,0,0,.5); }
 
-.v-notas { flex: none; background: var(--v-panel); padding: 14px 20px; font-size: 12px; color: var(--v-txt2); line-height: 1.6; }
-.v-notas b { color: var(--v-txt); }
+/* ── Panel de tema ─────────────────────────────────────────────────── */
+.col-tema { background: var(--v-panel); display: flex; flex-direction: column; overflow: hidden; }
+.tema-cab { padding: 14px 14px 10px; }
+.tema-cab h2 { margin: 0 0 3px; font-size: 13px; }
+.tema-cab p { margin: 0; font-size: 11px; color: var(--v-txt2); line-height: 1.45; }
+
+.presets { display: flex; gap: 6px; padding: 0 14px 12px; }
+.preset { flex: 1; padding: 8px 6px; border-radius: 7px; border: 1px solid var(--v-borde);
+  background: var(--v-alto); color: var(--v-txt); font-size: 11px; line-height: 1.3; }
+.preset:hover { border-color: var(--v-acento); }
+
+.tema-cuerpo { flex: 1; overflow: auto; padding: 0 14px 24px; }
+.grupo { margin-bottom: 4px; }
+.grupo > summary { list-style: none; cursor: pointer; padding: 9px 8px; border-radius: 7px;
+  font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--v-txt2); font-weight: 700; }
+.grupo > summary::-webkit-details-marker { display: none; }
+.grupo > summary:hover { background: var(--v-alto); }
+.grupo[open] > summary { color: var(--v-txt); }
+
+.fila-t { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 6px; }
+.fila-t:hover { background: var(--v-alto); }
+.fila-t label { flex: 1; font-size: 11.5px; color: var(--v-txt); line-height: 1.3; }
+.muestra-t { width: 30px; height: 26px; border-radius: 5px; border: 1px solid rgba(255,255,255,.22); flex: none; padding: 0; }
+.hex { width: 74px; height: 26px; background: var(--v-fondo); border: 1px solid var(--v-borde); border-radius: 5px;
+  color: var(--v-txt); font-family: Consolas, monospace; font-size: 10.5px; text-align: center; text-transform: uppercase; }
+
+.paleta { display: none; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 8px; margin: 2px 0 6px;
+  background: var(--v-fondo); border-radius: 7px; }
+.paleta.abierta { display: grid; }
+.paleta button { height: 30px; border-radius: 5px; border: 1px solid rgba(255,255,255,.2); padding: 0; }
+.paleta button:hover { outline: 2px solid var(--v-acento); }
+
+.control { padding: 6px 8px; }
+.control label { display: block; font-size: 11.5px; margin-bottom: 5px; }
+.control label span { float: right; color: var(--v-txt2); font-family: Consolas, monospace; }
+.control input[type=range] { width: 100%; accent-color: var(--v-acento); }
+.control select { width: 100%; height: 28px; background: var(--v-fondo); color: var(--v-txt);
+  border: 1px solid var(--v-borde); border-radius: 5px; font-size: 11.5px; padding: 0 6px; }
+.seg { display: flex; gap: 3px; }
+.seg button { flex: 1; height: 28px; border-radius: 5px; border: 1px solid var(--v-borde);
+  background: var(--v-fondo); color: var(--v-txt2); font-size: 11px; }
+.seg button[aria-pressed="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; border-color: var(--v-acento); }
+
+.chequeo { padding: 10px 12px; margin: 8px 0 4px; border-radius: 7px; background: var(--v-fondo); font-size: 11px; line-height: 1.5; }
+.chequeo b { display: block; margin-bottom: 5px; font-size: 11px; }
+.chequeo .ok { color: var(--v-ok); }
+.chequeo .mal { color: var(--v-mal); }
+.chequeo ul { margin: 0; padding-left: 14px; }
+.chequeo li { margin-bottom: 3px; }
+.matriz { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 10.5px; }
+.matriz th { text-align: left; font-weight: 400; color: var(--v-txt2); padding: 3px 4px; }
+.matriz th:first-child { display: flex; align-items: center; gap: 5px; }
+.matriz th i { width: 11px; height: 11px; border-radius: 3px; border: 1px solid rgba(255,255,255,.25); flex: none; }
+.matriz td { text-align: center; padding: 3px 4px; font-family: Consolas, monospace; }
+.matriz tr:first-child th { color: var(--v-txt); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+
+.exporta { width: 100%; height: 130px; background: var(--v-fondo); color: var(--v-txt2);
+  border: 1px solid var(--v-borde); border-radius: 6px; font-family: Consolas, monospace;
+  font-size: 10px; padding: 8px; resize: vertical; }
+
+.notas { flex: none; background: var(--v-panel); padding: 10px 16px; font-size: 11px; color: var(--v-txt2); line-height: 1.5; }
+.notas b { color: var(--v-txt); }
 
 body.solo { grid-template-columns: 1fr; }
-body.solo .v-lateral, body.solo .v-notas { display: none; }
-body.solo .v-escena { padding: 0; align-items: stretch; }
-body.solo .v-marco { border-radius: 0; box-shadow: none; }
+body.solo .col-lat, body.solo .col-tema, body.solo .notas { display: none; }
+body.solo .escena { padding: 0; align-items: stretch; }
+body.solo .marco { border-radius: 0; box-shadow: none; }
 
-@media (max-width: 900px) {
-  body { grid-template-columns: 1fr; }
-  .v-lateral { display: none; }
-}
+@media (max-width: 1200px) { body { grid-template-columns: 1fr 330px; } .col-lat { display: none; } }
+@media (max-width: 820px)  { body { grid-template-columns: 1fr; } .col-tema { display: none; } }
 </style>
 </head>
 <body>
 
-<aside class="v-lateral">
-  <div class="v-cab">
+<aside class="col-lat">
+  <div class="cab">
     <h1>Fast Creative Builder</h1>
-    <p>Tres propuestas de interfaz completa. Dirección Gamonal, color y tipografía Zurich.</p>
+    <p>Tres propuestas de interfaz. Elige una y recolorea lo que quieras.</p>
   </div>
-
-  <div class="v-props" id="props"></div>
-  <nav class="v-lista" id="lista" aria-label="Pantallas"></nav>
+  <div class="props" id="props"></div>
+  <nav class="lista" id="lista" aria-label="Pantallas"></nav>
 </aside>
 
-<main class="v-main">
-  <header class="v-barra">
-    <span class="v-titulo" id="tituloPantalla">Acceso</span>
-    <span class="v-ruta" id="rutaPantalla">/login</span>
-    <span class="v-crece"></span>
-
-    <div class="v-grupo-btn" role="group" aria-label="Dispositivo">
-      <button class="v-btn" data-disp="escritorio" aria-pressed="true">Escritorio</button>
-      <button class="v-btn" data-disp="tableta" aria-pressed="false">Tableta</button>
-      <button class="v-btn" data-disp="movil" aria-pressed="false">Móvil</button>
+<main class="col-mid">
+  <header class="barra">
+    <span class="tit" id="tit">Acceso</span>
+    <span class="ruta" id="ruta">/login</span>
+    <span class="x"></span>
+    <div class="gb" role="group" aria-label="Dispositivo">
+      <button class="b" data-disp="escritorio" aria-pressed="true">Escritorio</button>
+      <button class="b" data-disp="tableta" aria-pressed="false">Tableta</button>
+      <button class="b" data-disp="movil" aria-pressed="false">Móvil</button>
     </div>
-
-    <div class="v-grupo-btn">
-      <button class="v-btn" id="btnCuadricula" aria-pressed="false">Cuadrícula de 12</button>
-      <button class="v-btn" id="btnSolo" aria-pressed="false">Sin cromo</button>
+    <div class="gb">
+      <button class="b" id="bCuad" aria-pressed="false">Cuadrícula</button>
+      <button class="b" id="bSolo" aria-pressed="false">Sin cromo</button>
     </div>
   </header>
-
-  <div class="v-escena">
-    <div class="v-marco" id="marco"><div class="p" id="pantalla"></div></div>
-  </div>
-
-  <footer class="v-notas" id="notas"></footer>
+  <div class="escena"><div class="marco" id="marco"><div class="p" id="pantalla"></div></div></div>
+  <footer class="notas" id="notas"></footer>
 </main>
+
+<aside class="col-tema">
+  <div class="tema-cab">
+    <h2>Colores y tipografía</h2>
+    <p>Todo lo que ves se pinta desde aquí. Cambia un valor y la pantalla se actualiza al instante.</p>
+  </div>
+  <div class="presets">
+    <button class="preset" data-preset="pastel"><b>Bandas pastel</b><br>Color en las secciones</button>
+    <button class="preset" data-preset="sobrio"><b>Sobrio</b><br>Neutros y azul</button>
+  </div>
+  <div class="tema-cuerpo" id="temaCuerpo"></div>
+</aside>
 
 <script src="base_mockups_fast_creative_builder.js"></script>
 <script src="pantallas_mockups_fast_creative_builder.js"></script>
 <script src="editor_mockups_fast_creative_builder.js"></script>
 <script src="interiores_mockups_fast_creative_builder.js"></script>
 <script>
-var PROPUESTAS = [
-  {
-    id: 'a',
-    n: 'A · Taller',
-    d: 'Barra lateral de destinos y barra superior de acciones. La ruta de selección siempre visible bajo la barra. Densidad media, orientada a trabajar rápido.'
-  },
-  {
-    id: 'b',
-    n: 'B · Lienzo',
-    d: 'Riel de íconos y paneles flotantes. El home abre por búsqueda. En el editor el inspector se ancla junto a la selección y el lienzo ocupa toda la pantalla.'
-  },
-  {
-    id: 'c',
-    n: 'C · Escritorio',
-    d: 'Barra superior ancha con secciones, sin lateral. El home abre con el resumen operativo. Las propiedades van en una barra horizontal, no en un panel.'
-  }
+/* ═══ Paleta de marca ═══════════════════════════════════════════════════
+   Los once colores autorizados, más blanco. El selector ofrece estos y
+   además admite cualquier valor escrito a mano.                        */
+var PALETA = [
+  ['Azul oscuro', '#23366F'], ['Azul de Zúrich', '#2167AE'], ['Azul medio', '#5495CF'],
+  ['Azul claro', '#91BFE3'], ['Celeste', '#1FB1E6'], ['Piedra arenisca', '#DAD2BD'],
+  ['Paloma', '#DDE4E3'], ['Blanco de Zúrich', '#ECEEEF'], ['Menta', '#A6E9AB'],
+  ['Limón', '#FFF773'], ['Durazno', '#FF7569'], ['Blanco', '#FFFFFF']
 ];
 
-var TAMANOS = {
-  escritorio: { w: 1440, h: 900 },
-  tableta: { w: 834, h: 1100 },
-  movil: { w: 390, h: 844 }
+/* ═══ Tokens que el panel controla ═════════════════════════════════════ */
+var GRUPOS = [
+  { n: 'Fondos', t: [
+    ['--fondo-app', 'Fondo de la aplicación'], ['--superficie', 'Superficie y tarjetas'],
+    ['--neutra', 'Banda neutra'], ['--banda-a', 'Banda A'], ['--banda-b', 'Banda B'],
+    ['--banda-c', 'Banda C'], ['--banda-d', 'Banda D'], ['--banda-e', 'Banda E']
+  ]},
+  { n: 'Lateral y barras', t: [
+    ['--estructura', 'Fondo del lateral'], ['--sobre-estructura', 'Texto sobre el lateral'],
+    ['--sobre-estructura-suave', 'Texto secundario del lateral']
+  ]},
+  { n: 'Texto', t: [
+    ['--titular', 'Titulares'], ['--texto', 'Cuerpo'],
+    ['--texto-suave', 'Cuerpo secundario'], ['--texto-tenue', 'Texto tenue']
+  ]},
+  { n: 'Botones', t: [
+    ['--accion', 'Principal · fondo'], ['--accion-texto', 'Principal · texto'],
+    ['--conversion', 'Conversión · fondo'], ['--conversion-texto', 'Conversión · texto'],
+    ['--secundario-linea', 'Secundario · línea'], ['--secundario-texto', 'Secundario · texto']
+  ]},
+  { n: 'Acentos y estados', t: [
+    ['--acento', 'Acento'],
+    ['--exito', 'Éxito · texto'], ['--exito-fondo', 'Éxito · fondo'],
+    ['--aviso', 'Aviso · texto'], ['--aviso-fondo', 'Aviso · fondo'],
+    ['--error', 'Error · texto'], ['--error-fondo', 'Error · fondo']
+  ]},
+  { n: 'Detalle', t: [
+    ['--contorno', 'Contorno de campos'], ['--contorno-tenue', 'Líneas de tabla'],
+    ['--seleccion', 'Selección en el editor'], ['--cota', 'Cotas y reglas']
+  ]}
+];
+
+var PRESETS = {
+  pastel: {
+    '--fondo-app': '#ECEEEF', '--superficie': '#FFFFFF', '--neutra': '#ECEEEF',
+    '--banda-a': '#A6E9AB', '--banda-b': '#ECEEEF', '--banda-c': '#DDE4E3',
+    '--banda-d': '#DAD2BD', '--banda-e': '#91BFE3',
+    '--estructura': '#23366F', '--sobre-estructura': '#FFFFFF', '--sobre-estructura-suave': '#91BFE3',
+    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#4A5570', '--texto-tenue': '#68717F',
+    '--accion': '#2167AE', '--accion-texto': '#FFFFFF',
+    '--conversion': '#CC4038', '--conversion-texto': '#FFFFFF',
+    '--secundario-linea': '#2167AE', '--secundario-texto': '#2167AE',
+    '--acento': '#FFF773',
+    '--exito': '#1E6B3A', '--exito-fondo': '#E4F1E9', '--aviso': '#7A5A12', '--aviso-fondo': '#F8F1DD',
+    '--error': '#A52A20', '--error-fondo': '#FAE9E7',
+    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#CC4038',
+    '--fuente': "'Zurich Sans', Arial, Helvetica, sans-serif",
+    '--base': '16', '--escala': '1', '--peso-titular': '400', '--peso-texto': '400',
+    '--radio': '8', '--radio-cta': '999'
+  },
+  sobrio: {
+    /* La dirección contraria: neutros dominantes, el azul organiza y el
+       color sólo aparece en estados. */
+    '--fondo-app': '#ECEEEF', '--superficie': '#FFFFFF', '--neutra': '#ECEEEF',
+    '--banda-a': '#FFFFFF', '--banda-b': '#ECEEEF', '--banda-c': '#FFFFFF',
+    '--banda-d': '#DDE4E3', '--banda-e': '#FFFFFF',
+    '--estructura': '#23366F', '--sobre-estructura': '#FFFFFF', '--sobre-estructura-suave': '#91BFE3',
+    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#4A5570', '--texto-tenue': '#68717F',
+    '--accion': '#2167AE', '--accion-texto': '#FFFFFF',
+    '--conversion': '#2167AE', '--conversion-texto': '#FFFFFF',
+    '--secundario-linea': '#7D8A97', '--secundario-texto': '#23366F',
+    '--acento': '#FFF773',
+    '--exito': '#1E6B3A', '--exito-fondo': '#E4F1E9', '--aviso': '#7A5A12', '--aviso-fondo': '#F8F1DD',
+    '--error': '#A52A20', '--error-fondo': '#FAE9E7',
+    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#FF7569',
+    '--fuente': "'Zurich Sans', Arial, Helvetica, sans-serif",
+    '--base': '16', '--escala': '0.95', '--peso-titular': '500', '--peso-texto': '400',
+    '--radio': '8', '--radio-cta': '8'
+  }
 };
 
+var tema = Object.assign({}, PRESETS.pastel);
+
+function aplicarTema() {
+  var r = document.documentElement.style;
+  for (var k in tema) {
+    if (k === '--base') r.setProperty(k, tema[k] + 'px');
+    else if (k === '--radio') r.setProperty(k, tema[k] + 'px');
+    else if (k === '--radio-cta') r.setProperty(k, tema[k] + 'px');
+    else r.setProperty(k, tema[k]);
+  }
+}
+
+/* ═══ Contraste ═════════════════════════════════════════════════════════ */
+function rgbDe(h) {
+  h = (h || '').trim().replace('#', '');
+  if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  if (h.length !== 6) return null;
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function lin(c) { c /= 255; return c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+function lum(c) { return 0.2126*lin(c[0]) + 0.7152*lin(c[1]) + 0.0722*lin(c[2]); }
+function contraste(a, b) {
+  var x = rgbDe(a), y = rgbDe(b); if (!x || !y) return 0;
+  var la = lum(x), lb = lum(y), hi = Math.max(la,lb), lo = Math.min(la,lb);
+  return (hi + 0.05) / (lo + 0.05);
+}
+function familia(h) {
+  var c = rgbDe(h); if (!c) return 'x';
+  var mx = Math.max.apply(null,c), mn = Math.min.apply(null,c), d = mx-mn;
+  if (d < 24) return 'neutra';
+  var r=c[0]/255,g=c[1]/255,b=c[2]/255,dd=d/255, hu;
+  if (mx/255===r) hu=((g-b)/dd)%6; else if (mx/255===g) hu=(b-r)/dd+2; else hu=(r-g)/dd+4;
+  hu*=60; if(hu<0)hu+=360;
+  if (hu<70||hu>=330) return 'cálida';
+  if (hu<170) return 'verde';
+  if (hu<260) return 'azul';
+  return 'magenta';
+}
+
+var PARES_TEXTO = [
+  ['--texto', '--superficie', 'Cuerpo sobre superficie'],
+  ['--texto', '--fondo-app', 'Cuerpo sobre el fondo'],
+  ['--titular', '--banda-a', 'Titular sobre banda A'],
+  ['--titular', '--banda-b', 'Titular sobre banda B'],
+  ['--titular', '--banda-c', 'Titular sobre banda C'],
+  ['--titular', '--banda-d', 'Titular sobre banda D'],
+  ['--titular', '--banda-e', 'Titular sobre banda E'],
+  ['--texto-suave', '--superficie', 'Texto secundario sobre superficie'],
+  ['--accion-texto', '--accion', 'Texto del botón principal'],
+  ['--conversion-texto', '--conversion', 'Texto del botón de conversión'],
+  ['--sobre-estructura', '--estructura', 'Texto sobre el lateral']
+];
+var FONDOS = [
+  ['--superficie', 'la superficie'], ['--fondo-app', 'el fondo'], ['--neutra', 'la banda neutra'],
+  ['--banda-a', 'la banda A'], ['--banda-b', 'la banda B'], ['--banda-c', 'la banda C'],
+  ['--banda-d', 'la banda D'], ['--banda-e', 'la banda E']
+];
+var PARES_BOTON = [];
+FONDOS.forEach(function (f) {
+  PARES_BOTON.push(['--accion', f[0], 'Botón principal sobre ' + f[1]]);
+  PARES_BOTON.push(['--conversion', f[0], 'Botón de conversión sobre ' + f[1]]);
+});
+
+/* Legibilidad del texto: esto sí son errores y hay que arreglarlos. */
+function chequear() {
+  var malos = [];
+  PARES_TEXTO.forEach(function (par) {
+    var r = contraste(tema[par[0]], tema[par[1]]);
+    if (r < 4.5) malos.push(par[2] + ' — ' + r.toFixed(2) + ', hace falta 4,5');
+  });
+  return malos;
+}
+
+/* Compatibilidad de botón y fondo: no es un error, es una restricción.
+   Dice sobre qué fondos se puede poner cada botón.                    */
+function compatibilidad() {
+  return FONDOS.map(function (f) {
+    function ver(tok) {
+      var r = contraste(tema[tok], tema[f[0]]);
+      var fa = familia(tema[tok]), fb = familia(tema[f[0]]);
+      if (fa === fb && fa !== 'neutra') return { ok: false, m: 'misma familia' };
+      if (r < 3) return { ok: false, m: r.toFixed(1) };
+      return { ok: true, m: r.toFixed(1) };
+    }
+    return { n: f[1], color: tema[f[0]], pri: ver('--accion'), conv: ver('--conversion') };
+  });
+}
+
+/* ═══ Panel ═════════════════════════════════════════════════════════════ */
+function filaColor(tok, etiqueta) {
+  return '<div class="fila-t">' +
+    '<button class="muestra-t" data-abre="' + tok + '" style="background:' + tema[tok] + '" title="Elegir de la paleta"></button>' +
+    '<label>' + etiqueta + '</label>' +
+    '<input class="hex" data-hex="' + tok + '" value="' + tema[tok] + '">' +
+    '</div>' +
+    '<div class="paleta" data-pal="' + tok + '">' +
+      PALETA.map(function (c) {
+        return '<button data-set="' + tok + '" data-val="' + c[1] + '" style="background:' + c[1] + '" title="' + c[0] + ' ' + c[1] + '"></button>';
+      }).join('') +
+    '</div>';
+}
+
+function pintarPanel() {
+  var h = '';
+  GRUPOS.forEach(function (g, i) {
+    h += '<details class="grupo"' + (i < 2 ? ' open' : '') + '><summary>' + g.n + '</summary>' +
+      g.t.map(function (t) { return filaColor(t[0], t[1]); }).join('') + '</details>';
+  });
+
+  h += '<details class="grupo" open><summary>Tipografía</summary>' +
+    '<div class="control"><label>Familia</label><select id="selFuente">' +
+      ['\'Zurich Sans\', Arial, Helvetica, sans-serif|Zurich Sans, con Arial de respaldo',
+       'Arial, Helvetica, sans-serif|Arial',
+       '\'Helvetica Neue\', Helvetica, Arial, sans-serif|Helvetica',
+       'Georgia, \'Times New Roman\', serif|Georgia',
+       'system-ui, -apple-system, sans-serif|La del sistema']
+      .map(function (o) { var v = o.split('|');
+        return '<option value="' + v[0] + '"' + (tema['--fuente'] === v[0] ? ' selected' : '') + '>' + v[1] + '</option>'; }).join('') +
+    '</select></div>' +
+    '<div class="control"><label>Tamaño del cuerpo <span id="vBase">' + tema['--base'] + ' px</span></label>' +
+      '<input type="range" id="rBase" min="13" max="20" step="1" value="' + tema['--base'] + '"></div>' +
+    '<div class="control"><label>Escala de titulares <span id="vEsc">' + tema['--escala'] + '×</span></label>' +
+      '<input type="range" id="rEsc" min="0.75" max="1.4" step="0.05" value="' + tema['--escala'] + '"></div>' +
+    '<div class="control"><label>Peso de titulares</label><div class="seg" id="segPeso">' +
+      [300,400,500,600].map(function (w) {
+        return '<button data-peso="' + w + '" aria-pressed="' + (String(tema['--peso-titular']) === String(w)) + '">' + w + '</button>'; }).join('') +
+    '</div></div></details>';
+
+  h += '<details class="grupo"><summary>Forma</summary>' +
+    '<div class="control"><label>Radio general <span id="vRad">' + tema['--radio'] + ' px</span></label>' +
+      '<input type="range" id="rRad" min="0" max="20" step="1" value="' + tema['--radio'] + '"></div>' +
+    '<div class="control"><label>Forma del botón</label><div class="seg" id="segCta">' +
+      [['0','Recto'],['8','Redondeado'],['999','Píldora']].map(function (o) {
+        return '<button data-cta="' + o[0] + '" aria-pressed="' + (String(tema['--radio-cta']) === o[0]) + '">' + o[1] + '</button>'; }).join('') +
+    '</div></div></details>';
+
+  var malos = chequear();
+  h += '<div class="chequeo"><b>' + (malos.length
+      ? '<span class="mal">Texto: ' + malos.length + ' combinación(es) ilegible(s)</span>'
+      : '<span class="ok">Texto: todo cumple AA</span>') + '</b>' +
+    (malos.length ? '<ul>' + malos.map(function (m) { return '<li>' + m + '</li>'; }).join('') + '</ul>'
+      : 'Todos los pares de texto y fondo llegan a 4,5.') + '</div>';
+
+  h += '<div class="chequeo"><b>Dónde puede ir cada botón</b>' +
+    '<table class="matriz"><tr><th></th><th>Principal</th><th>Conversión</th></tr>' +
+    compatibilidad().map(function (f) {
+      function c(x) { return '<td class="' + (x.ok ? 'ok' : 'mal') + '">' + (x.ok ? x.m : '✕ ' + x.m) + '</td>'; }
+      return '<tr><th><i style="background:' + f.color + '"></i>' + f.n + '</th>' + c(f.pri) + c(f.conv) + '</tr>';
+    }).join('') + '</table>' +
+    '<span style="display:block;margin-top:6px;color:var(--v-txt2)">Una cruz no es un fallo: es un fondo donde ese botón no se puede usar.</span></div>';
+
+  h += '<details class="grupo"><summary>Copiar los valores</summary>' +
+    '<div class="control"><textarea class="exporta" readonly>' + exportar() + '</textarea></div></details>';
+
+  document.getElementById('temaCuerpo').innerHTML = h;
+}
+
+function exportar() {
+  return ':root {\n' + Object.keys(tema).map(function (k) {
+    var v = tema[k];
+    if (k === '--base' || k === '--radio' || k === '--radio-cta') v += 'px';
+    return '  ' + k + ': ' + v + ';';
+  }).join('\n') + '\n}';
+}
+
+/* ═══ Visor ═════════════════════════════════════════════════════════════ */
+var PROPUESTAS = [
+  { id: 'a', n: 'A · Taller', d: 'Lateral fijo de destinos y barra superior. La ruta de selección siempre visible.' },
+  { id: 'b', n: 'B · Lienzo', d: 'Riel de íconos y paneles flotantes. El lienzo ocupa toda la pantalla.' },
+  { id: 'c', n: 'C · Escritorio', d: 'Barra superior ancha. Las propiedades van en horizontal.' }
+];
+var TAM = { escritorio: { w: 1440, h: 900 }, tableta: { w: 834, h: 1100 }, movil: { w: 390, h: 844 } };
 var estado = { propuesta: 'a', pantalla: 'login', dispositivo: 'escritorio', cuadricula: false, solo: false };
 
-function pintarPropuestas() {
+function pintarProps() {
   document.getElementById('props').innerHTML = PROPUESTAS.map(function (p) {
-    return (
-      '<button class="v-prop" data-prop="' + p.id + '" aria-pressed="' + (p.id === estado.propuesta) + '">' +
-      '<b>' + p.n + '</b><span>' + p.d + '</span></button>'
-    );
+    return '<button class="prop" data-prop="' + p.id + '" aria-pressed="' + (p.id === estado.propuesta) + '">' +
+      '<b>' + p.n + '</b><span>' + p.d + '</span></button>';
   }).join('');
 }
-
 function pintarLista() {
-  var html = '';
-  var grupo = null;
+  var h = '', g = null;
   PANTALLAS.forEach(function (s) {
-    if (s.g !== grupo) { grupo = s.g; html += '<div class="v-grupo">' + grupo + '</div>'; }
-    html +=
-      '<button class="v-item" data-pant="' + s.id + '" aria-current="' + (s.id === estado.pantalla) + '">' +
+    if (s.g !== g) { g = s.g; h += '<div class="gr">' + g + '</div>'; }
+    h += '<button class="it" data-pant="' + s.id + '" aria-current="' + (s.id === estado.pantalla) + '">' +
       s.n + '<small>' + s.ruta + '</small></button>';
   });
-  document.getElementById('lista').innerHTML = html;
+  document.getElementById('lista').innerHTML = h;
 }
-
-function pantallaActual() {
+function actual() {
   for (var i = 0; i < PANTALLAS.length; i++) if (PANTALLAS[i].id === estado.pantalla) return PANTALLAS[i];
   return PANTALLAS[0];
 }
-
 function pintar() {
-  var s = pantallaActual();
-  var t = TAMANOS[estado.dispositivo];
-  var marco = document.getElementById('marco');
-  var lienzo = document.getElementById('pantalla');
-
-  document.getElementById('tituloPantalla').textContent = s.n;
-  document.getElementById('rutaPantalla').textContent = s.ruta;
-
-  marco.style.width = t.w + 'px';
-  marco.style.height = t.h + 'px';
-
+  var s = actual(), t = TAM[estado.dispositivo];
+  var marco = document.getElementById('marco'), lienzo = document.getElementById('pantalla');
+  document.getElementById('tit').textContent = s.n;
+  document.getElementById('ruta').textContent = s.ruta;
+  marco.style.width = t.w + 'px'; marco.style.height = t.h + 'px';
   lienzo.className = 'p' + (estado.dispositivo === 'movil' ? ' movil' : '') + (estado.cuadricula ? ' mostrar-cuadricula' : '');
   lienzo.setAttribute('data-propuesta', estado.propuesta);
-  lienzo.innerHTML =
-    s.f(estado.propuesta) +
-    (estado.cuadricula
-      ? '<div class="cuadricula">' + new Array(13).join('<span></span>') + '</div>'
-      : '');
+  lienzo.innerHTML = s.f(estado.propuesta) +
+    (estado.cuadricula ? '<div class="cuadricula">' + new Array(13).join('<span></span>') + '</div>' : '');
 
-  // Escala para que la maqueta quepa en la ventana sin recortarse
-  var escena = document.querySelector('.v-escena');
-  var holgura = estado.solo ? 0 : 56;
-  var dispW = escena.clientWidth - holgura;
-  var dispH = escena.clientHeight - holgura;
-  var escala = Math.min(1, dispW / t.w, dispH / t.h);
-  marco.style.transform = 'scale(' + escala + ')';
-  marco.style.marginBottom = -(t.h * (1 - escala)) + 'px';
+  var esc = document.querySelector('.escena');
+  var hol = estado.solo ? 0 : 44;
+  var e = Math.min(1, (esc.clientWidth - hol) / t.w, (esc.clientHeight - hol) / t.h);
+  marco.style.transform = 'scale(' + e + ')';
+  marco.style.marginBottom = -(t.h * (1 - e)) + 'px';
 
   var p = PROPUESTAS.filter(function (x) { return x.id === estado.propuesta; })[0];
-  document.getElementById('notas').innerHTML =
-    '<b>' + p.n + '</b> · ' + p.d +
-    ' &nbsp;—&nbsp; Escala ' + Math.round(escala * 100) + '% sobre ' + t.w + '×' + t.h + '. ' +
-    'Las fotografías son vistas previas de Envato con marca de agua; los archivos licenciados se sustituyen al cierre.';
+  document.getElementById('notas').innerHTML = '<b>' + p.n + '</b> · ' + p.d +
+    ' — Escala ' + Math.round(e * 100) + '% sobre ' + t.w + '×' + t.h + '.';
 }
 
-document.addEventListener('click', function (e) {
-  var b = e.target.closest('button');
+/* ═══ Eventos ═══════════════════════════════════════════════════════════ */
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest('button');
   if (!b) return;
-  if (b.dataset.prop) { estado.propuesta = b.dataset.prop; pintarPropuestas(); pintar(); }
+
+  if (b.dataset.prop) { estado.propuesta = b.dataset.prop; pintarProps(); pintar(); }
   else if (b.dataset.pant) { estado.pantalla = b.dataset.pant; pintarLista(); pintar(); }
   else if (b.dataset.disp) {
     estado.dispositivo = b.dataset.disp;
     document.querySelectorAll('[data-disp]').forEach(function (x) {
-      x.setAttribute('aria-pressed', String(x.dataset.disp === estado.dispositivo));
-    });
-    pintar();
-  } else if (b.id === 'btnSolo') {
-    estado.solo = !estado.solo;
-    b.setAttribute('aria-pressed', String(estado.solo));
-    document.body.classList.toggle('solo', estado.solo);
-    pintar();
-  } else if (b.id === 'btnCuadricula') {
-    estado.cuadricula = !estado.cuadricula;
-    b.setAttribute('aria-pressed', String(estado.cuadricula));
+      x.setAttribute('aria-pressed', String(x.dataset.disp === estado.dispositivo)); });
     pintar();
   }
+  else if (b.id === 'bCuad') { estado.cuadricula = !estado.cuadricula; b.setAttribute('aria-pressed', String(estado.cuadricula)); pintar(); }
+  else if (b.id === 'bSolo') { estado.solo = !estado.solo; b.setAttribute('aria-pressed', String(estado.solo));
+    document.body.classList.toggle('solo', estado.solo); pintar(); }
+  else if (b.dataset.preset) { tema = Object.assign({}, PRESETS[b.dataset.preset]); aplicarTema(); pintarPanel(); pintar(); }
+  else if (b.dataset.abre) {
+    var pal = document.querySelector('[data-pal="' + b.dataset.abre + '"]');
+    var abierta = pal.classList.contains('abierta');
+    document.querySelectorAll('.paleta').forEach(function (x) { x.classList.remove('abierta'); });
+    if (!abierta) pal.classList.add('abierta');
+  }
+  else if (b.dataset.set) { tema[b.dataset.set] = b.dataset.val; aplicarTema(); pintarPanel(); }
+  else if (b.dataset.peso) { tema['--peso-titular'] = b.dataset.peso; aplicarTema(); pintarPanel(); }
+  else if (b.dataset.cta) { tema['--radio-cta'] = b.dataset.cta; aplicarTema(); pintarPanel(); }
+});
+
+document.addEventListener('input', function (ev) {
+  var t = ev.target;
+  if (t.dataset && t.dataset.hex) {
+    var v = t.value.trim(); if (v[0] !== '#') v = '#' + v;
+    if (rgbDe(v)) { tema[t.dataset.hex] = v.toUpperCase(); aplicarTema();
+      var m = document.querySelector('[data-abre="' + t.dataset.hex + '"]'); if (m) m.style.background = v; }
+  }
+  else if (t.id === 'rBase') { tema['--base'] = t.value; document.getElementById('vBase').textContent = t.value + ' px'; aplicarTema(); }
+  else if (t.id === 'rEsc')  { tema['--escala'] = t.value; document.getElementById('vEsc').textContent = t.value + '×'; aplicarTema(); }
+  else if (t.id === 'rRad')  { tema['--radio'] = t.value; document.getElementById('vRad').textContent = t.value + ' px'; aplicarTema(); }
+  else if (t.id === 'selFuente') { tema['--fuente'] = t.value; aplicarTema(); }
 });
 
 window.addEventListener('resize', pintar);
 
-pintarPropuestas();
+aplicarTema();
+pintarProps();
 pintarLista();
+pintarPanel();
 pintar();
 </script>
 </body>
