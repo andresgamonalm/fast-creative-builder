@@ -24,4 +24,10 @@ for (const n of fs.readdirSync(path.join(dir, 'imagenes'))) {
 }
 
 fs.writeFileSync(salida, html);
+
+/* Hay una copia en docs/ que el usuario abre con doble clic. Se reescribe
+   aquí para que no pueda quedarse atrás respecto de esta. */
+const copia = path.join(dir, '..', 'docs', 'FastCreativeBuilderPropuestas.html');
+if (fs.existsSync(path.dirname(copia))) fs.writeFileSync(copia, html);
+
 console.log('Listo:', (fs.statSync(salida).size / 1024 / 1024).toFixed(2), 'MB');
