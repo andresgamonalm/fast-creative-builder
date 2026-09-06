@@ -1,0 +1,19 @@
+{
+  "name": "@fcb/nucleo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Núcleo de Fast Creative Builder: árbol de nodos, registro de componentes, render y exportación.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "typecheck": "tsc --noEmit"
+  }
+}
