@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run typecheck)",
+      "Bash(npm run typecheck --workspace=*)",
+      "Bash(tsc --noEmit *)",
+
+      "mcp__Claude_Browser__read_page",
+      "mcp__Claude_Browser__get_page_text",
+      "mcp__Claude_Browser__read_console_messages",
+      "mcp__Claude_Browser__read_network_requests",
+      "mcp__Claude_Browser__tabs_context",
+      "mcp__Claude_Browser__preview_list",
+      "mcp__Claude_Browser__find",
+
+      "mcp__faaae97b-a699-4df0-ad24-91052effe563__search_cloudflare_documentation",
+      "mcp__3a31beb1-d046-4717-b1db-7728e04da4dd__search_photos"
+    ]
+  }
+}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="sistema_mockups_fast_creative_builder.css">
+<link rel="stylesheet" href="propuestas_mockups_fast_creative_builder.css">
+<style>html,body{margin:0}#marco{overflow:hidden;background:#fff}
+#out{position:fixed;right:0;top:0;z-index:99999;background:#000;color:#0f0;font:11px monospace;white-space:pre;padding:6px;max-height:100vh;overflow:auto}</style>
+</head><body>
+<div id="marco" class="p"></div>
+<pre id="out"></pre>
+<script src="base_mockups_fast_creative_builder.js"></script>
+<script src="pantallas_mockups_fast_creative_builder.js"></script>
+<script src="editor_mockups_fast_creative_builder.js"></script>
+<script src="interiores_mockups_fast_creative_builder.js"></script>
+<script>
+var TAMX = { escritorio:{w:1440,h:900}, tableta:{w:834,h:1100}, movil:{w:390,h:844} };
+function r2(v){ return Math.round(v*10)/10; }
+var res = [];
+function medir(prop, modo, disp) {
+  var m = document.getElementById('marco'), t = TAMX[disp];
+  m.className = 'p' + (disp==='movil'?' movil':'') + (disp==='tableta'?' tableta':'');
+  m.style.width = t.w+'px'; m.style.height = t.h+'px';
+  m.innerHTML = EDITOR[prop](modo);
+  ajustarLienzos(m);
+  var l = m.querySelector('.ed__lienzo[data-modo]');
+  if (!l) { res.push(prop+'/'+modo+'/'+disp+' SIN LIENZO'); return; }
+  var et = l.querySelector('.sel__et');
+  var linea = prop+' '+modo+' '+disp;
+  if (!et) { res.push(linea+' | SIN .sel__et'); return; }
+  var er = et.getBoundingClientRect();
+  var area = l.querySelector('.lienzo-area').getBoundingClientRect();
+  var rh = l.querySelector('.regla-h');
+  var rhVis = rh ? getComputedStyle(rh).display : 'NO-EXISTE';
+  var rhr = rh ? rh.getBoundingClientRect() : null;
+  var sel = et.parentElement;
+  var sr = sel.getBoundingClientRect();
+  linea += ' | etiqueta padre=.'+sel.className.split(' ')[0];
+  linea += ' | et rect w='+r2(er.width)+' h='+r2(er.height)+' top='+r2(er.top)+' bottom='+r2(er.bottom);
+  linea += ' | selTop='+r2(sr.top)+' (et bottom-selTop='+r2(er.bottom-sr.top)+')';
+  linea += ' | areaTop='+r2(area.top)+' → etTop-areaTop='+r2(er.top-area.top);
+  if (rhr) linea += ' | reglaH display='+rhVis+' top='+r2(rhr.top)+' bottom='+r2(rhr.bottom)+' z='+getComputedStyle(rh).zIndex+' bg='+getComputedStyle(rh).backgroundColor;
+  // solapamiento vertical entre etiqueta y regla
+  if (rhr && rhVis!=='none') {
+    var ov = Math.max(0, Math.min(er.bottom, rhr.bottom) - Math.max(er.top, rhr.top));
+    linea += ' | SOLAPE vertical='+r2(ov)+'px de '+r2(er.height)+' ('+r2(er.height?ov/er.height*100:0)+'%)';
+  }
+  // quién pinta encima en el centro de la etiqueta
+  var cx = er.left + Math.min(er.width/2, 40), cy = er.top + er.height/2;
+  var pila = document.elementsFromPoint(cx, cy).slice(0,5).map(function(e){
+    return e.tagName.toLowerCase()+'.'+(e.className && e.className.split ? e.className.split(' ')[0] : '');
+  });
+  linea += '\n    elementsFromPoint('+r2(cx)+','+r2(cy)+') = '+pila.join(' > ');
+  linea += '\n    ¿etiqueta en el tope? '+(document.elementFromPoint(cx,cy)===et ? 'SI VISIBLE' : 'NO — tapada');
+  // ¿está dentro del viewport/marco?
+  res.push(linea);
+}
+window.MEDIR = function(){
+  res = [];
+  ['a','b','c'].forEach(function(p){
+    ['web','email','libre'].forEach(function(mo){
+      ['escritorio','tableta','movil'].forEach(function(d){ medir(p,mo,d); });
+    });
+  });
+  document.getElementById('out').textContent = res.join('\n\n');
+  return res.join('\n');
+};
+window.MEDIR();
+</script></body></html>

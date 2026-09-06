@@ -77,6 +77,8 @@ button { font-family: inherit; cursor: pointer; }
 .cambio button { background: none; border: 0; color: var(--v-txt2); font-size: 15px; line-height: 1; padding: 0 2px; }
 .cambio button:hover { color: #f08a80; }
 .vacio-c { padding: 22px 10px; text-align: center; color: var(--v-txt2); font-size: 11.5px; line-height: 1.6; }
+.cambio--huerfano { opacity: .62; border-left: 2px solid #d08a2c; }
+.cambio--huerfano em { color: #e0a44f; font-style: normal; }
 .der-pie { flex: none; padding: 11px 15px 15px; display: flex; gap: 6px; }
 .der-pie button { flex: 1; height: 34px; border-radius: 7px; border: 1px solid var(--v-borde);
   background: var(--v-alto); color: var(--v-txt); font-size: 11.5px; }
@@ -109,7 +111,19 @@ body.solo { grid-template-columns: 1fr; }
 body.solo .col-lat, body.solo .col-der, body.solo .pista { display: none; }
 body.solo .escena { padding: 0; align-items: stretch; }
 body.solo .marco { border-radius: 0; box-shadow: none; }
-@media (max-width: 1180px) { body { grid-template-columns: 1fr 300px; } .col-lat { display: none; } }
+/* Antes, por debajo de 1180 px se ocultaba la columna izquierda entera y no
+   quedaba forma de cambiar de pantalla ni de propuesta. Ahora se estrecha. */
+@media (max-width: 1180px) {
+  body { grid-template-columns: 178px 1fr 268px; }
+  .cab p, .prop span { display: none; }
+  .cab { padding: 12px 12px 8px; }
+  .props { padding: 0 8px 8px; }
+  .it small { display: none; }
+}
+@media (max-width: 820px) {
+  body { grid-template-columns: 1fr; }
+  .col-lat, .col-der { display: none; }
+}
 </style>
 </head>
 <body>
@@ -300,7 +314,9 @@ function recuperar() {
     if (!g || !Array.isArray(g.cambios)) return null;
     cambios = g.cambios;
     if (g.propuesta) estado.propuesta = g.propuesta;
-    return g.preset || 'pastel';
+    /* Un guardado de una versión anterior puede nombrar un punto de partida
+       que ya no existe. Se normaliza en vez de dejar el editor sin ninguno. */
+    return (g.preset && (g.preset === 'elegido' || PRESETS[g.preset])) ? g.preset : 'elegido';
   } catch (e) { return null; }
 }
 
@@ -319,13 +335,18 @@ function aplicarCambios() {
   var hay = false;
   cambios.forEach(function (c) {
     if (c.propuesta !== estado.propuesta || c.pantalla !== estado.pantalla) return;
-    (porRuta[c.ruta] = porRuta[c.ruta] || []).push(c); hay = true;
+    (porRuta[c.ruta] = porRuta[c.ruta] || []).push(c);
+    c.huerfano = true;   /* hasta que se demuestre lo contrario */
+    hay = true;
   });
   if (!hay) return;
   raiz.querySelectorAll('*').forEach(function (el) {
     var lista = porRuta[rutaDe(el, raiz)];
-    if (lista) lista.forEach(function (c) { pintarUno(el, c.prop, c.valor); });
+    if (lista) lista.forEach(function (c) { pintarUno(el, c.prop, c.valor); c.huerfano = false; });
   });
+  /* Si la maqueta cambió y la ruta ya no existe, el cambio se sigue
+     listando pero deja de pintarse. Antes no se avisaba de nada. */
+  if (cambios.some(function (c) { return c.huerfano; })) pintarCambios();
 }
 
 function etiquetaCambio(c) {
@@ -342,9 +363,10 @@ function pintarCambios() {
   }
   d.innerHTML = cambios.map(function (c, i) {
     var e = etiquetaCambio(c);
-    return '<div class="cambio">' +
+    return '<div class="cambio' + (c.huerfano ? ' cambio--huerfano' : '') + '">' +
       '<i style="background:' + (e.col || 'transparent') + (e.col ? '' : ';border-style:dashed') + '"></i>' +
-      '<div><b>' + e.t + '</b><span>' + c.nombre + '<br>' + c.propuesta.toUpperCase() + ' · ' + c.pantalla + '</span></div>' +
+      '<div><b>' + e.t + '</b><span>' + c.nombre + '<br>' + c.propuesta.toUpperCase() + ' · ' + c.pantalla +
+        (c.huerfano ? '<br><em>Ese elemento ya no está en la pantalla</em>' : '') + '</span></div>' +
       '<button data-quita="' + i + '" title="Deshacer">✕</button></div>';
   }).join('');
 }
@@ -399,6 +421,7 @@ function aplicarA(el, prop, valor) {
     if (prop === 'fondo') el.style.removeProperty('background');
     else if (prop === 'color') el.style.removeProperty('color');
     pintarCambios();
+    guardar();          /* faltaba: al recargar volvía el color quitado */
     return;
   }
   pintarUno(el, prop, valor);

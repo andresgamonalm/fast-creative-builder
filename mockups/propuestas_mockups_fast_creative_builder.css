@@ -390,7 +390,11 @@
 .movil .zona-regla { grid-template-columns: 1fr; grid-template-rows: 1fr; padding: var(--e3) var(--e3) var(--e8); }
 .movil .ed__lienzo { padding: 0; }
 .movil .ed-barra { padding: 0 var(--margen); gap: var(--e2); overflow: hidden; }
-.movil .ed-barra .cta span, .movil .ed-barra > div:nth-child(2) { display: none; }
+/* Se ocultan los textos de los botones, pero NO el nombre de la pieza: es
+   lo único que dice qué estás mirando. */
+.movil .ed-barra .cta span { display: none; }
+.movil .ed-barra > div:nth-child(2) { display: block; min-width: 0; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; font-size: var(--t-micro); }
 
 .movil .modo { min-height: 0; }
 .movil .cta--alto { width: 100%; }

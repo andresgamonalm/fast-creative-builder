@@ -100,6 +100,20 @@ function ajustarLienzos(raiz) {
     if (rh) { rh.style.width = pxRegla(w); rh.innerHTML = reglaHorizontal(pz.ancho, escala, sel); }
     if (rv) { rv.style.height = pxRegla(h); rv.innerHTML = reglaVertical(pz.alto, escala, sel); }
 
+    /* Las capas que anotan la pieza siguen a la misma escala */
+    var capas = l.querySelectorAll('[data-px]');
+    for (var j = 0; j < capas.length; j++) {
+      var cp = capas[j];
+      var px = parseFloat(cp.getAttribute('data-px'));
+      var py = cp.getAttribute('data-py');
+      var ph = cp.getAttribute('data-ph');
+      var dx = parseFloat(cp.getAttribute('data-dx') || '0');
+      var dy = parseFloat(cp.getAttribute('data-dy') || '0');
+      if (!isNaN(px)) cp.style.left = pxRegla(px * escala + dx);
+      if (py !== null) cp.style.top = pxRegla(parseFloat(py) * escala + dy);
+      if (ph !== null) cp.style.height = pxRegla(parseFloat(ph) * escala);
+    }
+
     var chip = l.querySelector('.zoom-chip');
     if (chip) chip.textContent = pz.n + ' · ' + Math.round(escala * 100) + '%';
   }
@@ -187,9 +201,14 @@ function hojaEmail(e) {
 
 /* ── Barra flotante de edición ───────────────────────────────────────── */
 
-function barraFlotante(arriba, izquierda) {
+/* Las capas que anotan el lienzo guardan su posición en píxeles de la
+   PIEZA, no de la pantalla. Así ajustarLienzos las recoloca junto con la
+   hoja y las reglas; antes se quedaban en la escala vieja y se separaban
+   del elemento que anotan. data-dx y data-dy son separaciones de interfaz
+   que no deben escalar. */
+function barraFlotante(px, py) {
   return (
-    '<div class="flotante" style="top:' + arriba + 'px;left:' + izquierda + 'px">' +
+    '<div class="flotante" data-px="' + px + '" data-py="' + py + '" data-dy="-50">' +
       '<span class="flotante__t">Título</span><span class="flotante__sep"></span>' +
       '<button class="flotante__b">A−</button><span class="flotante__v">38</span><button class="flotante__b">A+</button>' +
       '<span class="flotante__sep"></span>' +
@@ -208,9 +227,9 @@ function barraFlotante(arriba, izquierda) {
 }
 
 /* Lectura de posición y tamaño, siempre en píxeles de la pieza */
-function lectura(arriba, izquierda, x, y, ancho, alto) {
+function lectura(px, py, x, y, ancho, alto) {
   return (
-    '<div class="lectura" style="top:' + arriba + 'px;left:' + izquierda + 'px">' +
+    '<div class="lectura" data-px="' + px + '" data-py="' + py + '" data-dy="8">' +
       '<b><span>x</span> ' + x + '</b><b><span>y</span> ' + y + '</b>' +
       '<b>' + ancho + ' <span>×</span> ' + alto + '</b>' +
     '</div>'
@@ -218,16 +237,16 @@ function lectura(arriba, izquierda, x, y, ancho, alto) {
 }
 
 /* Cota de distancia entre dos elementos */
-function cotaVertical(arriba, izquierda, altoPx, valor) {
+function cotaVertical(px, py, altoPieza, valor) {
   return (
-    '<div class="cota cota--v" style="top:' + arriba + 'px;left:' + izquierda + 'px;height:' + altoPx + 'px">' +
+    '<div class="cota cota--v" data-px="' + px + '" data-py="' + py + '" data-ph="' + altoPieza + '">' +
       '<span class="cota__linea"></span><span class="cota__n">' + valor + '</span><span class="cota__linea"></span>' +
     '</div>'
   );
 }
 
-function guiaVertical(izquierda, valor) {
-  return '<div class="guia guia--v" style="left:' + izquierda + 'px"><span class="guia__n">x ' + valor + '</span></div>';
+function guiaVertical(px, valor) {
+  return '<div class="guia guia--v" data-px="' + px + '"><span class="guia__n">x ' + valor + '</span></div>';
 }
 
 /* ── Paneles ─────────────────────────────────────────────────────────── */
@@ -331,14 +350,13 @@ function contenidoModo(modo, estado) {
 /* ═══ A · Taller ════════════════════════════════════════════════════════ */
 
 function editorA(modo) {
-  var esc = Math.min(1, UTIL.a / PIEZA[modo].ancho);
   /* La barra va ENCIMA de la selección, no sobre el texto. La lectura de
      medidas va debajo, para que nunca se tapen entre ellas. */
   var sel = { x: 80, y: 150, ancho: 560, alto: 132 };
   var extras =
-    barraFlotante(Math.round(sel.y * esc) - 50, Math.round(sel.x * esc)) +
-    lectura(Math.round((sel.y + sel.alto) * esc) + 8, Math.round(sel.x * esc), sel.x, sel.y, sel.ancho, sel.alto) +
-    cotaVertical(Math.round(490 * esc), Math.round(24 * esc), Math.round(40 * esc), '40');
+    barraFlotante(sel.x, sel.y) +
+    lectura(sel.x, sel.y + sel.alto, sel.x, sel.y, sel.ancho, sel.alto) +
+    cotaVertical(24, 490, 40, '40');
 
   return (
     '<div class="ed-marco">' +
@@ -356,13 +374,12 @@ function editorA(modo) {
 /* ═══ B · Lienzo ════════════════════════════════════════════════════════ */
 
 function editorB(modo) {
-  var esc = Math.min(1, UTIL.b / PIEZA[modo].ancho);
   var selB = { x: 40, y: 760, ancho: 1120, alto: 96 };
   var extras =
-    guiaVertical(Math.round(40 * esc), 40) +
-    guiaVertical(Math.round(1160 * esc), 1160) +
-    barraFlotante(Math.round(selB.y * esc) - 50, Math.round(selB.x * esc)) +
-    lectura(Math.round((selB.y + selB.alto) * esc) + 8, Math.round(selB.x * esc), selB.x, selB.y, selB.ancho, selB.alto);
+    guiaVertical(40, 40) +
+    guiaVertical(1160, 1160) +
+    barraFlotante(selB.x, selB.y) +
+    lectura(selB.x, selB.y + selB.alto, selB.x, selB.y, selB.ancho, selB.alto);
 
   return (
     '<div class="ed-marco">' +
@@ -390,10 +407,8 @@ function editorB(modo) {
 /* ═══ C · Escritorio ════════════════════════════════════════════════════ */
 
 function editorC(modo) {
-  var esc = Math.min(1, UTIL.c / PIEZA[modo].ancho);
   var selC = { x: 40, y: 420, ancho: 1120, alto: 200 };
-  var extras = lectura(Math.round((selC.y + selC.alto) * esc) + 8, Math.round(selC.x * esc),
-    selC.x, selC.y, selC.ancho, selC.alto);
+  var extras = lectura(selC.x, selC.y + selC.alto, selC.x, selC.y, selC.ancho, selC.alto);
 
   return (
     '<div class="ed-marco">' +
