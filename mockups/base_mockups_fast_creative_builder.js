@@ -72,20 +72,26 @@ function pasoRegla(escala) {
   return 100;
 }
 
+/* Las posiciones NO se redondean. Redondear cada marca por separado dejaba
+   el paso alternando entre 6 y 7 px y metía hasta 0,48 px de error: en una
+   regla que promete el píxel real eso se ve y no vale. El navegador coloca
+   subpíxeles sin problema. */
+function pxRegla(v) { return (Math.round(v * 1000) / 1000) + 'px'; }
+
 function reglaHorizontal(anchoPieza, escala, seleccion) {
   var paso = pasoRegla(escala);
   var media = paso * 5;
   var mayor = paso * 10;
   var h = '';
   for (var x = 0; x <= anchoPieza; x += paso) {
-    var px = Math.round(x * escala);
+    var px = pxRegla(x * escala);
     var clase = x % mayor === 0 ? 'marca marca--mayor' : (x % media === 0 ? 'marca marca--media' : 'marca');
-    h += '<i class="' + clase + '" style="left:' + px + 'px"></i>';
-    if (x % mayor === 0) h += '<i class="regla-n" style="left:' + px + 'px">' + x + '</i>';
+    h += '<i class="' + clase + '" style="left:' + px + '"></i>';
+    if (x % mayor === 0) h += '<i class="regla-n" style="left:' + px + '">' + x + '</i>';
   }
   if (seleccion) {
-    h += '<i class="regla-sel" style="left:' + Math.round(seleccion.x * escala) +
-         'px;width:' + Math.round(seleccion.ancho * escala) + 'px"></i>';
+    h += '<i class="regla-sel" style="left:' + pxRegla(seleccion.x * escala) +
+         ';width:' + pxRegla(seleccion.ancho * escala) + '"></i>';
   }
   return h;
 }
@@ -96,14 +102,14 @@ function reglaVertical(altoPieza, escala, seleccion) {
   var mayor = paso * 10;
   var h = '';
   for (var y = 0; y <= altoPieza; y += paso) {
-    var px = Math.round(y * escala);
+    var px = pxRegla(y * escala);
     var clase = y % mayor === 0 ? 'marca marca--mayor' : (y % media === 0 ? 'marca marca--media' : 'marca');
-    h += '<i class="' + clase + '" style="top:' + px + 'px"></i>';
-    if (y % mayor === 0 && y > 0) h += '<i class="regla-n" style="top:' + px + 'px">' + y + '</i>';
+    h += '<i class="' + clase + '" style="top:' + px + '"></i>';
+    if (y % mayor === 0 && y > 0) h += '<i class="regla-n" style="top:' + px + '">' + y + '</i>';
   }
   if (seleccion) {
-    h += '<i class="regla-sel" style="top:' + Math.round(seleccion.y * escala) +
-         'px;height:' + Math.round(seleccion.alto * escala) + 'px"></i>';
+    h += '<i class="regla-sel" style="top:' + pxRegla(seleccion.y * escala) +
+         ';height:' + pxRegla(seleccion.alto * escala) + '"></i>';
   }
   return h;
 }

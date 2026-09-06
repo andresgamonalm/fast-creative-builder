@@ -1,0 +1,2794 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fast Creative Builder · Elige y recolorea</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   Fast Creative Builder — sistema visual
+   ───────────────────────────────────────────────────────────────────────
+   Dirección tomada de zurich.cl, que es la referencia que entregó el
+   usuario, leída así:
+
+     · La página NO es azul sobre azul. Alterna BANDAS PASTEL a todo el
+       ancho —rosa, celeste, menta, ámbar, arenisca— con mucho aire.
+     · El azul saturado se reserva para los botones y los datos, no para
+       los fondos de sección.
+     · El lenguaje de formas son CÍRCULOS: foto enmascarada en círculo con
+       burbujas superpuestas detrás.
+     · Los botones son PÍLDORA, azul sólido con chevron. El coral es la
+       acción de conversión.
+     · Los titulares son grandes y de peso normal, no compactos y pesados.
+
+   Disciplina, jerarquía y prohibiciones: lineamientos-marca-gamonal.
+   Valores de color y tipografía: Brandbook Zurich 2024.
+
+   Contrastes verificados uno a uno, no estimados.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ═══════════════════════════════════════════════════════════════════
+     TOKENS AJUSTABLES
+     Todos los colores, la tipografía y la forma del aplicativo salen de
+     aquí. El panel de la derecha los escribe en vivo, así que cualquier
+     elemento se puede recolorear sin tocar una línea de código.
+     ═══════════════════════════════════════════════════════════════════ */
+
+  /* ── Superficies ─────────────────────────────────────────────────── */
+  --fondo-app: #ECEEEF;
+  --superficie: #FFFFFF;
+  --neutra: #ECEEEF;
+
+  /* ── Bandas de sección ───────────────────────────────────────────────
+     Cada zona del aplicativo tiene su color de cabecera, elegido por el
+     usuario el 6 de septiembre. El color del texto viaja con la banda:
+     no se decide pantalla a pantalla. Ver DEC-024.                     */
+  --banda-inicio: #DDE4E3;                /* paloma  · portada de inicio */
+  --banda-crear: #ECEEEF;                 /* blanco de Zúrich · elegir modo */
+  --banda-trabajo: #2167AE;               /* azul de Zúrich · proyectos y ficha */
+  --sobre-trabajo: #FFFFFF;
+  --banda-papelera: #A6E9AB;              /* menta */
+  --banda-biblioteca: #FFF773;            /* limón */
+  --banda-config: #1FB1E6;                /* celeste */
+  --sobre-config: #FFFFFF;                /* decisión del usuario: ver DEC-025 */
+
+  /* Superficies suaves de uso general: cajas, mesas de trabajo, paneles.
+     No son cabeceras de zona; el limón y el celeste se quedan arriba,
+     como acento y como cabecera, y no se usan a sangre. */
+  --banda-a: #DAD2BD;
+  --banda-b: #2167AE;   /* la única fuerte: portada de la propuesta B */
+  --banda-c: #A6E9AB;
+  --banda-d: #DDE4E3;
+  --banda-e: #ECEEEF;
+
+  /* ── Estructura: lateral, barras y fondos oscuros ────────────────── */
+  --estructura: #23366F;
+  --sobre-estructura: #FFFFFF;
+  --sobre-estructura-suave: #91BFE3;
+
+  /* ── Texto ───────────────────────────────────────────────────────── */
+  --titular: #23366F;
+  --texto: #23366F;
+  --texto-suave: #3F4A63;
+  --texto-tenue: #4F5A6E;   /* aclarado más y no pasaba sobre menta ni gris */
+
+  /* ── Botones ─────────────────────────────────────────────────────────
+     El botón principal es azul oscuro; la acción que cierra el trabajo
+     —exportar, insertar— es limón con texto azul oscuro. El coral sale
+     del sistema: el usuario no lo eligió en ninguna pantalla.          */
+  --accion: #23366F;
+  --accion-texto: #FFFFFF;
+  --conversion: #FFF773;
+  --conversion-texto: #23366F;
+  --secundario-linea: #1B5A93;
+  --secundario-texto: #1B5A93;   /* el azul héroe no llega a 4,5 sobre arenisca */
+
+  /* ── Acentos y estados ───────────────────────────────────────────── */
+  --acento: #FFF773;
+  --exito: #1E6B3A;
+  --exito-fondo: #E4F1E9;
+  --aviso: #7A5A12;
+  --aviso-fondo: #F8F1DD;
+  --error: #A52A20;
+  --error-fondo: #FAE9E7;
+
+  /* ── Detalle ─────────────────────────────────────────────────────── */
+  --contorno: #7D8A97;
+  --contorno-tenue: #DDE1E5;
+  --seleccion: #2167AE;
+  --cota: #CC4038;
+
+  /* ── Tipografía ──────────────────────────────────────────────────── */
+  --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
+  --base: 16px;
+  --escala: 1;
+  --peso-titular: 700;   /* el usuario pidió titulares en negrita */
+  --peso-subtitulo: 600;
+  --peso-texto: 400;
+
+  /* ── Forma ───────────────────────────────────────────────────────── */
+  --radio: 8px;
+  --radio-cta: 999px;
+  --pildora: var(--radio-cta);
+
+  /* ── Derivados. No se ajustan a mano ─────────────────────────────── */
+  --accion-hover: color-mix(in srgb, var(--accion) 86%, #000);
+  --conversion-hover: color-mix(in srgb, var(--conversion) 86%, #000);
+
+  --t-micro: calc(var(--base) * 0.75);
+  --t-menor: calc(var(--base) * 0.875);
+  --t-cuerpo: var(--base);
+  --t-lead: calc(var(--base) * 1.125);
+  --t-h4: calc(var(--base) * 1.25 * var(--escala));
+  --t-h3: calc(var(--base) * 1.625 * var(--escala));
+  --t-h2: calc(var(--base) * 2.125 * var(--escala));
+  --t-h1: calc(var(--base) * 2.875 * var(--escala));
+
+  /* Escala de espacio, base 8 */
+  --e1: 4px;  --e2: 8px;  --e3: 12px; --e4: 16px; --e5: 24px;
+  --e6: 32px; --e7: 40px; --e8: 48px; --e9: 64px; --e10: 80px;
+  --e11: 96px; --e12: 128px;
+
+  --canal: 24px;
+  --margen: 48px;
+
+  /* Alias heredados, para no romper el CSS ya escrito */
+  --papel: var(--superficie);
+  --pagina: var(--fondo-app);
+  --navy: var(--estructura);
+  --heroe: var(--accion);
+  --heroe-hover: var(--accion-hover);
+  --coral: var(--conversion);
+  --coral-hover: var(--conversion-hover);
+  --tinta: var(--texto);
+  --tinta-suave: var(--texto-suave);
+  --tinta-tenue: var(--texto-tenue);
+  --azul-claro: var(--sobre-estructura-suave);
+  --banda-lima: var(--acento);
+  --banda-paloma: #DDE4E3;
+  --celeste: #1FB1E6;
+}
+
+
+/* ── Base ────────────────────────────────────────────────────────────── */
+
+.p {
+  font-family: var(--fuente);
+  font-weight: var(--peso-texto);
+  font-size: var(--t-cuerpo);
+  line-height: 1.55;
+  color: var(--texto);
+  background: var(--superficie);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.p *, .p *::before, .p *::after { box-sizing: border-box; }
+.p h1, .p h2, .p h3, .p h4, .p p, .p ul, .p ol, .p figure { margin: 0; padding: 0; }
+.p ul, .p ol { list-style: none; }
+.p img { display: block; max-width: 100%; }
+
+/* Titulares grandes y de peso normal, como en la referencia */
+.p h1 { font-size: var(--t-h1); font-weight: var(--peso-titular); line-height: 1.12; letter-spacing: -0.015em; color: var(--titular); }
+.p h2 { font-size: var(--t-h2); font-weight: var(--peso-titular); line-height: 1.18; letter-spacing: -0.01em; color: var(--titular); }
+.p h3 { font-size: var(--t-h3); font-weight: var(--peso-subtitulo); line-height: 1.25; color: var(--titular); }
+.p h4 { font-size: var(--t-h4); font-weight: var(--peso-subtitulo); line-height: 1.35; color: var(--titular); }
+
+.etiqueta { font-size: var(--t-micro); font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; }
+.lead { font-size: var(--t-lead); line-height: 1.6; color: var(--tinta-suave); }
+.menor { font-size: var(--t-menor); }
+.micro { font-size: var(--t-micro); }
+.tenue { color: var(--tinta-tenue); }
+.suave { color: var(--tinta-suave); }
+
+/* ── CTA en píldora ──────────────────────────────────────────────────── */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e2);
+  height: 44px;
+  padding: 0 var(--e5);
+  border: 0;
+  border-radius: var(--radio-cta);
+  font-family: inherit;
+  font-size: var(--t-menor);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, transform 100ms ease-out;
+}
+.cta:active { transform: scale(.985); }
+
+.cta--alto { height: 52px; padding: 0 var(--e6); font-size: var(--t-cuerpo); }
+.cta--bajo { height: 36px; padding: 0 var(--e4); }
+.cta--ancho { width: 100%; }
+
+.cta--principal { background: var(--accion); color: var(--accion-texto); }
+.cta--principal:hover { background: var(--heroe-hover); }
+
+/* Acción de conversión */
+.cta--conversion { background: var(--conversion); color: var(--conversion-texto); }
+.cta--conversion:hover { background: var(--coral-hover); }
+
+.cta--secundario { background: transparent; color: var(--secundario-texto); box-shadow: inset 0 0 0 1px var(--secundario-linea); }
+.cta--secundario:hover { background: color-mix(in srgb, var(--secundario-linea) 10%, transparent); }
+
+.cta--terciario { background: transparent; color: var(--secundario-texto); padding: 0 var(--e2); }
+.cta--terciario:hover { color: var(--heroe-hover); }
+
+.cta--sobre-color { background: var(--estructura); color: var(--sobre-estructura); }
+.cta--peligro { background: transparent; color: var(--error); box-shadow: inset 0 0 0 1px var(--error); }
+
+.cta .ico { width: 16px; height: 16px; }
+
+/* ═══ Qué botón admite cada banda ═════════════════════════════════════
+   Tabla calculada, no estimada. Dos condiciones a la vez: separación de
+   3:1 como mínimo entre el botón y su fondo, y familias cromáticas
+   distintas, que es lo que prohíbe Gamonal.
+
+     banda        héroe #2167AE   navy #23366F   coral #CC4038
+     ─────────────────────────────────────────────────────────
+     ámbar        3,02 sí         5,97 sí        2,50 NO · misma familia
+     rosa         3,99 sí         7,89 sí        3,31 NO · misma familia
+     menta        4,11 sí         4,11 sí        3,41 sí
+     arenisca     3,85 sí         7,62 sí        3,20 NO · misma familia
+     celeste      2,98 NO         5,89 NO        2,47 NO
+     hueso        4,99 sí         9,87 sí        4,14 sí
+     blanco       5,81 sí        11,48 sí        4,82 sí
+
+   Consecuencia que conviene recordar: LA BANDA CELESTE NO ADMITE NINGÚN
+   BOTÓN. Sirve de fondo para texto y fotografía, nunca para una acción.
+   Y el coral sólo va sobre neutro, blanco o verde: sobre ámbar, rosa o
+   arenisca sería rojo sobre naranja.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Bandas de sección a todo el ancho ───────────────────────────────── */
+
+.banda { padding: var(--e11) var(--margen); }
+.banda--corta { padding: var(--e9) var(--margen); }
+
+.banda--a { background: var(--banda-a); }
+.banda--b { background: var(--banda-b); color: var(--sobre-trabajo); }
+.banda--b h1, .banda--b h2, .banda--b h3,
+.banda--b .lead, .banda--b .etiqueta, .banda--b .suave, .banda--b .tenue { color: var(--sobre-trabajo); }
+.banda--c { background: var(--banda-c); }
+.banda--d { background: var(--banda-d); }
+.banda--e { background: var(--banda-e); }
+.banda--neutra { background: var(--neutra); }
+.banda--superficie { background: var(--superficie); }
+.banda--estructura { background: var(--estructura); color: var(--sobre-estructura); }
+.banda--estructura h1, .banda--estructura h2, .banda--estructura h3 { color: var(--sobre-estructura); }
+
+/* Cabeceras por zona. Antes se pedían por nombre —hueso, rosa, arenisca—
+   y esas clases no existían: las bandas salían sin fondo. De ahí que
+   hubiera que pintarlas a mano una por una. */
+.banda--inicio { background: var(--banda-inicio); }
+.banda--crear { background: var(--banda-crear); }
+.banda--papelera { background: var(--banda-papelera); }
+.banda--biblioteca { background: var(--banda-biblioteca); }
+.banda--config { background: var(--banda-config); color: var(--sobre-config); }
+
+.banda--trabajo { background: var(--banda-trabajo); color: var(--sobre-trabajo); }
+.banda--trabajo h1, .banda--trabajo h2, .banda--trabajo h3,
+.banda--trabajo .lead, .banda--trabajo .etiqueta,
+.banda--trabajo .suave, .banda--trabajo .tenue { color: var(--sobre-trabajo); }
+
+.contenedor { max-width: 1120px; margin: 0 auto; }
+
+/* ── Lenguaje de formas: círculo con burbujas ────────────────────────── */
+
+.circulo {
+  position: relative;
+  flex: none;
+  display: inline-block;
+}
+
+.circulo__foto {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.circulo__fondo {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Burbujas del sistema Zurich, tres tamaños, siempre en azules */
+.burbuja {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 3;
+}
+.burbuja--1 { width: 34px; height: 34px; background: #DDE4E3; }
+.burbuja--2 { width: 52px; height: 52px; background: #FFF773; }
+.burbuja--3 { width: 26px; height: 26px; background: #5495CF; }
+
+/* ── Campos ──────────────────────────────────────────────────────────── */
+
+.campo { display: flex; flex-direction: column; gap: var(--e2); }
+.campo__et { font-size: var(--t-menor); font-weight: 500; }
+.campo__in {
+  height: 52px;
+  padding: 0 var(--e4);
+  background: var(--papel);
+  border: 1px solid var(--contorno);
+  border-radius: var(--radio);
+  font-family: inherit;
+  font-size: var(--t-cuerpo);
+  color: var(--tinta);
+  width: 100%;
+}
+.campo__in--area { height: auto; min-height: 96px; padding: var(--e3) var(--e4); resize: none; }
+.campo__ayuda { font-size: var(--t-micro); color: var(--tinta-tenue); }
+
+/* ── Pastillas ───────────────────────────────────────────────────────── */
+
+.pastilla {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 26px; padding: 0 var(--e3);
+  border-radius: var(--pildora);
+  font-size: var(--t-micro); font-weight: 600;
+}
+.pastilla--exito { background: var(--exito-fondo); color: var(--exito); }
+.pastilla--aviso { background: var(--aviso-fondo); color: var(--aviso); }
+.pastilla--error { background: var(--error-fondo); color: var(--error); }
+.pastilla--neutra { background: var(--banda-paloma); color: var(--texto); }
+.pastilla--acento { background: var(--banda-lima); color: var(--navy); }
+.punto { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ── Tarjeta de acceso rápido, como la fila de iconos de la referencia ── */
+
+.acceso {
+  display: flex; flex-direction: column; align-items: center; gap: var(--e3);
+  padding: var(--e5) var(--e3);
+  background: var(--papel);
+  border: 1px solid var(--contorno-tenue);
+  border-radius: var(--radio);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 140ms ease;
+}
+.acceso:hover { border-color: var(--heroe); }
+.acceso__ico {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--estructura); color: var(--sobre-estructura);
+  display: grid; place-items: center;
+}
+/* El primero de la fila es el acento: limón con el icono en azul oscuro */
+.acceso:first-child .acceso__ico { background: var(--acento); color: var(--estructura); }
+.acceso__n { font-size: var(--t-menor); font-weight: 600; line-height: 1.3; }
+
+/* ── Tabla ───────────────────────────────────────────────────────────── */
+
+.tabla { width: 100%; border-collapse: collapse; background: var(--papel); border-radius: var(--radio); overflow: hidden; }
+.tabla th {
+  padding: var(--e3) var(--e4); text-align: left;
+  font-size: var(--t-micro); font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--tinta-tenue); background: var(--banda-paloma);
+}
+.tabla td { padding: var(--e4); font-size: var(--t-menor); border-top: 1px solid var(--contorno-tenue); vertical-align: middle; }
+.tabla tr:first-child td { border-top: 0; }
+.tabla__miniatura { width: 56px; height: 40px; border-radius: var(--radio); object-fit: cover; background: var(--banda-paloma); }
+
+/* ── Utilidades ──────────────────────────────────────────────────────── */
+
+.fila { display: flex; align-items: center; }
+.col { display: flex; flex-direction: column; }
+.crece { flex: 1; min-width: 0; }
+.centro { text-align: center; }
+.g1{gap:var(--e1)} .g2{gap:var(--e2)} .g3{gap:var(--e3)} .g4{gap:var(--e4)}
+.g5{gap:var(--e5)} .g6{gap:var(--e6)} .g8{gap:var(--e8)} .g9{gap:var(--e9)}
+
+.rejilla12 { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--canal); }
+
+.cuadricula { position: absolute; inset: 0; pointer-events: none; display: none; padding: 0 var(--margen); z-index: 90; }
+.mostrar-cuadricula .cuadricula { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--canal); }
+.cuadricula span { background: rgba(204, 64, 56, .12); }
+
+/* ── Iconografía ─────────────────────────────────────────────────────── */
+
+.ico { width: 20px; height: 20px; flex: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.ico--16 { width: 16px; height: 16px; }
+.ico--24 { width: 24px; height: 24px; }
+.ico--28 { width: 28px; height: 28px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .p *, .p *::before, .p *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+/* Todo fondo celeste lleva el texto en blanco. Es una decisión expresa
+   del usuario del 6 de septiembre: blanco sobre #1FB1E6 mide 2,47:1 y no
+   alcanza el 4,5 de AA. Queda así por indicación suya. Ver DEC-025. */
+.banda--config h1, .banda--config h2, .banda--config h3, .banda--config h4,
+.banda--config .lead, .banda--config .etiqueta, .banda--config p,
+.banda--config .suave, .banda--config .tenue { color: var(--sobre-config); }
+
+/* ── Botón contra el fondo que lo rodea (DEC-015) ─────────────────────
+   Dos condiciones a la vez: 3:1 de separación y familias distintas.
+   Donde el color elegido no llega, no se cambia el color: se le pone
+   contorno azul oscuro, que sí separa y no altera la decisión.       */
+.cta--conversion { box-shadow: inset 0 0 0 1px var(--estructura); }
+
+/* Sobre azul oscuro y sobre el azul de Zúrich, el botón principal se
+   invierte: fondo blanco y texto azul oscuro. En azul sobre azul no se
+   distingue el botón del fondo. */
+.c-barra .cta--principal,
+.ed-barra--navy .cta--principal,
+.banda--estructura .cta--principal {
+  background: var(--sobre-estructura); color: var(--estructura);
+}
+/* Estas dos bandas cambian de color según el punto de partida, así que el
+   botón se define contra la propia banda y no contra un color fijo. */
+.banda--trabajo .cta--principal { background: var(--sobre-trabajo); color: var(--banda-trabajo); }
+.banda--b .cta--principal { background: var(--sobre-trabajo); color: var(--banda-b); }
+.c-barra .cta--principal:hover,
+.ed-barra--navy .cta--principal:hover,
+.banda--trabajo .cta--principal:hover,
+.banda--b .cta--principal:hover { opacity: .88; }
+
+/* Sobre el panel azul oscuro, el contorno del botón de cierre va en claro */
+.panel--oscuro .cta--conversion { box-shadow: inset 0 0 0 1px var(--sobre-estructura); }
+
+</style>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   Estructura de las tres propuestas, editor y móvil.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══ Marcos de aplicación ══════════════════════════════════════════════ */
+
+/* A · Taller — lateral de destinos + barra superior */
+.a-marco { display: grid; grid-template-columns: 240px 1fr; height: 100%; overflow: hidden; }
+.a-lateral {
+  background: var(--estructura); color: #fff;
+  display: flex; flex-direction: column; padding: var(--e5) var(--e3); gap: var(--e6); overflow: hidden;
+}
+.a-marca { display: flex; align-items: center; gap: var(--e3); padding: 0 var(--e2); }
+.a-marca__n { font-size: var(--t-menor); font-weight: 600; line-height: 1.2; }
+.a-marca__l { font-size: var(--t-micro); color: var(--sobre-estructura-suave); }
+.a-grupo { display: flex; flex-direction: column; gap: 2px; }
+.a-grupo__t { padding: 0 var(--e2) var(--e2); font-size: var(--t-micro); font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--sobre-estructura-suave); }
+.a-dest {
+  display: flex; align-items: center; gap: var(--e3);
+  height: 44px; padding: 0 var(--e3); border-radius: var(--radio);
+  font-size: var(--t-menor); font-weight: 500; color: #fff; cursor: pointer;
+}
+.a-dest--on { background: #fff; color: var(--estructura); font-weight: 600; }
+.a-pie { margin-top: auto; display: flex; align-items: center; gap: var(--e3); padding: var(--e3); background: #2c4287; border-radius: var(--radio); }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--acento); color: var(--estructura); display: grid; place-items: center; font-size: var(--t-menor); font-weight: 600; flex: none; }
+
+.a-principal { display: flex; flex-direction: column; overflow: hidden; background: var(--superficie); }
+.a-barra { height: 68px; flex: none; background: var(--superficie); display: flex; align-items: center; gap: var(--e4); padding: 0 var(--margen); }
+.a-cuerpo { flex: 1; overflow: auto; }
+
+/* B · Lienzo — riel de íconos */
+.b-marco { display: grid; grid-template-columns: 72px 1fr; height: 100%; overflow: hidden; }
+.b-riel { background: var(--estructura); display: flex; flex-direction: column; align-items: center; gap: var(--e2); padding: var(--e4) 0; }
+.b-icono { width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--radio); color: #fff; cursor: pointer; }
+.b-icono--on { background: #fff; color: var(--estructura); }
+.b-riel__pie { margin-top: auto; }
+.b-principal { display: flex; flex-direction: column; overflow: hidden; background: var(--superficie); }
+.b-cuerpo { flex: 1; overflow: auto; }
+.b-buscador {
+  height: 56px; display: flex; align-items: center; gap: var(--e3);
+  padding: 0 var(--e5); background: var(--superficie);
+  border: 1px solid var(--contorno); border-radius: var(--pildora);
+  color: var(--texto-tenue); font-size: var(--t-cuerpo);
+}
+
+/* C · Escritorio — barra superior ancha */
+.c-marco { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+.c-barra { height: 68px; flex: none; background: var(--estructura); color: #fff; display: flex; align-items: center; gap: var(--e5); padding: 0 var(--margen); }
+.c-secciones { height: 52px; flex: none; background: var(--superficie); display: flex; align-items: stretch; gap: 2px; padding: 0 var(--margen); }
+.c-seccion { display: flex; align-items: center; gap: var(--e2); padding: 0 var(--e4); font-size: var(--t-menor); font-weight: 500; color: var(--texto-suave); cursor: pointer; }
+.c-seccion--on { background: var(--neutra); color: var(--estructura); font-weight: 600; border-radius: var(--radio) var(--radio) 0 0; }
+.c-cuerpo { flex: 1; overflow: auto; background: var(--superficie); }
+
+/* ═══ Login ═════════════════════════════════════════════════════════════ */
+
+.login { display: grid; height: 100%; overflow: hidden; }
+.login--a { grid-template-columns: 5fr 7fr; }
+.login--b { grid-template-columns: 7fr 5fr; }
+.login--c { grid-template-columns: 1fr 1fr; }
+
+.login__panel { background: var(--superficie); display: flex; flex-direction: column; justify-content: center; padding: var(--e10) var(--e9); overflow: auto; }
+.login__forma { width: 100%; max-width: 384px; display: flex; flex-direction: column; gap: var(--e4); }
+.login__visual { position: relative; overflow: hidden; display: grid; place-items: center; padding: var(--e8); }
+/* El panel visual del acceso es azul oscuro en las tres propuestas.
+   Sobre ese fondo, el mensaje va en blanco y la etiqueta en limón. */
+.login__visual--rosa, .login__visual--celeste, .login__visual--ambar { background: var(--estructura); }
+.login__pie-msg { position: absolute; left: var(--e8); right: var(--e8); bottom: var(--e8); max-width: 420px; }
+.login__pie-msg h3 { color: var(--sobre-estructura); font-weight: var(--peso-subtitulo); }
+.login__visual .etiqueta { color: var(--acento); }
+
+/* ═══ Editor ════════════════════════════════════════════════════════════ */
+
+.ed-marco { display: flex; flex-direction: column; height: 100%; overflow: hidden; background: var(--neutra); }
+.ed-barra { height: 60px; flex: none; background: var(--superficie); display: flex; align-items: center; gap: var(--e3); padding: 0 var(--e5); }
+.ed-barra--navy { background: var(--estructura); color: #fff; }
+
+.grupo-disp { display: flex; gap: 2px; background: var(--neutra); padding: 3px; border-radius: var(--pildora); }
+.ed-barra--navy .grupo-disp { background: rgba(255,255,255,.16); }
+.grupo-disp__b { width: 34px; height: 30px; display: grid; place-items: center; border-radius: var(--pildora); color: var(--texto-suave); }
+.ed-barra--navy .grupo-disp__b { color: #fff; }
+.grupo-disp__b--on { background: var(--superficie); color: var(--estructura); }
+
+.ed { flex: 1; display: grid; overflow: hidden; }
+.ed--a { grid-template-columns: 260px 1fr 288px; }
+.ed--b { grid-template-columns: 64px 1fr; position: relative; }
+.ed--c { grid-template-columns: 240px 1fr; }
+
+.ed__panel { background: var(--superficie); display: flex; flex-direction: column; overflow: hidden; }
+.ed__panel-t {
+  height: 44px; flex: none; display: flex; align-items: center; gap: var(--e2);
+  padding: 0 var(--e4); background: var(--neutra);
+  font-size: var(--t-micro); font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--texto-suave);
+}
+.ed__panel-c { flex: 1; overflow: auto; padding: var(--e3); }
+
+.ed-riel { background: var(--neutra); display: flex; flex-direction: column; align-items: center; gap: var(--e2); padding: var(--e3) 0; }
+.ed-riel__b { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radio); color: var(--texto-suave); cursor: pointer; }
+.ed-riel__b--on { background: var(--superficie); color: var(--accion); }
+
+.ed-flotante {
+  position: absolute; z-index: 40;
+  background: var(--superficie); border-radius: var(--radio);
+  box-shadow: 0 2px 8px rgba(0,0,0,.12), 0 12px 32px rgba(0,0,0,.14);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.ed-flotante--izq { left: var(--e4); top: var(--e4); bottom: var(--e4); width: 256px; }
+
+/* ── Reglas con píxeles reales ────────────────────────────────────────
+   La regla mide el lienzo, no la pantalla. Marca menor cada 10 px, media
+   cada 50 y rotulada cada 100. Si el lienzo se reduce para caber, la
+   regla se reduce con él, así que la cifra siempre corresponde al píxel
+   real de la pieza.                                                    */
+
+.ed__lienzo { position: relative; overflow: auto; background: var(--neutra); }
+
+.zona-regla {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  grid-template-rows: 24px 1fr;
+  min-height: 100%;
+  padding: 0 var(--e6) var(--e9) 0;
+}
+
+.regla-esq {
+  position: sticky; top: 0; left: 0; z-index: 12;
+  background: var(--superficie);
+  display: grid; place-items: center;
+  font-size: 9px; font-weight: 600; color: var(--texto-tenue);
+}
+
+.lienzo-area { position: relative; }
+.hoja-escala { position: relative; }
+.hoja-escala > .hoja { transform-origin: top left; }
+
+.regla-h, .regla-v { position: relative; background: var(--superficie); overflow: hidden; }
+.regla-h { position: sticky; top: 0; z-index: 11; height: 24px; }
+.regla-v { position: sticky; left: 0; z-index: 11; width: 24px; }
+
+.marca { position: absolute; background: var(--contorno); }
+.regla-h .marca { bottom: 0; width: 1px; height: 5px; }
+.regla-h .marca--media { height: 9px; }
+.regla-h .marca--mayor { height: 24px; width: 1px; background: var(--contorno-tenue); }
+.regla-v .marca { right: 0; height: 1px; width: 5px; }
+.regla-v .marca--media { width: 9px; }
+.regla-v .marca--mayor { width: 24px; height: 1px; background: var(--contorno-tenue); }
+
+.regla-n { position: absolute; font-size: 9px; color: var(--texto-tenue); font-variant-numeric: tabular-nums; }
+.regla-h .regla-n { top: 2px; transform: translateX(3px); }
+.regla-v .regla-n { left: 2px; transform: translateY(3px) rotate(-90deg); transform-origin: left top; }
+
+/* Extensión de lo seleccionado, marcada sobre la propia regla */
+.regla-sel { position: absolute; background: var(--cota); opacity: .9; }
+.regla-h .regla-sel { bottom: 0; height: 3px; }
+.regla-v .regla-sel { right: 0; width: 3px; }
+
+/* Guías arrastrables desde la regla */
+.guia { position: absolute; z-index: 9; background: var(--celeste); }
+.guia--v { top: 0; bottom: 0; width: 1px; }
+.guia--h { left: 0; right: 0; height: 1px; }
+.guia__n {
+  position: absolute; top: 0; left: 4px;
+  background: var(--estructura); color: #fff;
+  font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* Lectura en vivo de posición y tamaño */
+.lectura {
+  position: absolute; z-index: 42;
+  background: var(--estructura); color: #fff;
+  font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums;
+  padding: 4px 8px; border-radius: 4px; white-space: nowrap;
+  display: flex; gap: var(--e3);
+}
+.lectura span { opacity: .72; font-weight: 400; }
+
+/* Cotas de distancia entre elementos */
+.cota { position: absolute; z-index: 41; display: flex; align-items: center; justify-content: center; }
+.cota--v { flex-direction: column; }
+.cota__linea { background: var(--cota); }
+.cota--v .cota__linea { width: 1px; flex: 1; }
+.cota--h .cota__linea { height: 1px; flex: 1; }
+.cota__n {
+  background: var(--cota); color: #fff;
+  font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── La hoja que se edita ─────────────────────────────────────────────── */
+
+.hoja { position: relative; background: var(--superficie); width: 100%; }
+.hoja__portada { position: relative; display: grid; grid-template-columns: 6fr 5fr; background: var(--estructura); }
+.hoja__portada-txt { padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.hoja__portada img { width: 100%; height: 100%; object-fit: cover; min-height: 280px; }
+.hoja__cifras { position: relative; display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 40px; }
+.hoja__cifras div { background: var(--neutra); padding: 24px; border-radius: 8px; }
+.hoja__cifras b { display: block; font-size: 28px; font-weight: 600; color: var(--accion); }
+.hoja__cifras div span { font-size: 14px; color: var(--texto-suave); }
+.hoja__texto { position: relative; padding: 0 40px 48px; }
+.hoja__texto p { font-size: 16px; line-height: 1.65; color: var(--texto-suave); max-width: 62ch; }
+
+/* Selección y edición directa */
+.sel { outline: 2px solid var(--accion); outline-offset: -2px; }
+.sel__et {
+  position: absolute; top: 0; left: 0; transform: translateY(-100%);
+  height: 22px; padding: 0 var(--e2); display: flex; align-items: center;
+  background: var(--accion); color: #fff; font-size: 11px; font-weight: 600;
+  border-radius: 4px 4px 0 0; white-space: nowrap; z-index: 5;
+}
+
+/* El texto en edición: sin caja, sólo el cursor y un fondo apenas marcado */
+.editando { background: rgba(31,177,230,.14); border-radius: 3px; }
+.cursor {
+  display: inline-block; width: 2px; height: 1em; margin-left: 1px;
+  background: currentColor; vertical-align: text-bottom;
+  animation: parpadeo 1s steps(2) infinite;
+}
+@keyframes parpadeo { 50% { opacity: 0; } }
+
+/* ── Barra flotante de edición ───────────────────────────────────────── */
+
+.flotante {
+  position: absolute; z-index: 45;
+  display: flex; align-items: center; gap: 2px;
+  height: 40px; padding: 0 var(--e2);
+  background: var(--superficie); border-radius: var(--radio);
+  box-shadow: 0 2px 6px rgba(0,0,0,.14), 0 10px 28px rgba(0,0,0,.16);
+}
+.flotante__t { font-size: 11px; font-weight: 600; color: var(--texto-tenue); padding: 0 var(--e2); text-transform: uppercase; letter-spacing: .06em; }
+.flotante__sep { width: 1px; height: 20px; background: var(--contorno-tenue); margin: 0 2px; }
+.flotante__b {
+  min-width: 30px; height: 30px; padding: 0 6px;
+  border: 0; border-radius: 6px; background: transparent;
+  color: var(--texto); font-family: inherit; font-size: 13px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.flotante__b:hover { background: var(--neutra); }
+.flotante__b--on { background: var(--accion); color: #fff; }
+.flotante__v { min-width: 26px; text-align: center; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.flotante__color { width: 16px; height: 16px; border-radius: 4px; background: var(--estructura); display: block; }
+
+/* Tirador de espaciado */
+.tirador { position: absolute; z-index: 44; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tirador__barra { width: 44px; height: 6px; border-radius: var(--pildora); background: var(--accion); cursor: ns-resize; }
+.tirador__cifra {
+  background: var(--accion); color: #fff; font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 3px; font-variant-numeric: tabular-nums;
+}
+
+/* ── Arrastre y soltado ──────────────────────────────────────────────── */
+
+.comp {
+  display: flex; align-items: center; gap: var(--e3);
+  padding: var(--e2) var(--e3); border-radius: var(--radio); cursor: grab;
+  color: var(--texto-tenue);
+}
+.comp:hover { background: var(--neutra); color: var(--texto); }
+.comp--arrastrando { background: var(--accion); color: #fff; cursor: grabbing; }
+.comp--arrastrando .comp__ico { background: rgba(255,255,255,.2); color: #fff; }
+.comp--arrastrando .comp__d { color: rgba(255,255,255,.75); }
+.comp__ico { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: var(--radio); background: var(--neutra); color: var(--accion); }
+.comp__n { font-size: var(--t-menor); font-weight: 500; color: var(--texto); }
+.comp--arrastrando .comp__n { color: #fff; }
+.comp__d { font-size: var(--t-micro); color: var(--texto-tenue); }
+
+.linea-insercion { position: relative; height: 0; }
+.linea-insercion::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px;
+  height: 2px; background: var(--accion);
+}
+.linea-insercion span {
+  position: absolute; left: 50%; top: -11px; transform: translateX(-50%);
+  background: var(--accion); color: #fff; font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: var(--pildora); white-space: nowrap;
+}
+
+.eleccion-soltar {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  bottom: 24px; z-index: 46;
+  background: var(--superficie); border-radius: var(--radio); padding: var(--e3) var(--e4);
+  box-shadow: 0 2px 6px rgba(0,0,0,.14), 0 10px 28px rgba(0,0,0,.16);
+  display: flex; flex-direction: column; gap: var(--e2);
+}
+.eleccion-soltar b { font-size: var(--t-micro); color: var(--texto-suave); }
+
+/* ── Panel lateral del editor ────────────────────────────────────────── */
+
+.lat__tabs { display: flex; gap: 2px; padding: var(--e2); background: var(--neutra); flex: none; }
+.lat__tab { flex: 1; height: 32px; display: grid; place-items: center; border-radius: 6px; font-size: var(--t-micro); font-weight: 600; color: var(--texto-suave); cursor: pointer; }
+.lat__tab--on { background: var(--superficie); color: var(--estructura); }
+.lat__c { flex: 1; overflow: auto; padding: var(--e4); }
+
+.muestra { width: 32px; height: 32px; border-radius: 6px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(35,54,111,.14); }
+.muestra--on { box-shadow: inset 0 0 0 2px var(--accion), 0 0 0 2px var(--superficie); }
+
+.campo-img { display: flex; align-items: center; gap: var(--e3); padding: var(--e2); background: var(--neutra); border-radius: var(--radio); }
+.campo-img img { width: 48px; height: 36px; object-fit: cover; border-radius: 4px; }
+
+.opciones { display: flex; flex-wrap: wrap; gap: 4px; }
+.opcion { padding: 6px 10px; border-radius: var(--pildora); background: var(--neutra); font-size: var(--t-micro); font-weight: 500; color: var(--texto-suave); cursor: pointer; }
+.opcion--on { background: var(--accion); color: #fff; }
+
+.caja-mapa { background: var(--banda-d); border-radius: var(--radio); padding: var(--e5) var(--e4) var(--e4); position: relative; text-align: center; }
+.caja-mapa__et { position: absolute; top: 5px; left: 8px; font-size: 10px; color: var(--texto-suave); }
+.caja-mapa__v { position: absolute; top: 2px; left: 50%; transform: translateX(-50%); width: 38px; height: 20px; text-align: center; border: 1px solid var(--contorno); border-radius: 4px; font-size: 11px; font-family: inherit; }
+.caja-mapa__p { background: var(--sobre-estructura-suave); border-radius: var(--radio); padding: var(--e5) var(--e3) var(--e3); position: relative; }
+.caja-mapa__c { background: var(--superficie); border-radius: var(--radio); padding: var(--e4) var(--e2); font-size: var(--t-micro); font-weight: 600; }
+
+.capa { display: flex; align-items: center; gap: var(--e2); height: 34px; padding-right: var(--e2); border-radius: 6px; font-size: var(--t-menor); color: var(--texto-suave); cursor: pointer; }
+.capa:hover { background: var(--neutra); }
+.capa--on { background: var(--accion); color: #fff; font-weight: 600; }
+
+.ed-props { height: 52px; flex: none; background: var(--superficie); display: flex; align-items: center; gap: var(--e3); padding: 0 var(--e5); }
+.ed-props__q { display: flex; align-items: center; gap: 6px; font-size: var(--t-micro); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--texto-suave); }
+.ed-props__sep { width: 1px; height: 22px; background: var(--contorno-tenue); }
+.ed-props__g { display: flex; align-items: center; gap: 2px; }
+.ed-props__ruta { font-size: var(--t-micro); color: var(--texto-tenue); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MÓVIL
+   Una sola columna, nada que se corte y nada que se solape. La barra
+   inferior fija con cuatro destinos; el resto entra por el menú.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.movil-nav { display: none; }
+
+.movil { --margen: 20px; --e11: 56px; --e10: 48px; --e9: 40px; }
+
+.movil h1 { font-size: 30px; line-height: 1.18; }
+.movil h2 { font-size: 24px; }
+.movil h3 { font-size: 20px; }
+.movil .lead { font-size: 16px; }
+
+/* Se ocultan lateral y riel; la navegación pasa abajo */
+.movil .a-marco, .movil .b-marco { grid-template-columns: 1fr; }
+.movil .a-lateral, .movil .b-riel { display: none; }
+
+.movil .a-principal, .movil .b-principal, .movil .c-marco { padding-bottom: 0; }
+
+.movil .a-barra, .movil .c-barra { height: 56px; padding: 0 var(--margen); gap: var(--e3); }
+.movil .c-secciones { display: none; }
+
+.movil .movil-nav {
+  display: flex; height: 62px; flex: none; background: var(--superficie);
+  align-items: stretch; box-shadow: 0 -1px 0 var(--contorno-tenue);
+}
+.movil-nav__i { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10px; font-weight: 500; color: var(--texto-tenue); }
+.movil-nav__i--on { color: var(--accion); font-weight: 600; }
+
+/* Todo a una columna */
+.movil .banda { padding-left: var(--margen); padding-right: var(--margen); }
+.movil .rejilla12 > * { grid-column: 1 / -1 !important; }
+.movil .rejilla12 { grid-template-columns: 1fr; }
+.movil .fila--apila { flex-direction: column; align-items: stretch; }
+.movil .fila--apila > * { width: 100%; }
+
+/* Nada de cuadrículas de tres o cuatro en un teléfono */
+.movil .cuadro-2, .movil .cuadro-3, .movil .cuadro-4 { grid-template-columns: 1fr !important; }
+.movil .cuadro-accesos { grid-template-columns: repeat(2, 1fr) !important; }
+
+/* El círculo se reduce y se centra */
+.movil .circulo { margin: 0 auto; }
+.movil .hero-split { grid-template-columns: 1fr !important; text-align: left; }
+
+/* Las tablas se convierten en fichas apiladas: nunca scroll horizontal */
+.movil .tabla, .movil .tabla thead, .movil .tabla tbody,
+.movil .tabla tr, .movil .tabla th, .movil .tabla td { display: block; width: 100%; }
+.movil .tabla thead { display: none; }
+.movil .tabla tr { background: var(--superficie); border-radius: var(--radio); padding: var(--e3); margin-bottom: var(--e3); box-shadow: inset 0 0 0 1px var(--contorno-tenue); }
+.movil .tabla td { border: 0; padding: 2px 0; }
+.movil .tabla td[data-et]::before { content: attr(data-et) ' '; font-size: var(--t-micro); color: var(--texto-tenue); }
+.movil .tabla td:last-child { padding-top: var(--e3); }
+.movil .tabla__miniatura { width: 100%; height: 120px; margin-bottom: var(--e2); }
+
+/* Login en móvil: foto arriba, formulario debajo, sin superposiciones */
+.movil .login { grid-template-columns: 1fr !important; grid-template-rows: 180px 1fr; }
+.movil .login__visual { padding: var(--e4); }
+.movil .login__pie-msg { display: none; }
+.movil .login__panel { padding: var(--e6) var(--margen) var(--e9); }
+.movil .login__forma { max-width: none; }
+
+/* El editor en móvil no intenta ser un editor de escritorio */
+.movil .ed--a, .movil .ed--b, .movil .ed--c { grid-template-columns: 1fr; }
+.movil .ed__panel, .movil .ed-riel, .movil .ed-flotante, .movil .ed-props { display: none; }
+/* En el teléfono se ocultan las reglas y las ayudas de composición, pero la
+   pieza se ve: el aviso dice que ahí se revisa, y antes no había nada que
+   revisar porque se ocultaba el lienzo entero. */
+.movil .regla-h, .movil .regla-v, .movil .regla-esq,
+.movil .eleccion-soltar, .movil .linea-insercion, .movil .cota, .movil .guia { display: none; }
+.movil .zona-regla { grid-template-columns: 1fr; grid-template-rows: 1fr; padding: var(--e3) var(--e3) var(--e8); }
+.movil .ed__lienzo { padding: 0; }
+.movil .ed-barra { padding: 0 var(--margen); gap: var(--e2); overflow: hidden; }
+.movil .ed-barra .cta span, .movil .ed-barra > div:nth-child(2) { display: none; }
+
+.movil .modo { min-height: 0; }
+.movil .cta--alto { width: 100%; }
+
+/* ── Chip de escala del lienzo ───────────────────────────────────────── */
+.zoom-chip {
+  position: sticky; bottom: var(--e3); left: var(--e3);
+  display: inline-flex; align-items: center;
+  margin: 0 0 var(--e3) var(--e3);
+  height: 28px; padding: 0 var(--e3);
+  background: var(--estructura); color: #fff;
+  font-size: 11px; font-weight: 600; border-radius: var(--pildora);
+  font-variant-numeric: tabular-nums; z-index: 20;
+}
+
+/* ── Mesa de trabajo del modo libre ──────────────────────────────────── */
+.mesa { position: relative; width: 100%; aspect-ratio: 1; background: var(--banda-c); overflow: hidden; }
+.mesa__fondo { position: absolute; right: 0; bottom: 0; width: 58%; height: 68%; object-fit: cover; border-top-left-radius: 999px; }
+.mesa__bloque { position: absolute; left: 72px; top: 120px; width: 560px; display: flex; flex-direction: column; gap: 10px; }
+.mesa__burbuja { position: absolute; border-radius: 50%; }
+.mesa__burbuja--1 { width: 120px; height: 120px; background: var(--estructura); left: 72px; bottom: 96px; }
+.mesa__burbuja--2 { width: 64px; height: 64px; background: var(--accion); left: 176px; bottom: 60px; }
+
+/* ── Pieza de email ──────────────────────────────────────────────────── */
+.email { background: var(--neutra); padding-bottom: 32px; }
+.email__cab { padding: 12px 24px; text-align: center; }
+.email__logo { background: #fff; padding: 20px 24px; }
+.email__foto { width: 100%; height: 240px; object-fit: cover; }
+.email__cuerpo { position: relative; background: #fff; padding: 32px 24px 36px; }
+.email__pie { padding: 24px; text-align: center; }
+
+/* ── Bloques del selector de modo ────────────────────────────────────── */
+.modo {
+  display: flex; flex-direction: column; gap: var(--e3);
+  padding: var(--e6); border-radius: var(--radio); min-height: 280px;
+}
+.modo h3 { font-weight: 500; }
+.modo p { flex: 1; }
+
+/* ── Móvil: nada se sale del ancho ───────────────────────────────────── */
+
+/* Los anchos máximos pensados para escritorio no aplican en un teléfono */
+.movil .lead, .movil p, .movil .contenedor > * { max-width: none !important; }
+
+/* Las filas de botones se envuelven y cada botón ocupa lo que necesita */
+.movil .banda .fila, .movil .login__forma .fila { flex-wrap: wrap; }
+.movil .banda .cta--alto { flex: 1 1 auto; min-width: 0; }
+
+/* El círculo nunca es más ancho que la pantalla menos el margen */
+.movil .circulo { max-width: calc(100vw - 96px); max-height: calc(100vw - 96px); }
+.movil .circulo__foto, .movil .circulo__fondo { width: 100% !important; height: 100% !important; }
+
+/* Los grupos de pastillas y opciones se envuelven */
+.movil .opciones, .movil .pastilla { flex-wrap: wrap; }
+
+/* Barras de herramientas del visor y del editor: sin desborde */
+.movil .grupo-disp { display: none; }
+
+/* Todo lo que se escapa se recorta con elipsis en vez de romper la caja */
+.movil .a-barra h4, .movil .ed-barra > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── Editor en móvil: barra reducida ─────────────────────────────────────
+   Un teléfono no da para deshacer, rehacer, previsualizar y exportar en
+   la misma línea. Se conservan volver, el nombre y la acción principal;
+   el resto entra por el menú de la derecha.                             */
+
+.movil .ed-barra { flex-wrap: nowrap; }
+.movil .ed-barra .cta--bajo:not(.cta--principal):not(.cta--terciario) { display: none; }
+.movil .ed-barra .cta--secundario { display: none; }
+.movil .ed-barra .pastilla { display: none; }
+.movil .ed-barra .cta--terciario span { display: none; }
+.movil .ed-barra .cta--principal { padding: 0 var(--e3); }
+
+/* Aviso honesto: en el teléfono el lienzo se revisa, no se compone */
+.movil .ed .ed__lienzo::before {
+  content: 'En el teléfono se revisa y se corrige texto. Para componer, usa el escritorio.';
+  display: block; padding: var(--e3) var(--margen);
+  background: var(--banda-d); color: var(--estructura);
+  font-size: 12px; line-height: 1.45;
+}
+
+/* Modales en móvil: la rejilla de formatos no cabe en cuatro columnas */
+.movil [style*="grid-template-columns:repeat(4,1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
+.movil .email__pie, .movil .email__cab { padding-left: var(--e3); padding-right: var(--e3); }
+
+/* ── Tarjetas de modo sobre fondo oscuro ──────────────────────────────
+   Web y Email van sobre azul; todo lo que llevan dentro tiene que
+   pasar a blanco, incluidos el titular y la bajada.                  */
+.modo--oscuro, .modo--oscuro h3, .modo--oscuro p { color: var(--sobre-estructura); }
+
+/* ── Panel de aviso y panel lateral en azul oscuro ────────────────────
+   La barra de la papelera y el panel de dominios permitidos usan el
+   azul oscuro con el texto en blanco, según lo elegido.              */
+.panel--oscuro { background: var(--estructura); color: var(--sobre-estructura); }
+.panel--oscuro h3, .panel--oscuro h4, .panel--oscuro p,
+.panel--oscuro .menor, .panel--oscuro .suave, .panel--oscuro .tenue { color: var(--sobre-estructura); }
+.panel--oscuro .ico { color: var(--acento); }
+
+/* La barra del editor es azul oscuro: lo que va encima se aclara. */
+.ed-barra--navy .cta--secundario { color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); }
+.ed-barra--navy .cta--secundario:hover { background: rgba(255,255,255,.12); }
+.ed-barra--navy .suave, .ed-barra--navy .tenue { color: var(--sobre-estructura-suave); }
+
+/* Formato de exportación elegido: azul oscuro, con su apoyo aclarado */
+.formato { padding: var(--e4); border-radius: var(--radio); background: var(--neutra); }
+.formato--on { background: var(--estructura); color: var(--sobre-estructura); }
+.formato--on .suave, .formato--on .tenue { color: var(--sobre-estructura-suave); }
+
+/* ── Tableta: el lienzo manda ─────────────────────────────────────────
+   No había ningún ajuste para tableta, así que los tres paneles del
+   editor dejaban al lienzo 271 px de 834 y la pieza salía al 18 %. En
+   una tableta se trabaja con un panel, no con tres.                   */
+.tableta .ed--a { grid-template-columns: 208px 1fr; }
+.tableta .ed--a > .ed__panel:last-child { display: none; }
+.tableta .ed--c { grid-template-columns: 184px 1fr; }
+.tableta .ed__panel { min-width: 0; }
+.tableta .ed-props__ruta { display: none; }
+
+/* La barra flotante de formato es de escritorio: en el teléfono tapa un
+   tercio de la pieza que se supone que hay que revisar. */
+.movil .flotante { display: none; }
+
+</style>
+<style>
+:root {
+  --v-fondo: #15171b; --v-panel: #1d2025; --v-alto: #282c33; --v-borde: #343943;
+  --v-txt: #e9ebee; --v-txt2: #98a0ac; --v-acento: #5495cf;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: Arial, Helvetica, sans-serif; background: var(--v-fondo); color: var(--v-txt);
+  font-size: 13px; display: grid; grid-template-columns: 250px 1fr 300px; overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; }
+
+/* ── Columna izquierda ─────────────────────────────────────────────── */
+.col-lat { background: var(--v-panel); display: flex; flex-direction: column; overflow: hidden; }
+.cab { padding: 15px 15px 10px; }
+.cab h1 { margin: 0 0 4px; font-size: 14px; }
+.cab p { margin: 0; font-size: 11.5px; color: var(--v-txt2); line-height: 1.5; }
+.props { padding: 0 11px 10px; display: flex; flex-direction: column; gap: 5px; }
+.prop { text-align: left; padding: 9px 11px; border-radius: 8px; background: var(--v-alto);
+  color: var(--v-txt); border: 1px solid transparent; font-size: 12.5px; line-height: 1.35; }
+.prop b { display: block; margin-bottom: 2px; }
+.prop span { color: var(--v-txt2); font-size: 11px; }
+.prop[aria-pressed="true"] { border-color: var(--v-acento); background: #22303e; }
+.lista { flex: 1; overflow: auto; padding: 4px 9px 20px; }
+.gr { padding: 11px 8px 3px; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--v-txt2); }
+.it { display: block; width: 100%; text-align: left; padding: 6px 9px; border-radius: 7px;
+  background: transparent; color: var(--v-txt); border: 0; font-size: 12.5px; line-height: 1.3; }
+.it:hover { background: var(--v-alto); }
+.it[aria-current="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
+.it small { display: block; font-size: 10.5px; opacity: .72; font-weight: 400; }
+
+/* ── Centro ────────────────────────────────────────────────────────── */
+.col-mid { display: flex; flex-direction: column; overflow: hidden; }
+.barra { height: 48px; flex: none; display: flex; align-items: center; gap: 11px; padding: 0 15px; background: var(--v-panel); }
+.tit { font-size: 13px; font-weight: 700; }
+.ruta { font-size: 11px; color: var(--v-txt2); font-family: Consolas, monospace; }
+.x { flex: 1; }
+.gb { display: flex; gap: 2px; background: var(--v-alto); padding: 3px; border-radius: 7px; }
+.b { padding: 6px 10px; border: 0; border-radius: 5px; background: transparent; color: var(--v-txt2); font-size: 11.5px; }
+.b[aria-pressed="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
+.escena { flex: 1; overflow: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+.marco { background: #fff; border-radius: 8px; overflow: hidden; flex: none; transform-origin: top center;
+  box-shadow: 0 6px 34px rgba(0,0,0,.5); }
+.pista { flex: none; background: var(--v-panel); padding: 9px 15px; font-size: 11.5px; color: var(--v-txt2); }
+.pista b { color: var(--v-txt); }
+
+/* Al pasar el cursor, el elemento se marca para que se vea que es tocable */
+.tocable *:hover { outline: 1px dashed rgba(84,149,207,.9); outline-offset: -1px; }
+.tocable { cursor: crosshair; }
+
+/* ── Columna derecha: los cambios ──────────────────────────────────── */
+.col-der { background: var(--v-panel); display: flex; flex-direction: column; overflow: hidden; }
+.der-cab { padding: 15px 15px 10px; }
+.der-cab h2 { margin: 0 0 4px; font-size: 13px; }
+.der-cab p { margin: 0; font-size: 11.5px; color: var(--v-txt2); line-height: 1.5; }
+.presets { display: flex; gap: 6px; padding: 0 15px 12px; }
+.preset { flex: 1; padding: 8px 6px; border-radius: 7px; border: 1px solid var(--v-borde);
+  background: var(--v-alto); color: var(--v-txt); font-size: 11px; line-height: 1.3; }
+.preset:hover { border-color: var(--v-acento); }
+.cambios { flex: 1; overflow: auto; padding: 0 12px 14px; }
+.cambio { display: flex; align-items: flex-start; gap: 8px; padding: 8px 9px; border-radius: 7px;
+  background: var(--v-alto); margin-bottom: 5px; font-size: 11.5px; line-height: 1.4; }
+.cambio i { width: 13px; height: 13px; border-radius: 3px; flex: none; margin-top: 2px;
+  border: 1px solid rgba(255,255,255,.28); font-style: normal; }
+.cambio div { flex: 1; min-width: 0; }
+.cambio b { display: block; font-weight: 700; }
+.cambio span { color: var(--v-txt2); font-size: 10.5px; }
+.cambio button { background: none; border: 0; color: var(--v-txt2); font-size: 15px; line-height: 1; padding: 0 2px; }
+.cambio button:hover { color: #f08a80; }
+.vacio-c { padding: 22px 10px; text-align: center; color: var(--v-txt2); font-size: 11.5px; line-height: 1.6; }
+.der-pie { flex: none; padding: 11px 15px 15px; display: flex; gap: 6px; }
+.der-pie button { flex: 1; height: 34px; border-radius: 7px; border: 1px solid var(--v-borde);
+  background: var(--v-alto); color: var(--v-txt); font-size: 11.5px; }
+.der-pie button:hover { border-color: var(--v-acento); }
+
+/* ── El globo que aparece al tocar ─────────────────────────────────── */
+.globo {
+  position: fixed; z-index: 999; width: 244px; padding: 11px;
+  background: #22262d; border: 1px solid var(--v-borde); border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.6); display: none;
+}
+.globo.abierto { display: block; }
+.globo header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.globo header b { flex: 1; font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.globo header button { background: var(--v-alto); border: 0; border-radius: 5px; color: var(--v-txt2);
+  width: 24px; height: 22px; font-size: 12px; }
+.globo header button:hover { color: var(--v-txt); }
+.g-tit { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--v-txt2); margin: 9px 0 5px; }
+.g-cols { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.g-cols button { height: 26px; border-radius: 5px; border: 1px solid rgba(255,255,255,.22); padding: 0; }
+.g-cols button:hover { outline: 2px solid var(--v-acento); }
+.g-cols button.quita { background: transparent; color: var(--v-txt2); font-size: 11px;
+  grid-column: span 2; border-style: dashed; }
+.g-seg { display: flex; gap: 4px; }
+.g-seg button { flex: 1; height: 28px; border-radius: 5px; border: 1px solid var(--v-borde);
+  background: var(--v-fondo); color: var(--v-txt); font-size: 11.5px; }
+.g-seg button:hover { border-color: var(--v-acento); }
+
+body.solo { grid-template-columns: 1fr; }
+body.solo .col-lat, body.solo .col-der, body.solo .pista { display: none; }
+body.solo .escena { padding: 0; align-items: stretch; }
+body.solo .marco { border-radius: 0; box-shadow: none; }
+@media (max-width: 1180px) { body { grid-template-columns: 1fr 300px; } .col-lat { display: none; } }
+</style>
+</head>
+<body>
+
+<aside class="col-lat">
+  <div class="cab">
+    <h1>Fast Creative Builder</h1>
+    <p>Elige la propuesta y toca cualquier elemento para cambiarle el color.</p>
+  </div>
+  <div class="props" id="props"></div>
+  <nav class="lista" id="lista" aria-label="Pantallas"></nav>
+</aside>
+
+<main class="col-mid">
+  <header class="barra">
+    <span class="tit" id="tit">Acceso</span>
+    <span class="ruta" id="ruta">/login</span>
+    <span class="x"></span>
+    <div class="gb" role="group" aria-label="Dispositivo">
+      <button class="b" data-disp="escritorio" aria-pressed="true">Escritorio</button>
+      <button class="b" data-disp="tableta" aria-pressed="false">Tableta</button>
+      <button class="b" data-disp="movil" aria-pressed="false">Móvil</button>
+    </div>
+    <div class="gb"><button class="b" id="bSolo" aria-pressed="false">Sin cromo</button></div>
+  </header>
+  <div class="escena"><div class="marco" id="marco"><div class="p tocable" id="pantalla"></div></div></div>
+  <footer class="pista"><b>Toca cualquier cosa</b> de la pantalla para cambiarle el color de fondo, el color del texto o el tipo de letra.</footer>
+</main>
+
+<aside class="col-der">
+  <div class="der-cab">
+    <h2>Tus cambios</h2>
+    <p>Quedan registrados aquí. Cuando termines, cópialos y me los pasas.</p>
+  </div>
+  <div class="presets">
+    <button class="preset" data-preset="elegido"><b>Tus colores</b><br>Los que elegiste</button>
+    <button class="preset" data-preset="sobrio"><b>Sobrio</b><br>Todo en neutros</button>
+  </div>
+  <div class="cambios" id="cambios"></div>
+  <div class="der-pie">
+    <button id="bCopiar">Copiar cambios</button>
+    <button id="bLimpiar">Borrar todo</button>
+  </div>
+</aside>
+
+<div class="globo" id="globo">
+  <header>
+    <b id="gNombre">Elemento</b>
+    <button id="gArriba" title="Elegir el contenedor de alrededor">↑</button>
+    <button id="gCerrar" title="Cerrar">✕</button>
+  </header>
+  <div class="g-tit">Color de fondo</div>
+  <div class="g-cols" id="gFondo"></div>
+  <div class="g-tit">Color del texto</div>
+  <div class="g-cols" id="gTexto"></div>
+  <div class="g-tit">Tipo de letra</div>
+  <div class="g-seg" id="gEstilo">
+    <button data-estilo="normal">Normal</button>
+    <button data-estilo="bold"><b>Negrita</b></button>
+    <button data-estilo="italic"><i>Cursiva</i></button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   Fast Creative Builder — recursos compartidos de las propuestas
+   Iconografía, logotipos, fotografía y contenido de ejemplo.
+   Script clásico, sin módulos, para que el archivo abra con doble clic.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Iconografía ─────────────────────────────────────────────────────────
+   Una sola familia: trazo 1.5, remates redondeados, caja de 24.
+   Sin emojis y sin mezclar estilos, como exige la marca.            */
+
+var ICO = {
+  inicio: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/>',
+  crear: '<path d="M12 5v14M5 12h14"/>',
+  proyectos: '<path d="M3 7.5h7l1.6 2H21v9.5H3z"/><path d="M3 7.5V5h5"/>',
+  biblioteca: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 15l4.5-4 3.5 3 3.5-4L21 16"/><circle cx="8.5" cy="8.5" r="1.5"/>',
+  ajustes: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2M18.4 5.6l-2 2M7.6 16.4l-2 2M18.4 18.4l-2-2M7.6 7.6l-2-2"/>',
+  personas: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M17 5.5a3 3 0 0 1 0 5.6M18.5 14.4c1.9.7 3 2.3 3 4.6"/>',
+  papelera: '<path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/>',
+  buscar: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+  texto: '<path d="M5 6V4h14v2M12 4v16M9 20h6"/>',
+  imagen: '<rect x="3" y="4.5" width="18" height="15" rx="1.5"/><path d="M3 15l4.5-4 3.5 3 3.5-4L21 16"/><circle cx="8.5" cy="9" r="1.4"/>',
+  boton: '<rect x="2.5" y="7.5" width="19" height="9" rx="4.5"/>',
+  seccion: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18"/>',
+  columnas: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M9 4v16M15 4v16"/>',
+  datos: '<path d="M5 20V11M12 20V4M19 20v-6"/>',
+  insercion: '<path d="M9 6L3 12l6 6M15 6l6 6-6 6"/>',
+  capas: '<path d="M12 3l9 4.5-9 4.5-9-4.5z"/><path d="M3 12.5l9 4.5 9-4.5M3 17l9 4.5 9-4.5"/>',
+  escritorio: '<rect x="2.5" y="4" width="19" height="12.5" rx="1.5"/><path d="M8.5 20.5h7M12 16.5v4"/>',
+  tableta: '<rect x="6" y="2.5" width="12" height="19" rx="1.5"/><path d="M11 18.5h2"/>',
+  movil: '<rect x="7.5" y="2.5" width="9" height="19" rx="1.5"/><path d="M11 18.5h2"/>',
+  ojo: '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/>',
+  exportar: '<path d="M12 3v11M8 10.5l4 3.5 4-3.5"/><path d="M4 16v3.5h16V16"/>',
+  guardar: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>',
+  deshacer: '<path d="M4 9h10a5 5 0 0 1 0 10H8"/><path d="M7.5 5.5 4 9l3.5 3.5"/>',
+  rehacer: '<path d="M20 9H10a5 5 0 0 0 0 10h6"/><path d="M16.5 5.5 20 9l-3.5 3.5"/>',
+  mas: '<path d="M12 5v14M5 12h14"/>',
+  flecha: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  atras: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  abajo: '<path d="M6 9.5l6 6 6-6"/>',
+  cerrar: '<path d="M6 6l12 12M18 6L6 18"/>',
+  correo: '<rect x="2.5" y="5" width="19" height="14" rx="1.5"/><path d="M3 6.5l9 6.5 9-6.5"/>',
+  fuente: '<path d="M4 19l6-14h1.5l6 14M7 14h9"/>',
+  logo: '<path d="M12 3l8 4v6c0 4.2-3.2 7.2-8 8-4.8-.8-8-3.8-8-8V7z"/>',
+  candado: '<rect x="4.5" y="10" width="15" height="10.5" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  reloj: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3.2 2"/>',
+  cuadricula: '<rect x="3" y="3" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1"/>',
+  lista: '<path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/>',
+  filtro: '<path d="M3 5h18l-7 8v6l-4 2v-8z"/>',
+  restaurar: '<path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><path d="M3 3v5h5"/>',
+  alinIzq: '<path d="M3 6h18M3 12h11M3 18h15"/>',
+  alinCen: '<path d="M3 6h18M6.5 12h11M4.5 18h15"/>',
+  alinDer: '<path d="M3 6h18M10 12h11M6 18h15"/>',
+  enlace: '<path d="M10 13a4.5 4.5 0 0 0 6.4.4l2.6-2.6a4.5 4.5 0 0 0-6.4-6.4l-1.5 1.5"/><path d="M14 11a4.5 4.5 0 0 0-6.4-.4L5 13.2a4.5 4.5 0 0 0 6.4 6.4l1.5-1.5"/>',
+  agarre: '<circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/>',
+  regla: '<path d="M3 8h18v8H3z"/><path d="M7 8v4M11 8v3M15 8v4M19 8v3"/>',
+  chevron: '<path d="M9 5l7 7-7 7"/>'
+};
+
+/* ── Reglas con píxeles reales ────────────────────────────────────────────
+   Dibuja la regla midiendo el LIENZO, no la pantalla. Marca menor cada
+   10 px, media cada 50 y rotulada cada 100. Recibe la escala a la que se
+   está mostrando el lienzo y multiplica por ella, de modo que la cifra de
+   la regla siempre corresponde al píxel real de la pieza.               */
+
+/* Paso adaptativo: la regla nunca dibuja marcas a menos de 5 px de
+   distancia en pantalla, para que se siga leyendo al reducir el lienzo. */
+function pasoRegla(escala) {
+  var candidatos = [1, 2, 5, 10, 20, 25, 50, 100];
+  for (var i = 0; i < candidatos.length; i++) {
+    if (candidatos[i] * escala >= 5) return candidatos[i];
+  }
+  return 100;
+}
+
+/* Las posiciones NO se redondean. Redondear cada marca por separado dejaba
+   el paso alternando entre 6 y 7 px y metía hasta 0,48 px de error: en una
+   regla que promete el píxel real eso se ve y no vale. El navegador coloca
+   subpíxeles sin problema. */
+function pxRegla(v) { return (Math.round(v * 1000) / 1000) + 'px'; }
+
+function reglaHorizontal(anchoPieza, escala, seleccion) {
+  var paso = pasoRegla(escala);
+  var media = paso * 5;
+  var mayor = paso * 10;
+  var h = '';
+  for (var x = 0; x <= anchoPieza; x += paso) {
+    var px = pxRegla(x * escala);
+    var clase = x % mayor === 0 ? 'marca marca--mayor' : (x % media === 0 ? 'marca marca--media' : 'marca');
+    h += '<i class="' + clase + '" style="left:' + px + '"></i>';
+    if (x % mayor === 0) h += '<i class="regla-n" style="left:' + px + '">' + x + '</i>';
+  }
+  if (seleccion) {
+    h += '<i class="regla-sel" style="left:' + pxRegla(seleccion.x * escala) +
+         ';width:' + pxRegla(seleccion.ancho * escala) + '"></i>';
+  }
+  return h;
+}
+
+function reglaVertical(altoPieza, escala, seleccion) {
+  var paso = pasoRegla(escala);
+  var media = paso * 5;
+  var mayor = paso * 10;
+  var h = '';
+  for (var y = 0; y <= altoPieza; y += paso) {
+    var px = pxRegla(y * escala);
+    var clase = y % mayor === 0 ? 'marca marca--mayor' : (y % media === 0 ? 'marca marca--media' : 'marca');
+    h += '<i class="' + clase + '" style="top:' + px + '"></i>';
+    if (y % mayor === 0 && y > 0) h += '<i class="regla-n" style="top:' + px + '">' + y + '</i>';
+  }
+  if (seleccion) {
+    h += '<i class="regla-sel" style="top:' + pxRegla(seleccion.y * escala) +
+         ';height:' + pxRegla(seleccion.alto * escala) + '"></i>';
+  }
+  return h;
+}
+
+function ico(nombre, clase) {
+  return '<svg class="ico ' + (clase || '') + '" viewBox="0 0 24 24" aria-hidden="true">' +
+    (ICO[nombre] || '') + '</svg>';
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/* ── Logotipos. Uno por propuesta, del mismo concepto: la marca se
+      construye con bloques sólidos dentro de una caja redondeada.
+      No sustituyen al logotipo de Zurich, que es intocable.          */
+
+var LOGOS = {
+  a: function (t, fondo, tinta) {
+    return '<svg width="' + t + '" height="' + t + '" viewBox="0 0 48 48" aria-label="Fast Creative Builder">' +
+      '<rect width="48" height="48" rx="10" fill="' + fondo + '"/>' +
+      '<path d="M14 14h20v5H14z" fill="' + tinta + '"/>' +
+      '<path d="M14 21.5h13v5H14z" fill="' + tinta + '" opacity=".55"/>' +
+      '<path d="M14 29h20v5H14z" fill="' + tinta + '"/></svg>';
+  },
+  b: function (t, fondo, tinta) {
+    return '<svg width="' + t + '" height="' + t + '" viewBox="0 0 48 48" aria-label="Fast Creative Builder">' +
+      '<rect width="48" height="48" rx="10" fill="' + fondo + '"/>' +
+      '<circle cx="19" cy="19" r="7" fill="' + tinta + '"/>' +
+      '<circle cx="31" cy="29" r="9" fill="' + tinta + '" opacity=".55"/></svg>';
+  },
+  c: function (t, fondo, tinta) {
+    return '<svg width="' + t + '" height="' + t + '" viewBox="0 0 48 48" aria-label="Fast Creative Builder">' +
+      '<rect width="48" height="48" rx="10" fill="' + fondo + '"/>' +
+      '<path d="M13 13h22v9H13z" fill="' + tinta + '"/>' +
+      '<path d="M13 26h9v9h-9z" fill="' + tinta + '"/>' +
+      '<path d="M26 26h9v9h-9z" fill="' + tinta + '" opacity=".55"/></svg>';
+  }
+};
+
+/* ── Fotografía. Vistas previas de Envato, registradas en ENVATO_ASSETS.md */
+
+var FOTO = {
+  loginA: 'imagenes/login_a_YSEH2WZ.jpg',
+  loginB: 'imagenes/login_b_7QSLU6D.jpg',
+  loginC: 'imagenes/login_c_NBSJY9S.jpg',
+  home: 'imagenes/home_6WRAZHB.jpg',
+  pieza1: 'imagenes/pieza_PQKN7LR.jpg',
+  pieza2: 'imagenes/pieza_BAM3CJP.jpg'
+};
+
+/* ── Contenido de ejemplo, realista y en español ─────────────────────── */
+
+var PROYECTOS = [
+  { n: 'Seguro de hogar — landing de campaña', m: 'Web', e: 'Aprobado', f: '4 sept', a: 'Andrés Gamonal', img: FOTO.pieza1 },
+  { n: 'Renovación auto — correo de aviso', m: 'Email', e: 'En revisión', f: '4 sept', a: 'María Pérez', img: null },
+  { n: 'Cobertura viaje — pieza para redes', m: 'Libre', e: 'Borrador', f: '3 sept', a: 'Andrés Gamonal', img: FOTO.pieza2 },
+  { n: 'Bienvenida a nuevos asegurados', m: 'Email', e: 'Exportado', f: '2 sept', a: 'María Pérez', img: null },
+  { n: 'Comparador de planes — página', m: 'Web', e: 'Borrador', f: '1 sept', a: 'Andrés Gamonal', img: null }
+];
+
+var ESTADO_PASTILLA = {
+  Aprobado: 'exito', 'En revisión': 'aviso', Borrador: 'neutra', Exportado: 'acento'
+};
+
+/* Los 65 componentes del brief, agrupados para el panel del editor */
+var CATALOGO = [
+  { g: 'Estructura', c: [
+    { i: 'seccion', n: 'Sección', d: '4 variantes' },
+    { i: 'columnas', n: 'Columnas', d: '8 repartos' },
+    { i: 'cuadricula', n: 'Cuadrícula', d: '2 a 6 columnas' },
+    { i: 'capas', n: 'Pila', d: '2 a 12 elementos' } ] },
+  { g: 'Contenido', c: [
+    { i: 'texto', n: 'Título', d: 'H1 a H6' },
+    { i: 'texto', n: 'Texto enriquecido', d: '4 composiciones' },
+    { i: 'imagen', n: 'Imagen', d: '5 variantes' },
+    { i: 'boton', n: 'Botón', d: '5 estilos' } ] },
+  { g: 'Marketing', c: [
+    { i: 'imagen', n: 'Portada', d: '5 variantes' },
+    { i: 'datos', n: 'Métricas', d: '2, 3, 4 o 6' },
+    { i: 'lista', n: 'Precios', d: '2 a 4 planes' },
+    { i: 'lista', n: 'Preguntas frecuentes', d: '3 a 12' } ] },
+  { g: 'Inserción', c: [
+    { i: 'insercion', n: 'Inserción', d: 'YouTube, Spotify, Power BI…' },
+    { i: 'datos', n: 'Panel de datos', d: 'Looker, Power BI' } ] }
+];
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   Marcos de aplicación y pantalla de inicio
+   ───────────────────────────────────────────────────────────────────────
+   Correcciones aplicadas:
+     · «Azul, azul y más azul.» El inicio se resuelve con bandas pastel a
+       todo el ancho, como zurich.cl. El azul queda para botones y datos.
+     · «La repetición del Crear.» Antes aparecía cuatro veces en la misma
+       pantalla. Ahora hay UNA acción principal, en la barra superior.
+       Crear deja de ser un destino de navegación.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var DESTINOS = [
+  { id: 'inicio', n: 'Inicio', i: 'inicio', ruta: '/home' },
+  { id: 'proyectos', n: 'Proyectos', i: 'proyectos', ruta: '/proyectos' },
+  { id: 'biblioteca', n: 'Biblioteca', i: 'biblioteca', ruta: '/biblioteca/imagenes' },
+  { id: 'config', n: 'Configuración', i: 'ajustes', ruta: '/configuracion/general' }
+];
+
+/* La única acción principal de todo el aplicativo */
+function ctaCrear(alto) {
+  return '<button class="cta cta--principal' + (alto ? ' cta--alto' : '') + '">' +
+    ico('crear', 'ico--16') + 'Crear una pieza</button>';
+}
+
+function movilNav(activo) {
+  return '<nav class="movil-nav">' + DESTINOS.map(function (d) {
+    return '<div class="movil-nav__i' + (d.id === activo ? ' movil-nav__i--on' : '') + '">' +
+      ico(d.i, 'ico--24') + '<span>' + d.n + '</span></div>';
+  }).join('') + '</nav>';
+}
+
+/* ── A · Taller ──────────────────────────────────────────────────────── */
+
+function marcoA(activo, titulo, cuerpo, accion) {
+  return (
+    '<div class="a-marco">' +
+      '<aside class="a-lateral">' +
+        '<div class="a-marca">' + LOGOS.a(34, 'var(--superficie)', 'var(--estructura)') +
+          '<div><div class="a-marca__n">Fast Creative Builder</div>' +
+          '<div class="a-marca__l">Web · Email · Libre</div></div></div>' +
+        '<nav class="a-grupo">' + DESTINOS.map(function (d) {
+          return '<div class="a-dest' + (d.id === activo ? ' a-dest--on' : '') + '">' +
+            ico(d.i) + '<span>' + d.n + '</span></div>';
+        }).join('') + '</nav>' +
+        '<div class="a-pie"><span class="avatar">AG</span>' +
+          '<div class="crece"><div class="menor" style="font-weight:500">Andrés Gamonal</div>' +
+          '<div class="micro" style="color:var(--sobre-estructura-suave)">Administrador</div></div></div>' +
+      '</aside>' +
+      '<div class="a-principal">' +
+        '<header class="a-barra">' +
+          '<h4 class="crece">' + esc(titulo) + '</h4>' +
+          '<button class="cta cta--bajo cta--terciario">' + ico('buscar', 'ico--16') + 'Buscar</button>' +
+          (accion === false ? '' : ctaCrear()) +
+        '</header>' +
+        '<div class="a-cuerpo">' + cuerpo + '</div>' +
+        movilNav(activo) +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ── B · Lienzo ──────────────────────────────────────────────────────── */
+
+function marcoB(activo, cuerpo) {
+  return (
+    '<div class="b-marco">' +
+      '<aside class="b-riel">' +
+        '<div style="margin-bottom:var(--e4)">' + LOGOS.b(40, 'var(--superficie)', 'var(--estructura)') + '</div>' +
+        DESTINOS.map(function (d) {
+          return '<div class="b-icono' + (d.id === activo ? ' b-icono--on' : '') + '" title="' + d.n + '">' +
+            ico(d.i, 'ico--24') + '</div>';
+        }).join('') +
+        '<div class="b-riel__pie"><span class="avatar">AG</span></div>' +
+      '</aside>' +
+      '<div class="b-principal"><div class="b-cuerpo">' + cuerpo + '</div>' + movilNav(activo) + '</div>' +
+    '</div>'
+  );
+}
+
+/* ── C · Escritorio ──────────────────────────────────────────────────── */
+
+function marcoC(activo, cuerpo) {
+  return (
+    '<div class="c-marco">' +
+      '<header class="c-barra">' + LOGOS.c(32, 'var(--superficie)', 'var(--estructura)') +
+        '<div style="font-size:14px;font-weight:600">Fast Creative Builder</div>' +
+        '<div class="crece"></div>' + ctaCrear() + '<span class="avatar">AG</span></header>' +
+      '<nav class="c-secciones">' + DESTINOS.map(function (d) {
+        return '<div class="c-seccion' + (d.id === activo ? ' c-seccion--on' : '') + '">' +
+          ico(d.i, 'ico--16') + '<span>' + d.n + '</span></div>';
+      }).join('') + '</nav>' +
+      '<div class="c-cuerpo">' + cuerpo + '</div>' + movilNav(activo) +
+    '</div>'
+  );
+}
+
+/* ── Piezas compartidas ──────────────────────────────────────────────── */
+
+/* Foto en círculo con burbujas: el lenguaje de formas de la referencia */
+function circuloFoto(src, tam, fondo) {
+  var d = tam;
+  return (
+    '<div class="circulo" style="width:' + d + 'px;height:' + d + 'px">' +
+      (fondo ? '<span class="circulo__fondo" style="width:' + d + 'px;height:' + d + 'px;background:' + fondo + ';left:-14px;top:-14px"></span>' : '') +
+      '<img class="circulo__foto" src="' + src + '" alt="" style="width:' + d + 'px;height:' + d + 'px">' +
+      '<span class="burbuja burbuja--1" style="left:-6px;bottom:26px"></span>' +
+      '<span class="burbuja burbuja--2" style="left:14px;bottom:-16px"></span>' +
+      '<span class="burbuja burbuja--3" style="left:66px;bottom:-6px"></span>' +
+    '</div>'
+  );
+}
+
+/* Fila de accesos rápidos, como la de la referencia */
+function filaAccesos() {
+  var a = [
+    { i: 'crear', n: 'Nueva landing' }, { i: 'correo', n: 'Nuevo correo' },
+    { i: 'imagen', n: 'Nueva gráfica' }, { i: 'proyectos', n: 'En revisión' },
+    { i: 'biblioteca', n: 'Subir imagen' }, { i: 'fuente', n: 'Subir tipografía' }
+  ];
+  return '<div class="cuadro-accesos" style="display:grid;grid-template-columns:repeat(6,1fr);gap:var(--e3)">' +
+    a.map(function (x) {
+      return '<div class="acceso"><span class="acceso__ico">' + ico(x.i, 'ico--24') + '</span>' +
+        '<span class="acceso__n">' + x.n + '</span></div>';
+    }).join('') + '</div>';
+}
+
+function tablaProyectos(limite) {
+  var filas = PROYECTOS.slice(0, limite || PROYECTOS.length).map(function (p) {
+    return '<tr>' +
+      '<td data-et="Proyecto"><div class="fila g3">' +
+        (p.img ? '<img class="tabla__miniatura" src="' + p.img + '" alt="">'
+               : '<span class="tabla__miniatura fila" style="justify-content:center;color:var(--texto-tenue)">' + ico(p.m === 'Email' ? 'correo' : 'imagen', 'ico--16') + '</span>') +
+        '<div><div style="font-weight:500">' + esc(p.n) + '</div>' +
+        '<div class="micro tenue">' + esc(p.a) + '</div></div></div></td>' +
+      '<td data-et="Modo"><span style="color:#2167AE;font-weight:500">' + esc(p.m) + '</span></td>' +
+      '<td data-et="Estado"><span class="pastilla pastilla--' + ESTADO_PASTILLA[p.e] + '"><span class="punto"></span>' + esc(p.e) + '</span></td>' +
+      '<td data-et="Editado" class="tenue">' + esc(p.f) + '</td>' +
+      '<td><button class="cta cta--bajo cta--secundario">Abrir</button></td>' +
+    '</tr>';
+  }).join('');
+  return '<table class="tabla"><thead><tr><th>Proyecto</th><th>Modo</th><th>Estado</th><th>Editado</th><th></th></tr></thead>' +
+    '<tbody>' + filas + '</tbody></table>';
+}
+
+function selectorModos() {
+  return (
+    '<div class="modos cuadro-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--e4)">' +
+      '<div class="modo modo--oscuro" style="background:#23366F">' +
+        '<span class="acceso__ico" style="background:var(--superficie);color:#23366F">' + ico('escritorio', 'ico--24') + '</span>' +
+        '<h3>Web</h3><p class="menor">Landing pages y páginas de campaña. Sale en HTML, JPG, PNG y fragmento para el gestor de contenidos.</p>' +
+        '<button class="cta" style="align-self:flex-start;background:#FFFFFF;color:#23366F">Empezar</button></div>' +
+      '<div class="modo modo--oscuro" style="background:#2167AE">' +
+        '<span class="acceso__ico" style="background:var(--superficie);color:#2167AE">' + ico('correo', 'ico--24') + '</span>' +
+        '<h3>Email</h3><p class="menor">Piezas de correo de 600 px, con estructura segura y un respaldo elegido para cada bloque interactivo.</p>' +
+        '<button class="cta" style="align-self:flex-start;background:#FFFFFF;color:#2167AE">Empezar</button></div>' +
+      '<div class="modo" style="background:#DAD2BD">' +
+        '<span class="acceso__ico" style="background:var(--superficie);color:#23366F">' + ico('imagen', 'ico--24') + '</span>' +
+        '<h3>Estilo libre</h3><p class="menor">Key visuals y gráficas. Mesa de trabajo con capas, guías y reglas en píxeles reales.</p>' +
+        '<button class="cta" style="align-self:flex-start;background:#23366F;color:#FFFFFF">Empezar</button></div>' +
+    '</div>'
+  );
+}
+
+/* ═══ Inicio ════════════════════════════════════════════════════════════ */
+
+var HOME = {
+  /* A · abre con una banda ámbar y la foto en círculo */
+  a: function () {
+    var cuerpo =
+      '<section class="banda banda--inicio">' +
+        '<div class="contenedor fila g9 fila--apila hero-split" style="display:grid;grid-template-columns:7fr 5fr;align-items:center">' +
+          '<div class="col g4">' +
+            '<span class="etiqueta">Martes 6 de septiembre</span>' +
+            '<h1>Buenos días, Andrés</h1>' +
+            '<p class="lead" style="color:var(--estructura);max-width:46ch">Tienes tres piezas esperando revisión y dos campañas en borrador.</p>' +
+            '<div class="fila g3" style="margin-top:var(--e2)">' +
+              '<button class="cta cta--alto" style="background:#1FB1E6;color:#FFFFFF;box-shadow:inset 0 0 0 1px var(--estructura)">Revisar pendientes</button>' +
+              '<button class="cta cta--alto" style="background:#2167AE;color:#ECEEEF">Ver proyectos</button>' +
+            '</div>' +
+          '</div>' +
+          '<div style="justify-self:center">' + circuloFoto(FOTO.home, 240, '#5495CF') + '</div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--superficie">' +
+        '<div class="contenedor">' + filaAccesos() + '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--neutra">' +
+        '<div class="contenedor">' +
+          '<div class="fila g4" style="margin-bottom:var(--e5)"><h3 class="crece">Continúa donde lo dejaste</h3>' +
+          '<button class="cta cta--terciario">Ver todos' + ico('chevron', 'ico--16') + '</button></div>' +
+          tablaProyectos(4) +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--c">' +
+        '<div class="contenedor centro">' +
+          '<h2 style="margin-bottom:var(--e3)">Una pieza, tres salidas</h2>' +
+          '<p class="lead" style="color:var(--estructura);max-width:56ch;margin:0 auto var(--e6)">Diseña una vez y expórtalo en web, correo y gráfica sin rehacer nada.</p>' +
+          '<button class="cta cta--secundario cta--alto">Ver los tres modos</button>' +
+        '</div>' +
+      '</section>';
+
+    return marcoA('inicio', 'Inicio', cuerpo);
+  },
+
+  /* B · abre por búsqueda sobre banda rosa */
+  b: function () {
+    var cuerpo =
+      '<section class="banda banda--b">' +
+        '<div class="contenedor">' +
+          '<h1 style="margin-bottom:var(--e5)">Hola, Andrés</h1>' +
+          '<div class="b-buscador" style="max-width:620px">' + ico('buscar') +
+            '<span>Busca un proyecto, una imagen o una tipografía</span></div>' +
+          '<div class="fila g2" style="margin-top:var(--e4);flex-wrap:wrap">' +
+            '<span class="pastilla pastilla--neutra">Últimos 7 días</span>' +
+            '<span class="pastilla pastilla--neutra">En revisión</span>' +
+            '<span class="pastilla pastilla--neutra">Solo web</span>' +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--superficie">' +
+        '<div class="contenedor rejilla12">' +
+          '<div style="grid-column:span 8">' +
+            '<div class="fila g4" style="margin-bottom:var(--e4)"><h3 class="crece">Recientes</h3>' +
+            '<button class="cta cta--terciario">Ver todos' + ico('chevron', 'ico--16') + '</button></div>' +
+            tablaProyectos(4) +
+          '</div>' +
+          '<div style="grid-column:span 4" class="col g4">' +
+            '<div style="background:var(--banda-e);border-radius:var(--radio);padding:var(--e6)">' +
+              '<span class="etiqueta">Pendiente</span>' +
+              '<h4 style="margin:var(--e2) 0 var(--e4);font-weight:400;font-size:22px">Tres piezas esperan tu revisión</h4>' +
+              '<button class="cta cta--principal">Revisarlas</button></div>' +
+            '<div style="background:var(--banda-d);border-radius:var(--radio);padding:var(--e6)">' +
+              '<span class="etiqueta">Biblioteca</span>' +
+              '<p class="menor" style="margin:var(--e2) 0 var(--e4)">18 imágenes, 4 logos y 3 tipografías subidas.</p>' +
+              '<button class="cta cta--secundario cta--bajo">Abrir biblioteca</button></div>' +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--neutra">' +
+        '<div class="contenedor">' + filaAccesos() + '</div>' +
+      '</section>';
+
+    return marcoB('inicio', cuerpo);
+  },
+
+  /* C · abre con el resumen operativo sobre banda celeste */
+  c: function () {
+    var cuerpo =
+      '<section class="banda banda--d">' +
+        '<div class="contenedor">' +
+          '<div class="fila g5 fila--apila" style="align-items:flex-end;margin-bottom:var(--e7)">' +
+            '<div class="crece"><span class="etiqueta">Resumen de hoy</span>' +
+            '<h1 style="margin-top:var(--e2)">12 proyectos activos</h1></div>' +
+            '<button class="cta cta--principal cta--alto">Revisar pendientes</button>' +
+          '</div>' +
+          '<div class="cuadro-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e4)">' +
+            [['3','En revisión'],['5','Borradores'],['28','Exportadas este mes'],['3','Personas con acceso']]
+              .map(function (c) {
+                return '<div style="background:var(--superficie);padding:var(--e5);border-radius:var(--radio)">' +
+                  '<div style="font-size:34px;font-weight:600;color:var(--accion);line-height:1">' + c[0] + '</div>' +
+                  '<div class="menor suave" style="margin-top:var(--e2)">' + c[1] + '</div></div>';
+              }).join('') +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--superficie">' +
+        '<div class="contenedor">' + filaAccesos() + '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--b">' +
+        '<div class="contenedor fila g8 fila--apila hero-split" style="display:grid;grid-template-columns:5fr 7fr;align-items:center">' +
+          '<div style="justify-self:center">' + circuloFoto(FOTO.pieza2, 220, 'var(--superficie)') + '</div>' +
+          '<div class="col g4"><span class="etiqueta">Empieza aquí</span>' +
+            '<h2>Web, correo o gráfica</h2>' +
+            '<p class="lead" style="max-width:48ch">Los tres modos comparten el mismo catálogo de componentes y las mismas exportaciones.</p>' +
+            '<button class="cta cta--principal cta--alto" style="align-self:flex-start">Elegir modo</button></div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--neutra">' +
+        '<div class="contenedor">' +
+          '<div class="fila g4" style="margin-bottom:var(--e5)"><h3 class="crece">Últimos movimientos</h3>' +
+          '<button class="cta cta--terciario">Ver todos' + ico('chevron', 'ico--16') + '</button></div>' +
+          tablaProyectos(5) +
+        '</div>' +
+      '</section>';
+
+    return marcoC('inicio', cuerpo);
+  }
+};
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   Editor — edición directa, reglas en píxeles reales y arrastre depurado
+   ───────────────────────────────────────────────────────────────────────
+   Correcciones pedidas:
+     1. «Pongo el cursor en el texto y edito directo.» Se escribe sobre el
+        lienzo. Lo frecuente vive en una barra pegada a la selección; el
+        mapa de caja queda detrás de «Avanzado».
+     2. «Líneas o reglas que me permitan ver los píxeles reales, preciso.»
+        Regla horizontal y vertical que miden la PIEZA, no la pantalla.
+        Si el lienzo se reduce para caber, la regla se reduce con él y el
+        número sigue siendo el píxel real. Paso adaptativo para que nunca
+        se apelmacen las marcas.
+     3. Arrastre con umbral, línea de inserción, imantado con cota en
+        píxeles y elección explícita entre insertar dentro o superponer.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Medidas reales de cada modo */
+var PIEZA = {
+  web:   { ancho: 1200, alto: 1480, n: 'Web · 1200 px' },
+  email: { ancho: 600,  alto: 1400, n: 'Email · 600 px' },
+  libre: { ancho: 1080, alto: 1080, n: 'Libre · 1080 × 1080' }
+};
+
+/* Ancho útil del lienzo en cada propuesta, ya descontados paneles y regla */
+var UTIL = { a: 812, b: 1296, c: 1120 };
+
+/* ── Lienzo envuelto en reglas ───────────────────────────────────────── */
+
+function lienzoConReglas(modo, prop, contenido, sel, extras) {
+  var pz = PIEZA[modo];
+  var disponible = UTIL[prop];
+  var escala = Math.min(1, disponible / pz.ancho);
+  var w = pz.ancho * escala;
+  var h = pz.alto * escala;
+
+  /* Esto es sólo el primer dibujado. UTIL es una estimación de escritorio y
+     en tableta se queda corta: la pieza no cabe y el chip miente. Después de
+     pintar, ajustarLienzos mide el contenedor de verdad y recalcula. */
+  return (
+    '<div class="ed__lienzo" data-modo="' + modo + '"' +
+      (sel ? ' data-sel="' + esc(JSON.stringify(sel)) + '"' : '') + '>' +
+      '<div class="zona-regla">' +
+        '<div class="regla-esq">px</div>' +
+        '<div class="regla-h" style="width:' + pxRegla(w) + '">' + reglaHorizontal(pz.ancho, escala, sel) + '</div>' +
+        '<div class="regla-v" style="height:' + pxRegla(h) + '">' + reglaVertical(pz.alto, escala, sel) + '</div>' +
+        '<div class="lienzo-area" style="width:' + pxRegla(w) + '">' +
+          '<div class="hoja-escala" style="width:' + pxRegla(w) + ';height:' + pxRegla(h) + '">' +
+            '<div class="hoja" style="width:' + pz.ancho + 'px;transform:scale(' + escala + ')">' +
+              contenido +
+            '</div>' +
+          '</div>' +
+          (extras || '') +
+        '</div>' +
+      '</div>' +
+      '<div class="zoom-chip">' + pz.n + ' · ' + Math.round(escala * 100) + '%</div>' +
+    '</div>'
+  );
+}
+
+/* ── Ajuste real, medido después de pintar ────────────────────────────────
+   La escala no puede salir de una constante: depende del ancho que quede de
+   verdad, y ese cambia con la propuesta, con el dispositivo y con el tamaño
+   del marco. Se mide el contenedor, se recalcula la escala y se redibujan
+   las dos reglas. Así el número de la regla es el píxel real de la pieza en
+   escritorio, en tableta y en móvil.                                      */
+function ajustarLienzos(raiz) {
+  var lienzos = raiz.querySelectorAll('.ed__lienzo[data-modo]');
+  for (var i = 0; i < lienzos.length; i++) {
+    var l = lienzos[i];
+    var pz = PIEZA[l.getAttribute('data-modo')];
+    if (!pz) continue;
+
+    var zona = l.querySelector('.zona-regla');
+    var hoja = l.querySelector('.hoja');
+    var caja = l.querySelector('.hoja-escala');
+    var area = l.querySelector('.lienzo-area');
+    var rh = l.querySelector('.regla-h');
+    var rv = l.querySelector('.regla-v');
+    if (!hoja || !caja || !zona) continue;
+
+    /* Ancho libre = interior del lienzo, menos la columna de la regla
+       vertical y menos el aire que reserva la zona a la derecha. */
+    var ez = getComputedStyle(zona);
+    var columnaRegla = (rv && ez.display === 'grid' && getComputedStyle(rv).display !== 'none')
+      ? parseFloat(ez.gridTemplateColumns) || 24 : 0;
+    var aire = (parseFloat(ez.paddingLeft) || 0) + (parseFloat(ez.paddingRight) || 0);
+    var libre = l.clientWidth - columnaRegla - aire;
+    if (!(libre > 0)) continue;
+
+    var escala = Math.min(1, libre / pz.ancho);
+    var w = pz.ancho * escala, h = pz.alto * escala;
+
+    var sel = null;
+    var crudo = l.getAttribute('data-sel');
+    if (crudo) { try { sel = JSON.parse(crudo); } catch (e) { sel = null; } }
+
+    hoja.style.transform = 'scale(' + escala + ')';
+    caja.style.width = pxRegla(w); caja.style.height = pxRegla(h);
+    if (area) area.style.width = pxRegla(w);
+    if (rh) { rh.style.width = pxRegla(w); rh.innerHTML = reglaHorizontal(pz.ancho, escala, sel); }
+    if (rv) { rv.style.height = pxRegla(h); rv.innerHTML = reglaVertical(pz.alto, escala, sel); }
+
+    var chip = l.querySelector('.zoom-chip');
+    if (chip) chip.textContent = pz.n + ' · ' + Math.round(escala * 100) + '%';
+  }
+}
+
+/* ── Contenido de la pieza ───────────────────────────────────────────── */
+
+function hoja(e) {
+  e = e || {};
+  return (
+    '<section class="hoja__portada' + (e.sel === 'portada' ? ' sel' : '') + '">' +
+      (e.sel === 'portada' ? '<span class="sel__et">Portada · Contenido sobre imagen</span>' : '') +
+      '<div class="hoja__portada-txt">' +
+        '<span class="etiqueta" style="color:var(--acento)">Seguro de hogar</span>' +
+        '<h2 class="' + (e.editando === 'titular' ? 'editando' : '') + '" style="color:var(--sobre-estructura);font-size:38px">' +
+          'Tu casa protegida desde el primer día' +
+          (e.editando === 'titular' ? '<span class="cursor"></span>' : '') +
+        '</h2>' +
+        '<p style="color:var(--sobre-estructura-suave);font-size:17px">Cobertura inmediata, sin trámites y con asistencia 24 horas en todo Chile.</p>' +
+        '<div class="fila g3" style="margin-top:10px">' +
+          '<span class="cta cta--conversion">Cotizar en un minuto</span>' +
+          '<span class="cta" style="background:var(--sobre-estructura);color:var(--estructura)">Ver coberturas</span>' +
+        '</div>' +
+      '</div>' +
+      '<img src="' + FOTO.pieza1 + '" alt="">' +
+    '</section>' +
+
+    '<section class="hoja__cifras' + (e.sel === 'cifras' ? ' sel' : '') + '">' +
+      (e.sel === 'cifras' ? '<span class="sel__et">Métricas · 3 cifras</span>' : '') +
+      '<div><b>24 h</b><span>Asistencia todos los días</span></div>' +
+      '<div><b>0</b><span>Trámites en papel</span></div>' +
+      '<div><b>1 min</b><span>Para cotizar</span></div>' +
+    '</section>' +
+
+    (e.insercion ? '<div class="linea-insercion"><span>Insertar aquí · y 664</span></div>' : '') +
+
+    '<section class="hoja__texto' + (e.sel === 'texto' ? ' sel' : '') + '">' +
+      (e.sel === 'texto' ? '<span class="sel__et">Texto enriquecido</span>' : '') +
+      '<p class="' + (e.editando === 'texto' ? 'editando' : '') + '">' +
+        'La póliza cubre incendio, robo, daños por agua y responsabilidad civil. ' +
+        'Puedes ampliarla con contenido, bicicletas o equipos de trabajo cuando lo necesites.' +
+        (e.editando === 'texto' ? '<span class="cursor"></span>' : '') +
+      '</p>' +
+    '</section>'
+  );
+}
+
+/* Pieza de estilo libre: mesa de trabajo cuadrada */
+function hojaLibre(e) {
+  e = e || {};
+  return (
+    '<div class="mesa">' +
+      '<img class="mesa__fondo" src="' + FOTO.pieza2 + '" alt="">' +
+      '<div class="mesa__bloque' + (e.sel === 'bloque' ? ' sel' : '') + '">' +
+        (e.sel === 'bloque' ? '<span class="sel__et">Bloque de texto · capa 3</span>' : '') +
+        '<span class="etiqueta" style="color:var(--estructura)">Cobertura viaje</span>' +
+        '<h2 style="color:var(--estructura);font-size:44px;line-height:1.05">Viaja sin pensar en lo que puede pasar</h2>' +
+        '<span class="cta cta--conversion" style="align-self:flex-start;margin-top:12px">Cotiza en un minuto</span>' +
+      '</div>' +
+      '<span class="mesa__burbuja mesa__burbuja--1"></span>' +
+      '<span class="mesa__burbuja mesa__burbuja--2"></span>' +
+    '</div>'
+  );
+}
+
+/* Pieza de email: 600 px, estructura de tabla */
+function hojaEmail(e) {
+  e = e || {};
+  return (
+    '<div class="email">' +
+      '<div class="email__cab"><span class="micro tenue">Ver en el navegador</span></div>' +
+      '<div class="email__logo">' + LOGOS.a(36, 'var(--accion)', 'var(--superficie)') + '</div>' +
+      '<img class="email__foto" src="' + FOTO.pieza1 + '" alt="">' +
+      '<div class="email__cuerpo' + (e.sel === 'texto' ? ' sel' : '') + '">' +
+        (e.sel === 'texto' ? '<span class="sel__et">Texto enriquecido</span>' : '') +
+        '<h3 class="' + (e.editando === 'texto' ? 'editando' : '') + '" style="color:var(--estructura)">' +
+          'Tu renovación está lista' + (e.editando === 'texto' ? '<span class="cursor"></span>' : '') + '</h3>' +
+        '<p class="menor suave" style="margin-top:10px">Revisa las condiciones de tu póliza y renueva en línea antes del 30 de septiembre.</p>' +
+        '<span class="cta cta--conversion" style="margin-top:18px">Renovar ahora</span>' +
+      '</div>' +
+      '<div class="email__pie"><span class="micro tenue">Zurich Chile · Av. Pedro de Valdivia 100, Providencia<br>Darse de baja · Preferencias</span></div>' +
+    '</div>'
+  );
+}
+
+/* ── Barra flotante de edición ───────────────────────────────────────── */
+
+function barraFlotante(arriba, izquierda) {
+  return (
+    '<div class="flotante" style="top:' + arriba + 'px;left:' + izquierda + 'px">' +
+      '<span class="flotante__t">Título</span><span class="flotante__sep"></span>' +
+      '<button class="flotante__b">A−</button><span class="flotante__v">38</span><button class="flotante__b">A+</button>' +
+      '<span class="flotante__sep"></span>' +
+      '<button class="flotante__b flotante__b--on"><b>N</b></button>' +
+      '<button class="flotante__b"><i>C</i></button>' +
+      '<span class="flotante__sep"></span>' +
+      '<button class="flotante__b">' + ico('alinIzq', 'ico--16') + '</button>' +
+      '<button class="flotante__b">' + ico('alinCen', 'ico--16') + '</button>' +
+      '<span class="flotante__sep"></span>' +
+      '<button class="flotante__b"><span class="flotante__color"></span></button>' +
+      '<button class="flotante__b">' + ico('enlace', 'ico--16') + '</button>' +
+      '<span class="flotante__sep"></span>' +
+      '<button class="flotante__b">' + ico('mas', 'ico--16') + '</button>' +
+    '</div>'
+  );
+}
+
+/* Lectura de posición y tamaño, siempre en píxeles de la pieza */
+function lectura(arriba, izquierda, x, y, ancho, alto) {
+  return (
+    '<div class="lectura" style="top:' + arriba + 'px;left:' + izquierda + 'px">' +
+      '<b><span>x</span> ' + x + '</b><b><span>y</span> ' + y + '</b>' +
+      '<b>' + ancho + ' <span>×</span> ' + alto + '</b>' +
+    '</div>'
+  );
+}
+
+/* Cota de distancia entre dos elementos */
+function cotaVertical(arriba, izquierda, altoPx, valor) {
+  return (
+    '<div class="cota cota--v" style="top:' + arriba + 'px;left:' + izquierda + 'px;height:' + altoPx + 'px">' +
+      '<span class="cota__linea"></span><span class="cota__n">' + valor + '</span><span class="cota__linea"></span>' +
+    '</div>'
+  );
+}
+
+function guiaVertical(izquierda, valor) {
+  return '<div class="guia guia--v" style="left:' + izquierda + 'px"><span class="guia__n">x ' + valor + '</span></div>';
+}
+
+/* ── Paneles ─────────────────────────────────────────────────────────── */
+
+function panelComponentes(arrastrando) {
+  return CATALOGO.map(function (g) {
+    return (
+      '<div style="margin-bottom:var(--e5)">' +
+        '<div class="etiqueta tenue" style="padding:0 var(--e2) var(--e2)">' + g.g + '</div>' +
+        g.c.map(function (c, i) {
+          var act = arrastrando && g.g === 'Contenido' && i === 1 ? ' comp--arrastrando' : '';
+          return (
+            '<div class="comp' + act + '"><span class="comp__ico">' + ico(c.i, 'ico--16') + '</span>' +
+            '<div class="crece"><div class="comp__n">' + c.n + '</div><div class="comp__d">' + c.d + '</div></div>' +
+            ico('agarre', 'ico--16') + '</div>'
+          );
+        }).join('') +
+      '</div>'
+    );
+  }).join('');
+}
+
+function panelSeccion(avanzado) {
+  if (avanzado) {
+    return (
+      '<div class="lat__tabs"><span class="lat__tab">Contenido</span><span class="lat__tab lat__tab--on">Avanzado</span></div>' +
+      '<div class="lat__c">' +
+        '<div class="etiqueta tenue" style="margin-bottom:var(--e3)">Espaciado exacto</div>' +
+        '<div class="caja-mapa"><span class="caja-mapa__et">margen</span>' +
+          '<input class="caja-mapa__v" value="0">' +
+          '<div class="caja-mapa__p"><span class="caja-mapa__et">relleno</span>' +
+          '<div class="caja-mapa__c">Contenido</div></div></div>' +
+        '<p class="campo__ayuda" style="margin:var(--e3) 0 var(--e5)">Todo nace en cero. Si ves separación, está escrita aquí.</p>' +
+        '<div class="col g4">' +
+          '<label class="campo"><span class="campo__et">Ancho máximo</span><input class="campo__in" value="auto"></label>' +
+          '<label class="campo"><span class="campo__et">Ancla</span><input class="campo__in" placeholder="portada"></label>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+  return (
+    '<div class="lat__tabs"><span class="lat__tab lat__tab--on">Contenido</span><span class="lat__tab">Avanzado</span></div>' +
+    '<div class="lat__c">' +
+      '<div class="etiqueta tenue" style="margin-bottom:var(--e3)">Esta sección</div>' +
+      '<div class="col g5">' +
+        '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Fondo</span>' +
+          '<div class="fila g2" style="flex-wrap:wrap">' +
+            ['var(--estructura)','var(--banda-b)','var(--banda-b)','var(--banda-c)','var(--banda-a)','var(--banda-d)','var(--superficie)']
+              .map(function (c, i) { return '<span class="muestra' + (i === 0 ? ' muestra--on' : '') + '" style="background:' + c + '"></span>'; }).join('') +
+          '</div></div>' +
+        '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Imagen</span>' +
+          '<div class="campo-img"><img src="' + FOTO.pieza1 + '" alt="">' +
+          '<div class="crece"><div class="menor">pieza_hogar.jpg</div><div class="micro tenue">1600 × 900</div></div></div></div>' +
+        '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Disposición</span>' +
+          '<div class="opciones"><span class="opcion opcion--on">Texto izquierda</span><span class="opcion">Texto derecha</span>' +
+          '<span class="opcion">Centrado</span><span class="opcion">Sobre la imagen</span></div></div>' +
+        '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Alto</span>' +
+          '<div class="opciones"><span class="opcion">Ajustar</span><span class="opcion opcion--on">Cómodo</span>' +
+          '<span class="opcion">Amplio</span></div></div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function panelCapas() {
+  var items = [
+    { n: 'Portada', d: 0, on: true }, { n: 'Título', d: 1 }, { n: 'Texto', d: 1 },
+    { n: 'Botones', d: 1 }, { n: 'Métricas', d: 0 }, { n: 'Texto enriquecido', d: 0 }
+  ];
+  return items.map(function (i) {
+    return '<div class="capa' + (i.on ? ' capa--on' : '') + '" style="padding-left:' + (10 + i.d * 16) + 'px">' +
+      ico(i.d ? 'texto' : 'seccion', 'ico--16') + '<span class="crece">' + i.n + '</span>' + ico('ojo', 'ico--16') + '</div>';
+  }).join('');
+}
+
+function barraEditor(modo, oscuro) {
+  var sec = oscuro ? 'style="background:rgba(255,255,255,.16);color:var(--sobre-estructura)"' : '';
+  return (
+    '<button class="cta cta--bajo cta--terciario" ' + (oscuro ? 'style="color:var(--sobre-estructura)"' : '') + '>' + ico('atras', 'ico--16') + 'Proyectos</button>' +
+    '<div style="font-weight:600;font-size:14px">' + (modo === 'email' ? 'Renovación auto — correo' : modo === 'libre' ? 'Cobertura viaje — pieza' : 'Seguro de hogar — landing') + '</div>' +
+    '<span class="pastilla pastilla--neutra"><span class="punto"></span>Guardado</span>' +
+    '<div class="crece"></div>' +
+    '<div class="grupo-disp">' +
+      '<span class="grupo-disp__b grupo-disp__b--on">' + ico('escritorio', 'ico--16') + '</span>' +
+      '<span class="grupo-disp__b">' + ico('tableta', 'ico--16') + '</span>' +
+      '<span class="grupo-disp__b">' + ico('movil', 'ico--16') + '</span>' +
+    '</div>' +
+    '<button class="cta cta--bajo" ' + sec + '>' + ico('deshacer', 'ico--16') + '</button>' +
+    '<button class="cta cta--bajo" ' + sec + '>' + ico('rehacer', 'ico--16') + '</button>' +
+    '<button class="cta cta--bajo cta--secundario">' + ico('ojo', 'ico--16') + 'Previsualizar</button>' +
+    '<button class="cta cta--bajo cta--principal">' + ico('exportar', 'ico--16') + 'Exportar</button>'
+  );
+}
+
+function contenidoModo(modo, estado) {
+  if (modo === 'libre') return hojaLibre(estado);
+  if (modo === 'email') return hojaEmail(estado);
+  return hoja(estado);
+}
+
+/* ═══ A · Taller ════════════════════════════════════════════════════════ */
+
+function editorA(modo) {
+  var esc = Math.min(1, UTIL.a / PIEZA[modo].ancho);
+  /* La barra va ENCIMA de la selección, no sobre el texto. La lectura de
+     medidas va debajo, para que nunca se tapen entre ellas. */
+  var sel = { x: 80, y: 150, ancho: 560, alto: 132 };
+  var extras =
+    barraFlotante(Math.round(sel.y * esc) - 50, Math.round(sel.x * esc)) +
+    lectura(Math.round((sel.y + sel.alto) * esc) + 8, Math.round(sel.x * esc), sel.x, sel.y, sel.ancho, sel.alto) +
+    cotaVertical(Math.round(490 * esc), Math.round(24 * esc), Math.round(40 * esc), '40');
+
+  return (
+    '<div class="ed-marco">' +
+      '<header class="ed-barra">' + barraEditor(modo) + '</header>' +
+      '<div class="ed ed--a">' +
+        '<aside class="ed__panel"><div class="ed__panel-t">Componentes</div>' +
+          '<div class="ed__panel-c">' + panelComponentes(false) + '</div></aside>' +
+        lienzoConReglas(modo, 'a', contenidoModo(modo, { sel: 'portada', editando: 'titular' }), sel, extras) +
+        '<aside class="ed__panel">' + panelSeccion(false) + '</aside>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ═══ B · Lienzo ════════════════════════════════════════════════════════ */
+
+function editorB(modo) {
+  var esc = Math.min(1, UTIL.b / PIEZA[modo].ancho);
+  var selB = { x: 40, y: 760, ancho: 1120, alto: 96 };
+  var extras =
+    guiaVertical(Math.round(40 * esc), 40) +
+    guiaVertical(Math.round(1160 * esc), 1160) +
+    barraFlotante(Math.round(selB.y * esc) - 50, Math.round(selB.x * esc)) +
+    lectura(Math.round((selB.y + selB.alto) * esc) + 8, Math.round(selB.x * esc), selB.x, selB.y, selB.ancho, selB.alto);
+
+  return (
+    '<div class="ed-marco">' +
+      '<header class="ed-barra">' + barraEditor(modo) + '</header>' +
+      '<div class="ed ed--b">' +
+        '<aside class="ed-riel">' +
+          '<span class="ed-riel__b ed-riel__b--on">' + ico('mas', 'ico--24') + '</span>' +
+          '<span class="ed-riel__b">' + ico('capas', 'ico--24') + '</span>' +
+          '<span class="ed-riel__b">' + ico('biblioteca', 'ico--24') + '</span>' +
+          '<span class="ed-riel__b">' + ico('regla', 'ico--24') + '</span>' +
+        '</aside>' +
+        lienzoConReglas(modo, 'b', contenidoModo(modo, { sel: 'texto', editando: 'texto', insercion: true }), selB, extras) +
+        '<aside class="ed-flotante ed-flotante--izq">' +
+          '<div class="ed__panel-t">Componentes<div class="crece"></div>' + ico('cerrar', 'ico--16') + '</div>' +
+          '<div class="ed__panel-c">' + panelComponentes(true) + '</div>' +
+        '</aside>' +
+        '<div class="eleccion-soltar"><b>Suéltalo aquí</b>' +
+          '<div class="fila g2"><span class="cta cta--bajo cta--principal">Insertar dentro</span>' +
+          '<span class="cta cta--bajo cta--secundario">Superponer encima</span></div></div>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
+/* ═══ C · Escritorio ════════════════════════════════════════════════════ */
+
+function editorC(modo) {
+  var esc = Math.min(1, UTIL.c / PIEZA[modo].ancho);
+  var selC = { x: 40, y: 420, ancho: 1120, alto: 200 };
+  var extras = lectura(Math.round((selC.y + selC.alto) * esc) + 8, Math.round(selC.x * esc),
+    selC.x, selC.y, selC.ancho, selC.alto);
+
+  return (
+    '<div class="ed-marco">' +
+      '<header class="ed-barra ed-barra--navy">' + barraEditor(modo, true) + '</header>' +
+      '<div class="ed-props">' +
+        '<span class="ed-props__q">' + ico('datos', 'ico--16') + 'Métricas</span>' +
+        '<span class="ed-props__sep"></span>' +
+        '<span class="ed-props__g"><span class="menor tenue">Columnas</span>' +
+          '<span class="opciones"><span class="opcion">2</span><span class="opcion opcion--on">3</span><span class="opcion">4</span></span></span>' +
+        '<span class="ed-props__g"><span class="menor tenue">Separación</span><button class="flotante__b">−</button>' +
+          '<span class="flotante__v">16</span><button class="flotante__b">+</button></span>' +
+        '<span class="ed-props__g"><span class="menor tenue">Relleno</span><button class="flotante__b">−</button>' +
+          '<span class="flotante__v">40</span><button class="flotante__b">+</button></span>' +
+        '<span class="ed-props__g"><button class="flotante__b"><span class="flotante__color"></span></button></span>' +
+        '<div class="crece"></div>' +
+        '<span class="ed-props__ruta">Página › Métricas</span>' +
+      '</div>' +
+      '<div class="ed ed--c">' +
+        '<aside class="ed__panel">' +
+          '<div class="lat__tabs"><span class="lat__tab lat__tab--on">Capas</span><span class="lat__tab">Componentes</span></div>' +
+          '<div class="ed__panel-c" style="padding:var(--e2)">' + panelCapas() + '</div>' +
+        '</aside>' +
+        lienzoConReglas(modo, 'c', contenidoModo(modo, { sel: 'cifras', editando: 'titular' }), selC, extras) +
+      '</div>' +
+    '</div>'
+  );
+}
+
+var EDITOR = { a: editorA, b: editorB, c: editorC };
+
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   Acceso, pantallas interiores y modales
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function envolver(prop, cfg) {
+  var cabecera =
+    '<section class="banda banda--corta banda--' + (cfg.banda || 'crear') + '">' +
+      '<div class="contenedor fila g5 fila--apila" style="align-items:flex-end">' +
+        '<div class="crece">' +
+          (cfg.migas ? '<span class="etiqueta tenue">' + cfg.migas + '</span>' : '') +
+          '<h1 style="margin-top:' + (cfg.migas ? 'var(--e2)' : '0') + '">' + esc(cfg.titulo) + '</h1>' +
+          (cfg.bajada ? '<p class="lead" style="margin-top:var(--e3);max-width:60ch">' + esc(cfg.bajada) + '</p>' : '') +
+        '</div>' +
+        (cfg.accion || '') +
+      '</div>' +
+    '</section>';
+
+  var contenido =
+    cabecera +
+    '<section class="banda banda--corta banda--superficie"><div class="contenedor">' +
+      (cfg.pestanas || '') + cfg.cuerpo +
+    '</div></section>';
+
+  if (prop === 'a') return marcoA(cfg.activo, cfg.titulo, contenido);
+  if (prop === 'b') return marcoB(cfg.activo, contenido);
+  return marcoC(cfg.activo, contenido);
+}
+
+function pestanas(items, activa) {
+  return '<div class="fila g1" style="background:var(--neutra);padding:4px;border-radius:var(--pildora);margin-bottom:var(--e6);display:inline-flex">' +
+    items.map(function (t) {
+      var on = t === activa;
+      return '<span class="cta cta--bajo" style="background:' + (on ? 'var(--superficie)' : 'transparent') +
+        ';color:' + (on ? 'var(--estructura)' : 'var(--texto-suave)') + '">' + esc(t) + '</span>';
+    }).join('') + '</div>';
+}
+
+function campo(et, tipo, valor, ayuda) {
+  return '<label class="campo"><span class="campo__et">' + esc(et) + '</span>' +
+    '<input class="campo__in" type="' + tipo + '" value="' + esc(valor || '') + '">' +
+    (ayuda ? '<span class="campo__ayuda">' + esc(ayuda) + '</span>' : '') + '</label>';
+}
+
+/* ═══ Acceso ════════════════════════════════════════════════════════════
+   Página completa, dos zonas, fotografía real en círculo sobre banda
+   pastel. Ninguna tarjeta flotando sobre un fondo plano.               */
+
+var VISUAL_LOGIN = {
+  a: { clase: 'ambar', foto: 'loginA', alt: 'Persona trabajando en su puesto en casa' },
+  b: { clase: 'celeste', foto: 'loginB', alt: 'Dos personas trabajando junto a la ventana' },
+  c: { clase: 'rosa', foto: 'loginC', alt: 'Mesa de trabajo con bocetos' }
+};
+
+function ladoVisual(prop, mensaje) {
+  var v = VISUAL_LOGIN[prop];
+  return (
+    '<div class="login__visual login__visual--' + v.clase + '">' +
+      circuloFoto(FOTO[v.foto], 300, 'var(--superficie)') +
+      (mensaje
+        ? '<div class="login__pie-msg"><span class="etiqueta">' + mensaje.et + '</span>' +
+          '<h3 style="margin-top:var(--e2)">' + mensaje.t + '</h3></div>'
+        : '') +
+    '</div>'
+  );
+}
+
+function panelAcceso(prop, titulo, intro, campos, boton, pie) {
+  return (
+    '<div class="login__panel"><div class="login__forma">' +
+      '<div style="margin-bottom:var(--e4)">' + LOGOS[prop](46, 'var(--accion)', 'var(--superficie)') + '</div>' +
+      '<h2>' + esc(titulo) + '</h2>' +
+      '<p class="suave" style="margin-bottom:var(--e2)">' + esc(intro) + '</p>' +
+      campos +
+      '<button class="cta cta--principal cta--alto cta--ancho" style="margin-top:var(--e2)">' + esc(boton) + '</button>' +
+      (pie || '') +
+    '</div></div>'
+  );
+}
+
+function pLogin(prop) {
+  var visual = ladoVisual(prop, { et: 'Una pieza, tres salidas', t: 'Diseña una vez y expórtalo en web, correo y gráfica.' });
+  var panel = panelAcceso(prop, 'Entrar', 'Escribe tu correo y tu contraseña.',
+    campo('Correo', 'email', 'andres@zurich.cl') + campo('Contraseña', 'password', '••••••••••'),
+    'Entrar',
+    '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--accion)">¿Olvidaste tu contraseña?</a></p>');
+  var orden = prop === 'b' ? visual + panel : panel + visual;
+  return '<div class="login login--' + prop + '">' + orden + '</div>';
+}
+
+function pInvitacion(prop) {
+  var visual = ladoVisual(prop, { et: 'Primer acceso', t: 'El enlace caduca en siete días y sólo se usa una vez.' });
+  var panel = panelAcceso(prop, 'Te damos la bienvenida',
+    'Estás creando la cuenta de javier@zurich.cl. Elige una contraseña y ya puedes empezar.',
+    campo('Tu nombre', 'text', 'Javier Soto') +
+      campo('Contraseña', 'password', '', 'Diez caracteres como mínimo, con alguna letra y algún número.') +
+      campo('Repite la contraseña', 'password', ''),
+    'Guardar y entrar');
+  var orden = prop === 'b' ? visual + panel : panel + visual;
+  return '<div class="login login--' + prop + '">' + orden + '</div>';
+}
+
+function pRecuperar(prop) {
+  var visual = ladoVisual(prop, null);
+  var panel = panelAcceso(prop, 'Recuperar acceso',
+    'Escribe tu correo y te enviamos un enlace para elegir una contraseña nueva.',
+    campo('Correo', 'email', ''), 'Enviarme el enlace',
+    '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--accion)">Volver a entrar</a></p>');
+  var orden = prop === 'b' ? visual + panel : panel + visual;
+  return '<div class="login login--' + prop + '">' + orden + '</div>';
+}
+
+/* ═══ Crear ═════════════════════════════════════════════════════════════ */
+
+function pCrear(prop) {
+  return envolver(prop, {
+    activo: 'inicio', banda: 'crear', titulo: 'Elige el modo',
+    bajada: 'Los tres comparten el mismo catálogo y las mismas exportaciones. Lo que cambia son las reglas de construcción.',
+    cuerpo: selectorModos() +
+      '<div style="margin-top:var(--e8)"><h3 style="margin-bottom:var(--e5)">O duplica algo que ya hiciste</h3>' + tablaProyectos(3) + '</div>'
+  });
+}
+
+/* ═══ Proyectos ═════════════════════════════════════════════════════════ */
+
+function pProyectos(prop) {
+  var filtros =
+    '<div class="fila g3 fila--apila" style="margin-bottom:var(--e5);flex-wrap:wrap">' +
+      '<div class="b-buscador" style="height:44px;max-width:320px;font-size:14px">' + ico('buscar', 'ico--16') + '<span>Buscar por nombre</span></div>' +
+      '<button class="cta cta--secundario">Modo' + ico('abajo', 'ico--16') + '</button>' +
+      '<button class="cta cta--secundario">Estado' + ico('abajo', 'ico--16') + '</button>' +
+      '<div class="crece"></div>' +
+      '<button class="cta cta--terciario">' + ico('papelera', 'ico--16') + 'Papelera</button>' +
+    '</div>';
+  return envolver(prop, {
+    activo: 'proyectos', banda: 'trabajo', titulo: 'Proyectos',
+    bajada: 'Ves solo los tuyos. El administrador ve los de todo el equipo.',
+    cuerpo: filtros + tablaProyectos()
+  });
+}
+
+function pFicha(prop) {
+  var cuerpo =
+    '<div class="rejilla12">' +
+      '<div style="grid-column:span 8" class="col g5">' +
+        '<img src="' + FOTO.pieza1 + '" alt="Vista previa" style="width:100%;height:300px;object-fit:cover;border-radius:var(--radio)">' +
+        '<div><h4 style="margin-bottom:var(--e4)">Versiones guardadas</h4>' +
+          '<table class="tabla"><tbody>' +
+            '<tr><td data-et="Versión"><b>Antes de cambiar la portada</b><div class="micro tenue">4 sept, 16:20 · Andrés Gamonal</div></td>' +
+            '<td><button class="cta cta--bajo cta--secundario">Restaurar</button></td></tr>' +
+            '<tr><td data-et="Versión"><b>Primera propuesta</b><div class="micro tenue">3 sept, 11:04 · Andrés Gamonal</div></td>' +
+            '<td><button class="cta cta--bajo cta--secundario">Restaurar</button></td></tr>' +
+          '</tbody></table></div>' +
+      '</div>' +
+      '<div style="grid-column:span 4" class="col g4">' +
+        '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e5)">' +
+          '<span class="etiqueta">Estado</span>' +
+          '<h4 style="margin:var(--e2) 0 var(--e2);font-weight:400;font-size:22px">Aprobado</h4>' +
+          '<p class="micro suave" style="margin-bottom:var(--e4)">Por Andrés Gamonal el 4 de septiembre.</p>' +
+          '<button class="cta cta--conversion cta--ancho">' + ico('exportar', 'ico--16') + 'Exportar</button></div>' +
+        '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e5)">' +
+          '<span class="etiqueta tenue">Ficha</span>' +
+          '<div class="col g3 menor" style="margin-top:var(--e3)">' +
+            [['Modo','Web'],['Creado','1 sept 2026'],['Editado','4 sept 2026'],['Dueño','Andrés Gamonal'],['Marca','Zurich']]
+              .map(function (r) { return '<div class="fila"><span class="crece suave">' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') +
+          '</div></div>' +
+      '</div>' +
+    '</div>';
+  return envolver(prop, {
+    activo: 'proyectos', banda: 'trabajo', migas: 'Proyectos',
+    titulo: 'Seguro de hogar — landing de campaña',
+    accion: '<button class="cta cta--principal cta--alto">Abrir en el editor</button>',
+    cuerpo: cuerpo
+  });
+}
+
+function pPapelera(prop) {
+  var cuerpo =
+    '<div style="padding:var(--e4) var(--e5);border-radius:var(--radio);margin-bottom:var(--e5)" class="fila g3 panel--oscuro">' +
+      ico('reloj', 'ico--16') + '<span class="menor">Lo que borras se guarda 30 días. Después se elimina de verdad.</span></div>' +
+    '<table class="tabla"><thead><tr><th>Proyecto</th><th>Modo</th><th>Borrado</th><th></th></tr></thead><tbody>' +
+      '<tr><td data-et="Proyecto"><b>Campaña invierno 2025</b></td><td data-et="Modo">Web</td>' +
+      '<td data-et="Borrado" class="tenue">28 ago · quedan 21 días</td>' +
+      '<td><div class="fila g2"><button class="cta cta--bajo cta--secundario">' + ico('restaurar', 'ico--16') + 'Restaurar</button>' +
+      '<button class="cta cta--bajo cta--peligro">Eliminar</button></div></td></tr>' +
+      '<tr><td data-et="Proyecto"><b>Prueba de correo</b></td><td data-et="Modo">Email</td>' +
+      '<td data-et="Borrado" class="tenue">25 ago · quedan 18 días</td>' +
+      '<td><div class="fila g2"><button class="cta cta--bajo cta--secundario">' + ico('restaurar', 'ico--16') + 'Restaurar</button>' +
+      '<button class="cta cta--bajo cta--peligro">Eliminar</button></div></td></tr>' +
+    '</tbody></table>';
+  return envolver(prop, { activo: 'proyectos', banda: 'papelera', migas: 'Proyectos', titulo: 'Papelera', cuerpo: cuerpo });
+}
+
+/* ═══ Biblioteca ════════════════════════════════════════════════════════ */
+
+function pBiblioteca(prop, tipo) {
+  var cuerpo;
+  if (tipo === 'Imágenes') {
+    var fotos = [FOTO.pieza1, FOTO.pieza2, FOTO.home, FOTO.loginA, FOTO.loginB, FOTO.loginC];
+    var celdas = '';
+    for (var i = 0; i < 12; i++) {
+      celdas += '<figure style="border-radius:var(--radio);overflow:hidden;background:var(--neutra)">' +
+        '<img src="' + fotos[i % fotos.length] + '" alt="" style="width:100%;height:140px;object-fit:cover">' +
+        '<figcaption class="menor" style="padding:var(--e3)">imagen_' + (i + 1) + '.jpg' +
+        '<div class="micro tenue">1600 × 900 · 240 KB</div></figcaption></figure>';
+    }
+    cuerpo = '<div class="cuadro-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e4)">' + celdas + '</div>';
+  } else if (tipo === 'Logos') {
+    cuerpo = '<div class="cuadro-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e4)">' +
+      ['Zurich horizontal', 'Zurich vertical', 'Zurich negativo', 'Isotipo'].map(function (n) {
+        return '<figure style="border-radius:var(--radio);overflow:hidden;background:var(--neutra)">' +
+          '<div style="height:140px;display:grid;place-items:center;background:var(--banda-e);color:var(--texto-suave)">' +
+          ico('logo', 'ico--28') + '</div>' +
+          '<figcaption class="menor" style="padding:var(--e3)">' + n +
+          '<div class="micro tenue">SVG · vectorial</div></figcaption></figure>';
+      }).join('') + '</div>';
+  } else {
+    cuerpo = '<table class="tabla"><thead><tr><th>Familia</th><th>Peso</th><th>Formato</th><th></th></tr></thead><tbody>' +
+      [['400 · Regular'], ['500 · Medium'], ['600 · SemiBold']].map(function (r) {
+        return '<tr><td data-et="Familia"><b>Zurich Sans</b></td><td data-et="Peso">' + r[0] + '</td>' +
+          '<td data-et="Formato">WOFF2</td><td><button class="cta cta--bajo cta--terciario">Quitar</button></td></tr>';
+      }).join('') + '</tbody></table>' +
+      '<div style="background:var(--banda-d);border-radius:var(--radio);padding:var(--e6);margin-top:var(--e5)">' +
+      '<h4 style="margin-bottom:var(--e2)">Sin tipografías propias se usa Arial</h4>' +
+      '<p class="menor suave" style="max-width:60ch">Es lo que autoriza el manual de marca cuando Zurich Sans no está disponible. Las que subas aquí se incrustan en los HTML exportados.</p></div>';
+  }
+
+  return envolver(prop, {
+    activo: 'biblioteca', banda: 'biblioteca', titulo: 'Biblioteca',
+    bajada: 'Tus materiales. Nadie más los ve, salvo el administrador.',
+    accion: '<button class="cta cta--principal cta--alto">' + ico('mas', 'ico--16') + 'Subir</button>',
+    pestanas: pestanas(['Imágenes', 'Logos', 'Tipografías'], tipo),
+    cuerpo: cuerpo
+  });
+}
+
+/* ═══ Configuración ═════════════════════════════════════════════════════ */
+
+function pConfigGeneral(prop) {
+  var cuerpo =
+    '<div class="rejilla12">' +
+      '<div style="grid-column:span 7;background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
+        '<h4 style="margin-bottom:var(--e5)">Marca de las creatividades</h4>' +
+        '<div class="col g5">' +
+          '<label class="campo"><span class="campo__et">Marca activa</span>' +
+            '<select class="campo__in"><option>Zurich</option><option>Añadir otra marca…</option></select>' +
+            '<span class="campo__ayuda">Los proyectos nuevos nacen con sus colores y tipografías.</span></label>' +
+          '<div><span class="campo__et" style="display:block;margin-bottom:var(--e2)">Paleta</span>' +
+            '<div class="fila g2" style="flex-wrap:wrap">' +
+              ['#23366F','#2167AE','#5495CF','#91BFE3','#1FB1E6','#DAD2BD','#DDE4E3','#ECEEEF','#A6E9AB','#FFF773','#FF7569']
+                .map(function (c) { return '<span class="muestra" style="background:' + c + '" title="' + c + '"></span>'; }).join('') +
+            '</div></div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="grid-column:span 5" class="col g4">' +
+        '<div class="panel--oscuro" style="border-radius:var(--radio);padding:var(--e6)">' +
+          '<h4 style="margin-bottom:var(--e2)">Dominios permitidos</h4>' +
+          '<p class="menor" style="margin-bottom:var(--e4)">Sólo se puede insertar contenido de estos servicios.</p>' +
+          '<div class="fila g2" style="flex-wrap:wrap">' +
+            ['YouTube','Vimeo','Spotify','Power BI','Looker Studio','Typeform','Calendly'].map(function (d) {
+              return '<span class="pastilla" style="background:var(--superficie);color:var(--estructura)">' + d + '</span>';
+            }).join('') + '</div>' +
+          '<button class="cta cta--conversion cta--bajo" style="margin-top:var(--e4)">' + ico('mas', 'ico--16') + 'Añadir</button></div>' +
+        '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
+          '<h4 style="margin-bottom:var(--e3)">Formatos de estilo libre</h4>' +
+          '<div class="fila g2" style="flex-wrap:wrap">' +
+            ['1080×1080','1080×1350','1080×1920','1200×628','Personalizado'].map(function (d) {
+              return '<span class="pastilla pastilla--neutra">' + d + '</span>'; }).join('') + '</div></div>' +
+      '</div>' +
+    '</div>';
+  return envolver(prop, {
+    activo: 'config', banda: 'config', titulo: 'Configuración',
+    pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'General'), cuerpo: cuerpo
+  });
+}
+
+function pConfigUsuarios(prop) {
+  var gente = [
+    ['AG', 'Andrés Gamonal', 'andres@zurich.cl', 'Administrador', 'exito', 'Activa', 'Hoy'],
+    ['MP', 'María Pérez', 'maria@zurich.cl', 'Usuario', 'exito', 'Activa', 'Ayer'],
+    ['JS', 'Javier Soto', 'javier@zurich.cl', 'Usuario', 'aviso', 'Sin entrar', '—']
+  ];
+  var cuerpo = '<table class="tabla"><thead><tr><th>Nombre</th><th>Correo</th><th>Permiso</th><th>Estado</th><th>Último acceso</th><th></th></tr></thead><tbody>' +
+    gente.map(function (g) {
+      return '<tr><td data-et="Nombre"><div class="fila g3"><span class="avatar" style="width:32px;height:32px;font-size:12px">' + g[0] + '</span><b>' + g[1] + '</b></div></td>' +
+        '<td data-et="Correo" class="tenue">' + g[2] + '</td><td data-et="Permiso">' + g[3] + '</td>' +
+        '<td data-et="Estado"><span class="pastilla pastilla--' + g[4] + '"><span class="punto"></span>' + g[5] + '</span></td>' +
+        '<td data-et="Último acceso" class="tenue">' + g[6] + '</td>' +
+        '<td><button class="cta cta--bajo cta--secundario">' + (g[5] === 'Sin entrar' ? 'Reenviar' : 'Editar') + '</button></td></tr>';
+    }).join('') + '</tbody></table>';
+  return envolver(prop, {
+    activo: 'config', banda: 'config', titulo: 'Configuración', bajada: 'Tres de quince cuentas usadas.',
+    accion: '<button class="cta cta--principal cta--alto">' + ico('personas', 'ico--16') + 'Invitar</button>',
+    pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'Usuarios'), cuerpo: cuerpo
+  });
+}
+
+function pConfigPermisos(prop) {
+  var cuerpo =
+    '<div class="rejilla12">' +
+      '<div style="grid-column:span 6;background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
+        '<h4 style="margin-bottom:var(--e5)">Invitar a alguien</h4>' +
+        '<div class="col g4">' + campo('Correo', 'email', '') + campo('Nombre', 'text', '') +
+          '<label class="campo"><span class="campo__et">Permiso</span>' +
+          '<select class="campo__in"><option>Usuario</option><option>Administrador</option></select></label>' +
+          '<button class="cta cta--principal cta--alto">Enviar invitación</button></div></div>' +
+      '<div style="grid-column:span 6;background:var(--banda-c);border-radius:var(--radio);padding:var(--e6)">' +
+        '<h4 style="margin-bottom:var(--e5)">Qué puede hacer cada permiso</h4>' +
+        '<div class="col g5">' +
+          '<div><div style="font-weight:600;margin-bottom:4px">Administrador</div>' +
+          '<p class="menor suave">Ve y administra todo, aprueba, exporta, invita y quita accesos.</p></div>' +
+          '<div><div style="font-weight:600;margin-bottom:4px">Usuario</div>' +
+          '<p class="menor suave">Ve, edita, guarda y exporta sólo sus proyectos. Usa sólo los materiales que él subió.</p></div>' +
+        '</div></div>' +
+    '</div>';
+  return envolver(prop, {
+    activo: 'config', banda: 'config', titulo: 'Configuración',
+    pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'Permisos'), cuerpo: cuerpo
+  });
+}
+
+/* ═══ Modales ═══════════════════════════════════════════════════════════ */
+
+function conModal(fondo, modal) {
+  return '<div style="position:relative;height:100%;overflow:hidden">' + fondo +
+    '<div style="position:absolute;inset:0;background:rgba(35,54,111,.5);display:grid;place-items:center;padding:var(--e6)">' +
+    modal + '</div></div>';
+}
+
+function pExportar(prop) {
+  var modal =
+    '<div style="background:var(--superficie);border-radius:var(--radio);width:100%;max-width:720px;overflow:hidden">' +
+      '<div style="padding:var(--e5) var(--e6);background:var(--neutra)" class="fila">' +
+        '<h4 class="crece">Exportar la pieza</h4>' + ico('cerrar') + '</div>' +
+      '<div style="padding:var(--e6)" class="col g5">' +
+        '<div><div class="etiqueta tenue" style="margin-bottom:var(--e3)">Formato</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e3)">' +
+            [['HTML','Completo',1],['Fragmento','Para el CMS',0],['JPG','Tres tamaños',0],['PNG','Con transparencia',0]]
+              .map(function (f) {
+                return '<div class="formato' + (f[2] ? ' formato--on' : '') + '">' +
+                  '<div style="font-weight:600">' + f[0] + '</div><div class="micro suave">' + f[1] + '</div></div>';
+              }).join('') + '</div></div>' +
+        '<div style="padding:var(--e4);border-radius:var(--radio)" class="fila g3 panel--oscuro">' +
+          ico('reloj', 'ico--16') + '<span class="menor">La portada lleva un carrusel. Elige qué diapositiva se congela en la imagen.</span></div>' +
+        '<div><div class="etiqueta tenue" style="margin-bottom:var(--e3)">Estado que se congela</div>' +
+          '<div class="opciones"><span class="opcion opcion--on">Diapositiva 1</span>' +
+          '<span class="opcion">Diapositiva 2</span><span class="opcion">Diapositiva 3</span></div></div>' +
+        '<div class="fila g3"><div class="crece"></div><button class="cta cta--secundario">Cancelar</button>' +
+          '<button class="cta cta--conversion">Comparar y exportar</button></div>' +
+      '</div></div>';
+  return conModal(EDITOR[prop]('web'), modal);
+}
+
+function pInsercion(prop) {
+  var modal =
+    '<div style="background:var(--superficie);border-radius:var(--radio);width:100%;max-width:620px;overflow:hidden">' +
+      '<div style="padding:var(--e5) var(--e6);background:var(--neutra)" class="fila">' +
+        '<h4 class="crece">Insertar contenido externo</h4>' + ico('cerrar') + '</div>' +
+      '<div style="padding:var(--e6)" class="col g5">' +
+        campo('Pega lo que sea', 'text', 'https://youtu.be/aB3xK9pQ2Lm') +
+        '<p class="campo__ayuda" style="margin-top:-12px">Una dirección, un código de inserción o un identificador. Lo reconocemos solo.</p>' +
+        '<div style="padding:var(--e4);border-radius:var(--radio)" class="fila g3 panel--oscuro">' +
+          ico('ojo', 'ico--16') + '<span class="menor"><b>YouTube reconocido.</b> Proporción 16:9 y portada tomada del propio video.</span></div>' +
+        '<div><div class="etiqueta tenue" style="margin-bottom:var(--e2)">Respaldo en correo y en imagen</div>' +
+          '<p class="menor suave" style="margin-bottom:var(--e3)">Ningún marco insertado sobrevive a un cliente de correo ni a una captura.</p>' +
+          '<div class="opciones"><span class="opcion opcion--on">Portada enlazada</span>' +
+          '<span class="opcion">Imagen propia</span><span class="opcion">Texto enlazado</span></div></div>' +
+        '<div class="fila g3"><div class="crece"></div><button class="cta cta--secundario">Cancelar</button>' +
+          '<button class="cta cta--conversion">Insertar</button></div>' +
+      '</div></div>';
+  return conModal(EDITOR[prop]('web'), modal);
+}
+
+/* ═══ Índice ════════════════════════════════════════════════════════════ */
+
+var PANTALLAS = [
+  { id: 'login', n: 'Acceso', ruta: '/login', g: 'Acceso', f: pLogin },
+  { id: 'invitacion', n: 'Invitación', ruta: '/invitacion/:token', g: 'Acceso', f: pInvitacion },
+  { id: 'recuperar', n: 'Recuperar acceso', ruta: '/recuperar', g: 'Acceso', f: pRecuperar },
+
+  { id: 'home', n: 'Inicio', ruta: '/home', g: 'Trabajo', f: function (p) { return HOME[p](); } },
+  { id: 'crear', n: 'Crear', ruta: '/crear', g: 'Trabajo', f: pCrear },
+  { id: 'proyectos', n: 'Proyectos', ruta: '/proyectos', g: 'Trabajo', f: pProyectos },
+  { id: 'ficha', n: 'Ficha de proyecto', ruta: '/proyectos/:id', g: 'Trabajo', f: pFicha },
+  { id: 'papelera', n: 'Papelera', ruta: '/proyectos/papelera', g: 'Trabajo', f: pPapelera },
+
+  { id: 'editor-web', n: 'Editor web', ruta: '/crear/web/:id', g: 'Editor', f: function (p) { return EDITOR[p]('web'); } },
+  { id: 'editor-email', n: 'Editor email', ruta: '/crear/email/:id', g: 'Editor', f: function (p) { return EDITOR[p]('email'); } },
+  { id: 'editor-libre', n: 'Editor libre', ruta: '/crear/libre/:id', g: 'Editor', f: function (p) { return EDITOR[p]('libre'); } },
+  { id: 'exportar', n: 'Exportar', ruta: '/crear/web/:id · modal', g: 'Editor', f: pExportar },
+  { id: 'insercion', n: 'Insertar contenido', ruta: '/crear/web/:id · modal', g: 'Editor', f: pInsercion },
+
+  { id: 'bib-img', n: 'Biblioteca · imágenes', ruta: '/biblioteca/imagenes', g: 'Biblioteca', f: function (p) { return pBiblioteca(p, 'Imágenes'); } },
+  { id: 'bib-logos', n: 'Biblioteca · logos', ruta: '/biblioteca/logos', g: 'Biblioteca', f: function (p) { return pBiblioteca(p, 'Logos'); } },
+  { id: 'bib-tipo', n: 'Biblioteca · tipografías', ruta: '/biblioteca/tipografias', g: 'Biblioteca', f: function (p) { return pBiblioteca(p, 'Tipografías'); } },
+
+  { id: 'cfg-general', n: 'Configuración general', ruta: '/configuracion/general', g: 'Configuración', f: pConfigGeneral },
+  { id: 'cfg-permisos', n: 'Permisos', ruta: '/configuracion/permisos', g: 'Configuración', f: pConfigPermisos },
+  { id: 'cfg-usuarios', n: 'Usuarios', ruta: '/configuracion/usuarios', g: 'Configuración', f: pConfigUsuarios }
+];
+
+</script>
+<script>
+/* ═══ Los once colores de marca, más blanco ═════════════════════════════ */
+var PALETA = [
+  ['Azul oscuro', '#23366F'], ['Azul de Zúrich', '#2167AE'], ['Azul medio', '#5495CF'],
+  ['Azul claro', '#91BFE3'], ['Celeste', '#1FB1E6'], ['Piedra arenisca', '#DAD2BD'],
+  ['Paloma', '#DDE4E3'], ['Blanco de Zúrich', '#ECEEEF'], ['Menta', '#A6E9AB'],
+  ['Limón', '#FFF773'], ['Durazno', '#FF7569'], ['Blanco', '#FFFFFF']
+];
+var NOMBRE_COLOR = {};
+PALETA.forEach(function (c) { NOMBRE_COLOR[c[1].toUpperCase()] = c[0]; });
+
+/* ═══ Dos puntos de partida ═════════════════════════════════════════════ */
+/* ═══ El punto de partida ═══════════════════════════════════════════════
+   «Tus colores» es lo que dice la hoja de estilos, sin nada encima: los
+   colores que eligió el usuario el 6 de septiembre. «Sobrio» es la única
+   alternativa, y se aplica escribiendo tokens sobre esa base.         */
+var PRESETS = {
+  sobrio: {
+    '--fondo-app': '#ECEEEF', '--superficie': '#FFFFFF', '--neutra': '#ECEEEF',
+    '--banda-inicio': '#FFFFFF', '--banda-crear': '#FFFFFF',
+    '--banda-trabajo': '#ECEEEF', '--sobre-trabajo': '#23366F',
+    '--banda-papelera': '#ECEEEF', '--banda-biblioteca': '#ECEEEF',
+    '--banda-config': '#ECEEEF', '--sobre-config': '#23366F',
+    '--banda-a': '#FFFFFF', '--banda-b': '#ECEEEF', '--banda-c': '#FFFFFF',
+    '--banda-d': '#DDE4E3', '--banda-e': '#FFFFFF',
+    '--estructura': '#23366F', '--sobre-estructura': '#FFFFFF', '--sobre-estructura-suave': '#91BFE3',
+    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#3F4A63', '--texto-tenue': '#4F5A6E',
+    '--accion': '#2167AE', '--accion-texto': '#FFFFFF',
+    '--conversion': '#2167AE', '--conversion-texto': '#FFFFFF',
+    '--secundario-linea': '#7D8A97', '--secundario-texto': '#23366F',
+    '--acento': '#FFF773',
+    '--exito': '#1E6B3A', '--exito-fondo': '#E4F1E9', '--aviso': '#7A5A12', '--aviso-fondo': '#F8F1DD',
+    '--error': '#A52A20', '--error-fondo': '#FAE9E7',
+    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#CC4038',
+    '--escala': '0.95', '--peso-titular': '600', '--radio-cta': '8px'
+  }
+};
+var presetActivo = 'elegido';
+function aplicarPreset(n) {
+  presetActivo = n;
+  var r = document.documentElement.style, t = PRESETS[n];
+  /* Se limpia siempre: «tus colores» es la hoja de estilos sin overrides */
+  for (var k in PRESETS.sobrio) r.removeProperty(k);
+  for (var k in t) r.setProperty(k, t[k]);
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.style.borderColor = b.dataset.preset === n ? 'var(--v-acento)' : 'var(--v-borde)';
+  });
+}
+
+/* ═══ Registro de cambios ═══════════════════════════════════════════════
+   Cada cambio guarda propuesta, pantalla, una ruta estable hasta el
+   elemento y qué se le hizo. La ruta se recalcula igual en cada dibujado,
+   así que los cambios sobreviven a cambiar de pantalla y volver.        */
+var cambios = [];
+
+function rutaDe(el, raiz) {
+  var partes = [];
+  while (el && el !== raiz && el.parentElement) {
+    var padre = el.parentElement;
+    var hermanos = Array.prototype.filter.call(padre.children, function (c) { return c.tagName === el.tagName; });
+    var i = hermanos.indexOf(el);
+    var cls = '';
+    if (el.className && typeof el.className === 'string') {
+      var c0 = el.className.trim().split(/\s+/)[0];
+      if (c0) cls = '.' + c0;
+    }
+    partes.unshift(el.tagName.toLowerCase() + cls + (hermanos.length > 1 ? '[' + i + ']' : ''));
+    el = padre;
+  }
+  return partes.join(' > ');
+}
+
+function nombreLegible(el) {
+  var c = (el.className && typeof el.className === 'string') ? el.className.trim().split(/\s+/)[0] : '';
+  var t = el.tagName.toLowerCase();
+  var mapa = { h1: 'Titular', h2: 'Titular', h3: 'Subtítulo', h4: 'Subtítulo', p: 'Párrafo',
+    span: 'Texto', b: 'Texto', label: 'Etiqueta', button: 'Botón', section: 'Sección',
+    img: 'Imagen', td: 'Celda', th: 'Cabecera de tabla', input: 'Campo', table: 'Tabla' };
+  var base = mapa[t] || 'Bloque';
+  if (c.indexOf('cta') === 0) base = 'Botón';
+  else if (c.indexOf('banda') === 0) base = 'Banda de sección';
+  else if (c === 'a-lateral' || c === 'b-riel') base = 'Lateral';
+  else if (c === 'a-barra' || c === 'c-barra' || c === 'ed-barra') base = 'Barra superior';
+  else if (c.indexOf('tabla') === 0) base = 'Tabla';
+  else if (c.indexOf('acceso') === 0) base = 'Tarjeta de acceso';
+  else if (c.indexOf('pastilla') === 0) base = 'Etiqueta de estado';
+  /* El texto sólo acompaña al nombre cuando el elemento es una hoja: en un
+     contenedor grande, textContent devolvería toda la sección. */
+  var hijos = el.children.length;
+  var txt = (el.textContent || '').trim().replace(/\s+/g, ' ');
+  if (hijos > 2 || txt.length > 46) txt = '';
+  return base + (txt ? ' · ' + (txt.length > 30 ? txt.slice(0, 30) + '…' : txt) : '');
+}
+
+function claveDe(ruta) { return estado.propuesta + '|' + estado.pantalla + '|' + ruta; }
+
+function registrar(ruta, nombre, prop, valor) {
+  var k = claveDe(ruta);
+  var ya = cambios.filter(function (c) { return c.k === k && c.prop === prop; })[0];
+  if (ya) ya.valor = valor;
+  else cambios.push({ k: k, ruta: ruta, nombre: nombre, prop: prop, valor: valor,
+                      propuesta: estado.propuesta, pantalla: estado.pantalla });
+  pintarCambios();
+  guardar();
+}
+
+/* Los cambios se guardan en el propio navegador: cerrar el archivo y volver
+   a abrirlo no pierde el trabajo. Si el navegador lo impide, se sigue
+   funcionando igual, solo que sin memoria. */
+var LLAVE = 'fcb-cambios';
+function guardar() {
+  try {
+    localStorage.setItem(LLAVE, JSON.stringify({
+      preset: presetActivo, propuesta: estado.propuesta, cambios: cambios
+    }));
+  } catch (e) { /* sin memoria disponible */ }
+}
+function recuperar() {
+  try {
+    var g = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+    if (!g || !Array.isArray(g.cambios)) return null;
+    cambios = g.cambios;
+    if (g.propuesta) estado.propuesta = g.propuesta;
+    return g.preset || 'pastel';
+  } catch (e) { return null; }
+}
+
+function pintarUno(el, prop, valor) {
+  if (prop === 'fondo') el.style.setProperty('background', valor, 'important');
+  else if (prop === 'color') el.style.setProperty('color', valor, 'important');
+  else if (prop === 'estilo') {
+    el.style.setProperty('font-weight', valor === 'bold' ? '700' : '400', 'important');
+    el.style.setProperty('font-style', valor === 'italic' ? 'italic' : 'normal', 'important');
+  }
+}
+
+function aplicarCambios() {
+  var raiz = document.getElementById('pantalla');
+  var porRuta = {};
+  var hay = false;
+  cambios.forEach(function (c) {
+    if (c.propuesta !== estado.propuesta || c.pantalla !== estado.pantalla) return;
+    (porRuta[c.ruta] = porRuta[c.ruta] || []).push(c); hay = true;
+  });
+  if (!hay) return;
+  raiz.querySelectorAll('*').forEach(function (el) {
+    var lista = porRuta[rutaDe(el, raiz)];
+    if (lista) lista.forEach(function (c) { pintarUno(el, c.prop, c.valor); });
+  });
+}
+
+function etiquetaCambio(c) {
+  if (c.prop === 'estilo') return { t: 'Letra ' + ({ normal: 'normal', bold: 'negrita', italic: 'cursiva' }[c.valor]), col: null };
+  var n = NOMBRE_COLOR[String(c.valor).toUpperCase()] || c.valor;
+  return { t: (c.prop === 'fondo' ? 'Fondo ' : 'Texto ') + n, col: c.valor };
+}
+
+function pintarCambios() {
+  var d = document.getElementById('cambios');
+  if (!cambios.length) {
+    d.innerHTML = '<div class="vacio-c">Todavía no has cambiado nada.<br>Toca cualquier elemento de la pantalla.</div>';
+    return;
+  }
+  d.innerHTML = cambios.map(function (c, i) {
+    var e = etiquetaCambio(c);
+    return '<div class="cambio">' +
+      '<i style="background:' + (e.col || 'transparent') + (e.col ? '' : ';border-style:dashed') + '"></i>' +
+      '<div><b>' + e.t + '</b><span>' + c.nombre + '<br>' + c.propuesta.toUpperCase() + ' · ' + c.pantalla + '</span></div>' +
+      '<button data-quita="' + i + '" title="Deshacer">✕</button></div>';
+  }).join('');
+}
+
+function textoCambios() {
+  if (!cambios.length) return 'Sin cambios.';
+  var por = {};
+  cambios.forEach(function (c) {
+    var k = 'PROPUESTA ' + c.propuesta.toUpperCase() + ' · pantalla ' + c.pantalla;
+    (por[k] = por[k] || []).push(c);
+  });
+  return 'CAMBIOS DE COLOR Y TIPOGRAFÍA — Fast Creative Builder\n' +
+    new Date().toLocaleDateString('es-CL') + ' · punto de partida: ' + presetActivo + '\n\n' +
+    Object.keys(por).map(function (k) {
+      return k + '\n' + por[k].map(function (c) {
+        var e = etiquetaCambio(c);
+        return '  · ' + c.nombre + '\n      ' + e.t + (e.col ? '  ' + c.valor : '') + '\n      ' + c.ruta;
+      }).join('\n');
+    }).join('\n\n');
+}
+
+/* ═══ El globo ══════════════════════════════════════════════════════════ */
+var globo = document.getElementById('globo');
+var elegido = null;
+
+(function pintarGlobo() {
+  function cols(prop) {
+    return PALETA.map(function (c) {
+      return '<button data-set="' + prop + '" data-val="' + c[1] + '" style="background:' + c[1] + '" title="' + c[0] + ' · ' + c[1] + '"></button>';
+    }).join('') + '<button class="quita" data-set="' + prop + '" data-val="">Quitar</button>';
+  }
+  document.getElementById('gFondo').innerHTML = cols('fondo');
+  document.getElementById('gTexto').innerHTML = cols('color');
+})();
+
+function abrirGlobo(el, x, y) {
+  elegido = el;
+  document.getElementById('gNombre').textContent = nombreLegible(el);
+  globo.classList.add('abierto');
+  var an = globo.offsetWidth, al = globo.offsetHeight;
+  globo.style.left = Math.min(Math.max(8, x - an / 2), window.innerWidth - an - 8) + 'px';
+  globo.style.top = (y + al + 16 > window.innerHeight ? Math.max(8, y - al - 12) : y + 12) + 'px';
+}
+function cerrarGlobo() { globo.classList.remove('abierto'); elegido = null; }
+
+function aplicarA(el, prop, valor) {
+  var raiz = document.getElementById('pantalla');
+  var ruta = rutaDe(el, raiz);
+  if (!valor) {
+    var k = claveDe(ruta);
+    cambios = cambios.filter(function (c) { return !(c.k === k && c.prop === prop); });
+    if (prop === 'fondo') el.style.removeProperty('background');
+    else if (prop === 'color') el.style.removeProperty('color');
+    pintarCambios();
+    return;
+  }
+  pintarUno(el, prop, valor);
+  registrar(ruta, nombreLegible(el), prop, valor);
+}
+
+/* ═══ Visor ═════════════════════════════════════════════════════════════ */
+var PROPUESTAS = [
+  { id: 'a', n: 'A · Taller', d: 'Lateral fijo de destinos y barra superior.' },
+  { id: 'b', n: 'B · Lienzo', d: 'Riel de íconos y paneles flotantes.' },
+  { id: 'c', n: 'C · Escritorio', d: 'Barra superior ancha, sin lateral.' }
+];
+var TAM = { escritorio: { w: 1440, h: 900 }, tableta: { w: 834, h: 1100 }, movil: { w: 390, h: 844 } };
+var estado = { propuesta: 'a', pantalla: 'login', dispositivo: 'escritorio', solo: false };
+
+function pintarProps() {
+  document.getElementById('props').innerHTML = PROPUESTAS.map(function (p) {
+    return '<button class="prop" data-prop="' + p.id + '" aria-pressed="' + (p.id === estado.propuesta) + '">' +
+      '<b>' + p.n + '</b><span>' + p.d + '</span></button>';
+  }).join('');
+}
+function pintarLista() {
+  var h = '', g = null;
+  PANTALLAS.forEach(function (s) {
+    if (s.g !== g) { g = s.g; h += '<div class="gr">' + g + '</div>'; }
+    h += '<button class="it" data-pant="' + s.id + '" aria-current="' + (s.id === estado.pantalla) + '">' +
+      s.n + '<small>' + s.ruta + '</small></button>';
+  });
+  document.getElementById('lista').innerHTML = h;
+}
+function actual() {
+  for (var i = 0; i < PANTALLAS.length; i++) if (PANTALLAS[i].id === estado.pantalla) return PANTALLAS[i];
+  return PANTALLAS[0];
+}
+function pintar() {
+  var s = actual(), t = TAM[estado.dispositivo];
+  var marco = document.getElementById('marco'), lienzo = document.getElementById('pantalla');
+  document.getElementById('tit').textContent = s.n;
+  document.getElementById('ruta').textContent = s.ruta;
+  marco.style.width = t.w + 'px'; marco.style.height = t.h + 'px';
+  lienzo.className = 'p tocable' + (estado.dispositivo === 'movil' ? ' movil' : '') +
+                     (estado.dispositivo === 'tableta' ? ' tableta' : '');
+  lienzo.setAttribute('data-propuesta', estado.propuesta);
+  lienzo.innerHTML = s.f(estado.propuesta);
+  aplicarCambios();
+  ajustarLienzos(lienzo);   /* la escala se mide, no se supone */
+
+  var esc = document.querySelector('.escena');
+  var hol = estado.solo ? 0 : 40;
+  var e = Math.min(1, (esc.clientWidth - hol) / t.w, (esc.clientHeight - hol) / t.h);
+  marco.style.transform = 'scale(' + e + ')';
+  marco.style.marginBottom = -(t.h * (1 - e)) + 'px';
+  cerrarGlobo();
+}
+
+/* ═══ Eventos ═══════════════════════════════════════════════════════════ */
+/* En captura, para que los botones de la maqueta no se traguen el clic */
+document.getElementById('pantalla').addEventListener('click', function (ev) {
+  if (ev.target === this) return;
+  ev.preventDefault(); ev.stopPropagation();
+  abrirGlobo(ev.target, ev.clientX, ev.clientY);
+}, true);
+
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest('button');
+  if (!b) {
+    if (globo.classList.contains('abierto') && !ev.target.closest('#globo') && !ev.target.closest('#pantalla')) cerrarGlobo();
+    return;
+  }
+  if (ev.target.closest('#pantalla')) return;
+
+  if (b.dataset.set !== undefined && elegido) aplicarA(elegido, b.dataset.set, b.dataset.val);
+  else if (b.dataset.estilo && elegido) aplicarA(elegido, 'estilo', b.dataset.estilo);
+  else if (b.id === 'gArriba' && elegido && elegido.parentElement && elegido.parentElement.id !== 'pantalla') {
+    var r = elegido.parentElement.getBoundingClientRect();
+    abrirGlobo(elegido.parentElement, r.left + r.width / 2, r.top + 20);
+  }
+  else if (b.id === 'gCerrar') cerrarGlobo();
+  else if (b.dataset.quita !== undefined) { cambios.splice(+b.dataset.quita, 1); pintarCambios(); guardar(); pintar(); }
+  else if (b.dataset.prop) { estado.propuesta = b.dataset.prop; pintarProps(); pintar(); }
+  else if (b.dataset.pant) { estado.pantalla = b.dataset.pant; pintarLista(); pintar(); }
+  else if (b.dataset.disp) {
+    estado.dispositivo = b.dataset.disp;
+    document.querySelectorAll('[data-disp]').forEach(function (x) {
+      x.setAttribute('aria-pressed', String(x.dataset.disp === estado.dispositivo)); });
+    pintar();
+  }
+  else if (b.id === 'bSolo') { estado.solo = !estado.solo; b.setAttribute('aria-pressed', String(estado.solo));
+    document.body.classList.toggle('solo', estado.solo); pintar(); }
+  else if (b.dataset.preset) { aplicarPreset(b.dataset.preset); guardar(); pintar(); }
+  else if (b.id === 'bLimpiar') {
+    if (cambios.length && confirm('¿Borrar los ' + cambios.length + ' cambios?')) {
+      cambios = []; pintarCambios(); guardar(); pintar();
+    }
+  }
+  else if (b.id === 'bCopiar') {
+    var txt = textoCambios();
+    navigator.clipboard.writeText(txt).then(function () {
+      b.textContent = 'Copiado'; setTimeout(function () { b.textContent = 'Copiar cambios'; }, 1400);
+    }).catch(function () { window.prompt('Copia esto y pásamelo:', txt); });
+  }
+});
+
+window.addEventListener('resize', pintar);
+window.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarGlobo(); });
+
+aplicarPreset(recuperar() || 'elegido');
+pintarProps();
+pintarLista();
+pintarCambios();
+pintar();
+</script>
+</body>
+</html>

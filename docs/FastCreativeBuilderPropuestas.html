@@ -594,7 +594,7 @@
 .regla-v .regla-n { left: 2px; transform: translateY(3px) rotate(-90deg); transform-origin: left top; }
 
 /* Extensión de lo seleccionado, marcada sobre la propia regla */
-.regla-sel { position: absolute; background: var(--conversion); opacity: .9; }
+.regla-sel { position: absolute; background: var(--cota); opacity: .9; }
 .regla-h .regla-sel { bottom: 0; height: 3px; }
 .regla-v .regla-sel { right: 0; width: 3px; }
 
@@ -826,7 +826,13 @@
 
 /* El editor en móvil no intenta ser un editor de escritorio */
 .movil .ed--a, .movil .ed--b, .movil .ed--c { grid-template-columns: 1fr; }
-.movil .ed__panel, .movil .ed-riel, .movil .ed-flotante, .movil .ed-props, .movil .zona-regla { display: none; }
+.movil .ed__panel, .movil .ed-riel, .movil .ed-flotante, .movil .ed-props { display: none; }
+/* En el teléfono se ocultan las reglas y las ayudas de composición, pero la
+   pieza se ve: el aviso dice que ahí se revisa, y antes no había nada que
+   revisar porque se ocultaba el lienzo entero. */
+.movil .regla-h, .movil .regla-v, .movil .regla-esq,
+.movil .eleccion-soltar, .movil .linea-insercion, .movil .cota, .movil .guia { display: none; }
+.movil .zona-regla { grid-template-columns: 1fr; grid-template-rows: 1fr; padding: var(--e3) var(--e3) var(--e8); }
 .movil .ed__lienzo { padding: 0; }
 .movil .ed-barra { padding: 0 var(--margen); gap: var(--e2); overflow: hidden; }
 .movil .ed-barra .cta span, .movil .ed-barra > div:nth-child(2) { display: none; }
@@ -937,6 +943,20 @@
 .formato { padding: var(--e4); border-radius: var(--radio); background: var(--neutra); }
 .formato--on { background: var(--estructura); color: var(--sobre-estructura); }
 .formato--on .suave, .formato--on .tenue { color: var(--sobre-estructura-suave); }
+
+/* ── Tableta: el lienzo manda ─────────────────────────────────────────
+   No había ningún ajuste para tableta, así que los tres paneles del
+   editor dejaban al lienzo 271 px de 834 y la pieza salía al 18 %. En
+   una tableta se trabaja con un panel, no con tres.                   */
+.tableta .ed--a { grid-template-columns: 208px 1fr; }
+.tableta .ed--a > .ed__panel:last-child { display: none; }
+.tableta .ed--c { grid-template-columns: 184px 1fr; }
+.tableta .ed__panel { min-width: 0; }
+.tableta .ed-props__ruta { display: none; }
+
+/* La barra flotante de formato es de escritorio: en el teléfono tapa un
+   tercio de la pieza que se supone que hay que revisar. */
+.movil .flotante { display: none; }
 
 </style>
 <style>
@@ -1182,20 +1202,26 @@ function pasoRegla(escala) {
   return 100;
 }
 
+/* Las posiciones NO se redondean. Redondear cada marca por separado dejaba
+   el paso alternando entre 6 y 7 px y metía hasta 0,48 px de error: en una
+   regla que promete el píxel real eso se ve y no vale. El navegador coloca
+   subpíxeles sin problema. */
+function pxRegla(v) { return (Math.round(v * 1000) / 1000) + 'px'; }
+
 function reglaHorizontal(anchoPieza, escala, seleccion) {
   var paso = pasoRegla(escala);
   var media = paso * 5;
   var mayor = paso * 10;
   var h = '';
   for (var x = 0; x <= anchoPieza; x += paso) {
-    var px = Math.round(x * escala);
+    var px = pxRegla(x * escala);
     var clase = x % mayor === 0 ? 'marca marca--mayor' : (x % media === 0 ? 'marca marca--media' : 'marca');
-    h += '<i class="' + clase + '" style="left:' + px + 'px"></i>';
-    if (x % mayor === 0) h += '<i class="regla-n" style="left:' + px + 'px">' + x + '</i>';
+    h += '<i class="' + clase + '" style="left:' + px + '"></i>';
+    if (x % mayor === 0) h += '<i class="regla-n" style="left:' + px + '">' + x + '</i>';
   }
   if (seleccion) {
-    h += '<i class="regla-sel" style="left:' + Math.round(seleccion.x * escala) +
-         'px;width:' + Math.round(seleccion.ancho * escala) + 'px"></i>';
+    h += '<i class="regla-sel" style="left:' + pxRegla(seleccion.x * escala) +
+         ';width:' + pxRegla(seleccion.ancho * escala) + '"></i>';
   }
   return h;
 }
@@ -1206,14 +1232,14 @@ function reglaVertical(altoPieza, escala, seleccion) {
   var mayor = paso * 10;
   var h = '';
   for (var y = 0; y <= altoPieza; y += paso) {
-    var px = Math.round(y * escala);
+    var px = pxRegla(y * escala);
     var clase = y % mayor === 0 ? 'marca marca--mayor' : (y % media === 0 ? 'marca marca--media' : 'marca');
-    h += '<i class="' + clase + '" style="top:' + px + 'px"></i>';
-    if (y % mayor === 0 && y > 0) h += '<i class="regla-n" style="top:' + px + 'px">' + y + '</i>';
+    h += '<i class="' + clase + '" style="top:' + px + '"></i>';
+    if (y % mayor === 0 && y > 0) h += '<i class="regla-n" style="top:' + px + '">' + y + '</i>';
   }
   if (seleccion) {
-    h += '<i class="regla-sel" style="top:' + Math.round(seleccion.y * escala) +
-         'px;height:' + Math.round(seleccion.alto * escala) + 'px"></i>';
+    h += '<i class="regla-sel" style="top:' + pxRegla(seleccion.y * escala) +
+         ';height:' + pxRegla(seleccion.alto * escala) + '"></i>';
   }
   return h;
 }
@@ -1638,17 +1664,21 @@ function lienzoConReglas(modo, prop, contenido, sel, extras) {
   var pz = PIEZA[modo];
   var disponible = UTIL[prop];
   var escala = Math.min(1, disponible / pz.ancho);
-  var w = Math.round(pz.ancho * escala);
-  var h = Math.round(pz.alto * escala);
+  var w = pz.ancho * escala;
+  var h = pz.alto * escala;
 
+  /* Esto es sólo el primer dibujado. UTIL es una estimación de escritorio y
+     en tableta se queda corta: la pieza no cabe y el chip miente. Después de
+     pintar, ajustarLienzos mide el contenedor de verdad y recalcula. */
   return (
-    '<div class="ed__lienzo">' +
+    '<div class="ed__lienzo" data-modo="' + modo + '"' +
+      (sel ? ' data-sel="' + esc(JSON.stringify(sel)) + '"' : '') + '>' +
       '<div class="zona-regla">' +
         '<div class="regla-esq">px</div>' +
-        '<div class="regla-h" style="width:' + w + 'px">' + reglaHorizontal(pz.ancho, escala, sel) + '</div>' +
-        '<div class="regla-v" style="height:' + h + 'px">' + reglaVertical(pz.alto, escala, sel) + '</div>' +
-        '<div class="lienzo-area" style="width:' + w + 'px">' +
-          '<div class="hoja-escala" style="width:' + w + 'px;height:' + h + 'px">' +
+        '<div class="regla-h" style="width:' + pxRegla(w) + '">' + reglaHorizontal(pz.ancho, escala, sel) + '</div>' +
+        '<div class="regla-v" style="height:' + pxRegla(h) + '">' + reglaVertical(pz.alto, escala, sel) + '</div>' +
+        '<div class="lienzo-area" style="width:' + pxRegla(w) + '">' +
+          '<div class="hoja-escala" style="width:' + pxRegla(w) + ';height:' + pxRegla(h) + '">' +
             '<div class="hoja" style="width:' + pz.ancho + 'px;transform:scale(' + escala + ')">' +
               contenido +
             '</div>' +
@@ -1659,6 +1689,54 @@ function lienzoConReglas(modo, prop, contenido, sel, extras) {
       '<div class="zoom-chip">' + pz.n + ' · ' + Math.round(escala * 100) + '%</div>' +
     '</div>'
   );
+}
+
+/* ── Ajuste real, medido después de pintar ────────────────────────────────
+   La escala no puede salir de una constante: depende del ancho que quede de
+   verdad, y ese cambia con la propuesta, con el dispositivo y con el tamaño
+   del marco. Se mide el contenedor, se recalcula la escala y se redibujan
+   las dos reglas. Así el número de la regla es el píxel real de la pieza en
+   escritorio, en tableta y en móvil.                                      */
+function ajustarLienzos(raiz) {
+  var lienzos = raiz.querySelectorAll('.ed__lienzo[data-modo]');
+  for (var i = 0; i < lienzos.length; i++) {
+    var l = lienzos[i];
+    var pz = PIEZA[l.getAttribute('data-modo')];
+    if (!pz) continue;
+
+    var zona = l.querySelector('.zona-regla');
+    var hoja = l.querySelector('.hoja');
+    var caja = l.querySelector('.hoja-escala');
+    var area = l.querySelector('.lienzo-area');
+    var rh = l.querySelector('.regla-h');
+    var rv = l.querySelector('.regla-v');
+    if (!hoja || !caja || !zona) continue;
+
+    /* Ancho libre = interior del lienzo, menos la columna de la regla
+       vertical y menos el aire que reserva la zona a la derecha. */
+    var ez = getComputedStyle(zona);
+    var columnaRegla = (rv && ez.display === 'grid' && getComputedStyle(rv).display !== 'none')
+      ? parseFloat(ez.gridTemplateColumns) || 24 : 0;
+    var aire = (parseFloat(ez.paddingLeft) || 0) + (parseFloat(ez.paddingRight) || 0);
+    var libre = l.clientWidth - columnaRegla - aire;
+    if (!(libre > 0)) continue;
+
+    var escala = Math.min(1, libre / pz.ancho);
+    var w = pz.ancho * escala, h = pz.alto * escala;
+
+    var sel = null;
+    var crudo = l.getAttribute('data-sel');
+    if (crudo) { try { sel = JSON.parse(crudo); } catch (e) { sel = null; } }
+
+    hoja.style.transform = 'scale(' + escala + ')';
+    caja.style.width = pxRegla(w); caja.style.height = pxRegla(h);
+    if (area) area.style.width = pxRegla(w);
+    if (rh) { rh.style.width = pxRegla(w); rh.innerHTML = reglaHorizontal(pz.ancho, escala, sel); }
+    if (rv) { rv.style.height = pxRegla(h); rv.innerHTML = reglaVertical(pz.alto, escala, sel); }
+
+    var chip = l.querySelector('.zoom-chip');
+    if (chip) chip.textContent = pz.n + ' · ' + Math.round(escala * 100) + '%';
+  }
 }
 
 /* ── Contenido de la pieza ───────────────────────────────────────────── */
@@ -2646,10 +2724,12 @@ function pintar() {
   document.getElementById('tit').textContent = s.n;
   document.getElementById('ruta').textContent = s.ruta;
   marco.style.width = t.w + 'px'; marco.style.height = t.h + 'px';
-  lienzo.className = 'p tocable' + (estado.dispositivo === 'movil' ? ' movil' : '');
+  lienzo.className = 'p tocable' + (estado.dispositivo === 'movil' ? ' movil' : '') +
+                     (estado.dispositivo === 'tableta' ? ' tableta' : '');
   lienzo.setAttribute('data-propuesta', estado.propuesta);
   lienzo.innerHTML = s.f(estado.propuesta);
   aplicarCambios();
+  ajustarLienzos(lienzo);   /* la escala se mide, no se supone */
 
   var esc = document.querySelector('.escena');
   var hol = estado.solo ? 0 : 40;

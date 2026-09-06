@@ -149,7 +149,7 @@
 .regla-v .regla-n { left: 2px; transform: translateY(3px) rotate(-90deg); transform-origin: left top; }
 
 /* Extensión de lo seleccionado, marcada sobre la propia regla */
-.regla-sel { position: absolute; background: var(--conversion); opacity: .9; }
+.regla-sel { position: absolute; background: var(--cota); opacity: .9; }
 .regla-h .regla-sel { bottom: 0; height: 3px; }
 .regla-v .regla-sel { right: 0; width: 3px; }
 
@@ -381,7 +381,13 @@
 
 /* El editor en móvil no intenta ser un editor de escritorio */
 .movil .ed--a, .movil .ed--b, .movil .ed--c { grid-template-columns: 1fr; }
-.movil .ed__panel, .movil .ed-riel, .movil .ed-flotante, .movil .ed-props, .movil .zona-regla { display: none; }
+.movil .ed__panel, .movil .ed-riel, .movil .ed-flotante, .movil .ed-props { display: none; }
+/* En el teléfono se ocultan las reglas y las ayudas de composición, pero la
+   pieza se ve: el aviso dice que ahí se revisa, y antes no había nada que
+   revisar porque se ocultaba el lienzo entero. */
+.movil .regla-h, .movil .regla-v, .movil .regla-esq,
+.movil .eleccion-soltar, .movil .linea-insercion, .movil .cota, .movil .guia { display: none; }
+.movil .zona-regla { grid-template-columns: 1fr; grid-template-rows: 1fr; padding: var(--e3) var(--e3) var(--e8); }
 .movil .ed__lienzo { padding: 0; }
 .movil .ed-barra { padding: 0 var(--margen); gap: var(--e2); overflow: hidden; }
 .movil .ed-barra .cta span, .movil .ed-barra > div:nth-child(2) { display: none; }
@@ -492,3 +498,17 @@
 .formato { padding: var(--e4); border-radius: var(--radio); background: var(--neutra); }
 .formato--on { background: var(--estructura); color: var(--sobre-estructura); }
 .formato--on .suave, .formato--on .tenue { color: var(--sobre-estructura-suave); }
+
+/* ── Tableta: el lienzo manda ─────────────────────────────────────────
+   No había ningún ajuste para tableta, así que los tres paneles del
+   editor dejaban al lienzo 271 px de 834 y la pieza salía al 18 %. En
+   una tableta se trabaja con un panel, no con tres.                   */
+.tableta .ed--a { grid-template-columns: 208px 1fr; }
+.tableta .ed--a > .ed__panel:last-child { display: none; }
+.tableta .ed--c { grid-template-columns: 184px 1fr; }
+.tableta .ed__panel { min-width: 0; }
+.tableta .ed-props__ruta { display: none; }
+
+/* La barra flotante de formato es de escritorio: en el teléfono tapa un
+   tercio de la pieza que se supone que hay que revisar. */
+.movil .flotante { display: none; }

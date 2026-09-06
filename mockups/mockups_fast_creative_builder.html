@@ -439,10 +439,12 @@ function pintar() {
   document.getElementById('tit').textContent = s.n;
   document.getElementById('ruta').textContent = s.ruta;
   marco.style.width = t.w + 'px'; marco.style.height = t.h + 'px';
-  lienzo.className = 'p tocable' + (estado.dispositivo === 'movil' ? ' movil' : '');
+  lienzo.className = 'p tocable' + (estado.dispositivo === 'movil' ? ' movil' : '') +
+                     (estado.dispositivo === 'tableta' ? ' tableta' : '');
   lienzo.setAttribute('data-propuesta', estado.propuesta);
   lienzo.innerHTML = s.f(estado.propuesta);
   aplicarCambios();
+  ajustarLienzos(lienzo);   /* la escala se mide, no se supone */
 
   var esc = document.querySelector('.escena');
   var hol = estado.solo ? 0 : 40;

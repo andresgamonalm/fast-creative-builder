@@ -130,6 +130,9 @@ function pantalla(prop, s, movil) {
     '<div class="encaje"><div class="pantalla-marco' + (movil ? ' movil' : '') + '">' +
       '<div class="p' + (movil ? ' movil' : '') + '" data-propuesta="' + prop + '">' + s.f(prop) + '</div>' +
     '</div></div>';
+  /* El lienzo de los editores mide su contenedor: sin esto, las páginas de
+     editor salían con la escala cableada y la pieza no cabía. */
+  if (typeof ajustarLienzos === 'function') ajustarLienzos(p);
   var marco = p.querySelector('.pantalla-marco');
   var esc = movil ? 690 / 844 : Math.min(1000 / 1440, 660 / 900);
   marco.style.transform = 'scale(' + esc + ')';

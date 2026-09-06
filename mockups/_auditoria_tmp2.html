@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<link rel="stylesheet" href="sistema_mockups_fast_creative_builder.css?v=1788686253">
+<link rel="stylesheet" href="propuestas_mockups_fast_creative_builder.css?v=1788686253">
+<style>html,body{margin:0}#marco{overflow:hidden;background:#fff}</style>
+</head><body>
+<div id="marco" class="p"></div>
+<script src="base_mockups_fast_creative_builder.js?v=1788686253"></script>
+<script src="pantallas_mockups_fast_creative_builder.js?v=1788686253"></script>
+<script src="editor_mockups_fast_creative_builder.js?v=1788686253"></script>
+<script src="interiores_mockups_fast_creative_builder.js?v=1788686253"></script>
+<script>
+var TAMX = { escritorio:{w:1440,h:900}, tableta:{w:834,h:1100}, movil:{w:390,h:844} };
+function render(prop, modo, disp) {
+  disp = disp || 'escritorio';
+  var m = document.getElementById('marco'), t = TAMX[disp];
+  m.className = 'p' + (disp==='movil'?' movil':'') + (disp==='tableta'?' tableta':'');
+  m.style.width = t.w+'px'; m.style.height = t.h+'px';
+  m.innerHTML = EDITOR[prop](modo);
+  if (typeof ajustarLienzos === 'function') ajustarLienzos(m);
+}
+render('a','web','escritorio');
+</script></body></html>

@@ -30,17 +30,21 @@ function lienzoConReglas(modo, prop, contenido, sel, extras) {
   var pz = PIEZA[modo];
   var disponible = UTIL[prop];
   var escala = Math.min(1, disponible / pz.ancho);
-  var w = Math.round(pz.ancho * escala);
-  var h = Math.round(pz.alto * escala);
+  var w = pz.ancho * escala;
+  var h = pz.alto * escala;
 
+  /* Esto es sólo el primer dibujado. UTIL es una estimación de escritorio y
+     en tableta se queda corta: la pieza no cabe y el chip miente. Después de
+     pintar, ajustarLienzos mide el contenedor de verdad y recalcula. */
   return (
-    '<div class="ed__lienzo">' +
+    '<div class="ed__lienzo" data-modo="' + modo + '"' +
+      (sel ? ' data-sel="' + esc(JSON.stringify(sel)) + '"' : '') + '>' +
       '<div class="zona-regla">' +
         '<div class="regla-esq">px</div>' +
-        '<div class="regla-h" style="width:' + w + 'px">' + reglaHorizontal(pz.ancho, escala, sel) + '</div>' +
-        '<div class="regla-v" style="height:' + h + 'px">' + reglaVertical(pz.alto, escala, sel) + '</div>' +
-        '<div class="lienzo-area" style="width:' + w + 'px">' +
-          '<div class="hoja-escala" style="width:' + w + 'px;height:' + h + 'px">' +
+        '<div class="regla-h" style="width:' + pxRegla(w) + '">' + reglaHorizontal(pz.ancho, escala, sel) + '</div>' +
+        '<div class="regla-v" style="height:' + pxRegla(h) + '">' + reglaVertical(pz.alto, escala, sel) + '</div>' +
+        '<div class="lienzo-area" style="width:' + pxRegla(w) + '">' +
+          '<div class="hoja-escala" style="width:' + pxRegla(w) + ';height:' + pxRegla(h) + '">' +
             '<div class="hoja" style="width:' + pz.ancho + 'px;transform:scale(' + escala + ')">' +
               contenido +
             '</div>' +
@@ -51,6 +55,54 @@ function lienzoConReglas(modo, prop, contenido, sel, extras) {
       '<div class="zoom-chip">' + pz.n + ' · ' + Math.round(escala * 100) + '%</div>' +
     '</div>'
   );
+}
+
+/* ── Ajuste real, medido después de pintar ────────────────────────────────
+   La escala no puede salir de una constante: depende del ancho que quede de
+   verdad, y ese cambia con la propuesta, con el dispositivo y con el tamaño
+   del marco. Se mide el contenedor, se recalcula la escala y se redibujan
+   las dos reglas. Así el número de la regla es el píxel real de la pieza en
+   escritorio, en tableta y en móvil.                                      */
+function ajustarLienzos(raiz) {
+  var lienzos = raiz.querySelectorAll('.ed__lienzo[data-modo]');
+  for (var i = 0; i < lienzos.length; i++) {
+    var l = lienzos[i];
+    var pz = PIEZA[l.getAttribute('data-modo')];
+    if (!pz) continue;
+
+    var zona = l.querySelector('.zona-regla');
+    var hoja = l.querySelector('.hoja');
+    var caja = l.querySelector('.hoja-escala');
+    var area = l.querySelector('.lienzo-area');
+    var rh = l.querySelector('.regla-h');
+    var rv = l.querySelector('.regla-v');
+    if (!hoja || !caja || !zona) continue;
+
+    /* Ancho libre = interior del lienzo, menos la columna de la regla
+       vertical y menos el aire que reserva la zona a la derecha. */
+    var ez = getComputedStyle(zona);
+    var columnaRegla = (rv && ez.display === 'grid' && getComputedStyle(rv).display !== 'none')
+      ? parseFloat(ez.gridTemplateColumns) || 24 : 0;
+    var aire = (parseFloat(ez.paddingLeft) || 0) + (parseFloat(ez.paddingRight) || 0);
+    var libre = l.clientWidth - columnaRegla - aire;
+    if (!(libre > 0)) continue;
+
+    var escala = Math.min(1, libre / pz.ancho);
+    var w = pz.ancho * escala, h = pz.alto * escala;
+
+    var sel = null;
+    var crudo = l.getAttribute('data-sel');
+    if (crudo) { try { sel = JSON.parse(crudo); } catch (e) { sel = null; } }
+
+    hoja.style.transform = 'scale(' + escala + ')';
+    caja.style.width = pxRegla(w); caja.style.height = pxRegla(h);
+    if (area) area.style.width = pxRegla(w);
+    if (rh) { rh.style.width = pxRegla(w); rh.innerHTML = reglaHorizontal(pz.ancho, escala, sel); }
+    if (rv) { rv.style.height = pxRegla(h); rv.innerHTML = reglaVertical(pz.alto, escala, sel); }
+
+    var chip = l.querySelector('.zoom-chip');
+    if (chip) chip.textContent = pz.n + ' · ' + Math.round(escala * 100) + '%';
+  }
 }
 
 /* ── Contenido de la pieza ───────────────────────────────────────────── */
