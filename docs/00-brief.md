@@ -1,6 +1,6 @@
 # Fast Creative Builder — Brief corregido y plan de construcción
 
-**Versión:** 5 · 5 de septiembre de 2026
+**Versión:** 6 · 6 de septiembre de 2026
 **Reemplaza a:** `Fast_Creative_Builder_Especificacion_Funcional.docx` + texto complementario + respuestas del 5 de septiembre
 **Destino:** `fast-creative-builder.gamonal.app`
 **Estado:** contrato funcional para aprobación. Nada implementado.
@@ -458,24 +458,98 @@ Si prefieres borrarla ya mismo, se borra y asumo el riesgo.
 
 ---
 
-## 19. Fases
+## 19. Entregables de producto e identidad
 
-Cada fase termina en algo que puedes abrir y romper tú mismo en local.
+Faltaban en la versión 5 porque el brief se redactó sin leer
+`reglas-creacion-aplicativos`. Son obligatorios.
 
-| Fase | Resultado | Cómo se comprueba |
-|---|---|---|
-| **0 · Andamiaje** | Repositorio Git, TypeScript, Vite, Workers, D1, R2, sesión, invitación por correo, roles en servidor. Documento de referencia de campos. Borrado de la carpeta anterior | Invitas una cuenta, entra, y no ve nada tuyo |
-| **1 · Base espacial** | Árbol de nodos, cinco niveles de selección, margin/padding/gap en 0, flujo y overlay, arrastre, historial | 50 movimientos seguidos sin pérdidas, duplicados ni espacios ocultos |
-| **2 · Estilos** | Inspector completo, unidades, mapa de caja, tokens, tipografías subidas, estados, breakpoints, persistencia | Un cambio en tablet no altera desktop; recargar conserva todo |
-| **3 · Componentes** | El catálogo por categoría, con todas las cantidades, variantes y fallbacks | Cada componente pasa su propia lista de aceptación |
-| **4 · Modos** | Reglas Web, Email y Libre; biblioteca, proyectos, papelera, permisos | La misma pieza se comporta correctamente en los tres modos |
-| **5 · Exportación** | HTML, JPG y PNG en los tres modos, con validación y comparación visual | Los archivos abiertos coinciden con la vista previa |
+### 19.1 Identidad del aplicativo
 
-La fase 3 es aproximadamente el 80% del trabajo. Se implementa y valida **una categoría a la vez**.
+Logo propio, derivado del nombre y la función, con el lenguaje visual Zurich.
+De un mismo concepto salen todas las piezas:
+
+| Archivo | Formato |
+|---|---|
+| `logo_fast_creative_builder.svg` | Vectorial |
+| `logo_fast_creative_builder.png` | Fondo transparente, alta resolución |
+| `icono_fast_creative_builder.ico` | ICO real y multirresolución, para acceso directo e instalador |
+| `icono_fast_creative_builder_1000x1000.png` | 1000 × 1000 reales, para audiovisual |
+| Favicon | Integrado y comprobado dentro del aplicativo |
+
+El logotipo de Zurich no se sustituye ni se modifica: la marca del aplicativo
+es propia y convive con la de Zurich según las reglas de co-branding.
+
+### 19.2 Capturas y portada
+
+Tres capturas reales del producto funcionando, en 1920 × 1080 y JPG de calidad:
+pantalla principal, función diferencial y resultado. Más
+`portada_presentacion_fast_creative_builder.jpg`, también 1920 × 1080.
+
+### 19.3 Documentación
+
+- `documentacion_general_tecnica_fast_creative_builder.docx`
+- `descripcion_publicitaria_fast_creative_builder.docx`
+- `descripcion_archivos_fast_creative_builder.docx`, después de la aprobación
+
+### 19.4 Nomenclatura
+
+`tema_nombre_proyecto.extension`, en minúsculas, sin espacios, acentos ni ñ.
+
+### 19.5 Cómo se entrega
+
+Cada entrega se abre con **doble clic o con una URL**. Nunca con la consola:
+instalar, configurar, compilar y arrancar es responsabilidad mía.
 
 ---
 
-## 20. Criterios de aceptación
+## 20. Diseño de interfaz: el proceso que faltaba
+
+La versión 5 no decía nada sobre cómo se diseña la interfaz. Sin ese proceso,
+la primera implementación salió mal y hubo que rehacerla entera.
+
+- **Tres propuestas de mockup de alta fidelidad** antes de tocar la
+  implementación, materialmente distintas en navegación, composición,
+  densidad, interacción e identidad. Se eligen una y se implementa esa.
+- **Cuadrícula de 12 columnas** en escritorio y **escala de espaciado de 8 px**.
+- **Investigar tres productos comparables** antes de fijar la navegación.
+- **Login con fotografía real de Envato**, a página completa, con panel de
+  formulario y área visual diferenciados. Nunca una tarjeta sobre fondo plano.
+- **Cuerpo de texto a 16 px**; pesos 400, 500 y 600.
+- **Área táctil mínima de 44 px** en todo control.
+- **Radio único entre 5 y 10 px** en todo el sistema. Se fija en 8.
+- Sin sombras cromáticas, degradados, brillos ni difuminados.
+- Ningún color sobre su misma familia; las superficies se separan con fondos
+  sólidos, nunca con líneas ni filetes decorativos.
+- Ningún home resuelto como acumulación de cards blancas.
+- `DECISIONES-VISUALES.md` y `ENVATO_ASSETS.md` se mantienen al día.
+
+**Dirección visual.** La estructura, la composición, la personalidad y los
+criterios son de `lineamientos-marca-gamonal`. Zurich aporta el color y la
+tipografía, mapeados a los roles de Gamonal.
+
+---
+
+## 21. Fases
+
+El orden de la versión 5 estaba mal: ponía la infraestructura primero y el
+editor —que es el producto— en la fase 3. Se invierte, para que cada fase
+entregue algo que se pueda ver y usar.
+
+| Fase | Resultado | Cómo se comprueba |
+|---|---|---|
+| **0 · Acceso** | Repositorio, sesión, invitación por correo, roles en servidor | Invitas una cuenta, entra y no ve nada tuyo |
+| **1 · Interfaz** | Tres propuestas de la interfaz completa, elección e implementación de la elegida, con identidad, favicon y todas las rutas navegables | Recorres el aplicativo entero y nada parece de mentira |
+| **2 · Base espacial** | Árbol de nodos, cinco niveles de selección, cero espaciado automático, flujo y superposición, arrastre, historial | 50 movimientos seguidos sin pérdidas ni espacios ocultos |
+| **3 · Estilos** | Inspector completo, mapa de caja, tokens, tipografías subidas, estados, breakpoints | Un cambio en tableta no altera escritorio |
+| **4 · Componentes** | El catálogo por categoría, con cantidades, variantes y respaldos | Cada componente pasa su lista de aceptación |
+| **5 · Modos y biblioteca** | Reglas web, email y libre; biblioteca, proyectos, papelera | La misma pieza se comporta bien en los tres modos |
+| **6 · Exportación** | HTML, fragmento, JPG y PNG, con validación y comparación visual | Los archivos abiertos coinciden con la vista previa |
+
+La fase 4 sigue siendo el grueso del trabajo. Se valida una categoría a la vez.
+
+---
+
+## 22. Criterios de aceptación
 
 | Área | Terminado cuando… |
 |---|---|
@@ -493,7 +567,7 @@ La fase 3 es aproximadamente el 80% del trabajo. Se implementa y valida **una ca
 
 ---
 
-## 21. Lo que necesito de ti antes de arrancar
+## 23. Lo que necesito de ti antes de arrancar
 
 1. **R2 o D1** para los archivos: R2 pide tarjeta registrada aunque no cobre; D1 obliga a limitar las subidas a 1 MB.
 2. **Los archivos de Zurich Sans**, si los tienes, para cargarlos como tipografía base.

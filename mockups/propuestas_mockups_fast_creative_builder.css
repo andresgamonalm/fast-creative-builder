@@ -1,0 +1,760 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Tres propuestas. No son la misma pantalla con otro color: cambian la
+   navegación, la composición de apertura, la densidad y la lógica del
+   editor. Cada una tiene su propio logotipo e ícono.
+
+   A · TALLER      Barra lateral de destinos + barra superior de acciones.
+                   Rasgo propio: la ruta de selección siempre visible.
+   B · LIENZO      Riel de íconos y paneles flotantes. Máxima superficie
+                   para la pieza. Rasgo propio: el inspector se ancla junto
+                   a la selección, no en un panel fijo.
+   C · ESCRITORIO  Barra superior ancha con secciones desplegables, sin
+                   lateral. Rasgo propio: propiedades en barra horizontal.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════
+   A · TALLER
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.a-marco {
+  display: grid;
+  grid-template-columns: 248px 1fr;
+  height: 100%;
+  overflow: hidden;
+}
+
+.a-lateral {
+  background: var(--estructura);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: var(--e5) var(--e3);
+  gap: var(--e6);
+  overflow: hidden;
+}
+
+.a-marca {
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  padding: 0 var(--e2);
+}
+
+.a-marca__nombre {
+  font-size: var(--t-menor);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.a-marca__lema {
+  font-size: var(--t-micro);
+  color: var(--claro);
+}
+
+.a-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e1);
+}
+
+.a-grupo__t {
+  padding: 0 var(--e2) var(--e2);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--claro);
+}
+
+.a-dest {
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  height: 44px;
+  padding: 0 var(--e3);
+  border-radius: var(--radio);
+  font-size: var(--t-menor);
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* Estado activo por fondo sólido y peso, nunca por línea ni filete */
+.a-dest--on {
+  background: var(--papel);
+  color: var(--estructura);
+  font-weight: 600;
+}
+
+.a-lateral__pie {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  padding: var(--e3);
+  background: var(--estructura-clara);
+  border-radius: var(--radio);
+}
+
+.a-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%; /* excepción funcional al radio único */
+  background: var(--acento-calido);
+  color: var(--estructura);
+  display: grid;
+  place-items: center;
+  font-size: var(--t-menor);
+  font-weight: 600;
+  flex: none;
+}
+
+.a-principal {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--pagina);
+}
+
+.a-barra {
+  height: 64px;
+  flex: none;
+  background: var(--papel);
+  display: flex;
+  align-items: center;
+  gap: var(--e4);
+  padding: 0 var(--margen-pagina);
+}
+
+/* Rasgo propio de la propuesta A */
+.a-ruta {
+  height: 40px;
+  flex: none;
+  background: var(--paloma);
+  display: flex;
+  align-items: center;
+  gap: var(--e2);
+  padding: 0 var(--margen-pagina);
+  font-size: var(--t-micro);
+  color: var(--tinta-suave);
+}
+
+.a-ruta strong {
+  color: var(--estructura);
+  font-weight: 600;
+}
+
+.a-cuerpo {
+  flex: 1;
+  overflow: auto;
+  padding: var(--e6) var(--margen-pagina) var(--e9);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   B · LIENZO
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.b-marco {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  height: 100%;
+  overflow: hidden;
+}
+
+.b-riel {
+  background: var(--heroe);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e2);
+  padding: var(--e4) 0;
+}
+
+.b-riel__marca {
+  margin-bottom: var(--e4);
+}
+
+.b-icono {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radio);
+  color: #ffffff;
+  cursor: pointer;
+  position: relative;
+}
+
+.b-icono--on {
+  background: var(--papel);
+  color: var(--heroe);
+}
+
+.b-icono__et {
+  position: absolute;
+  left: 100%;
+  margin-left: var(--e2);
+  padding: 0 var(--e2);
+  height: 28px;
+  display: none;
+  align-items: center;
+  background: var(--estructura);
+  color: #ffffff;
+  font-size: var(--t-micro);
+  border-radius: var(--radio);
+  white-space: nowrap;
+}
+
+.b-riel__pie {
+  margin-top: auto;
+}
+
+.b-principal {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--pagina);
+}
+
+.b-cuerpo {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Cabecera integrada en el contenido, sin barra blanca aparte */
+.b-cabecera {
+  padding: var(--e7) var(--margen-pagina) var(--e5);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--e5);
+}
+
+.b-buscador {
+  height: 56px;
+  flex: 1;
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  padding: 0 var(--e4);
+  background: var(--papel);
+  border: 1px solid var(--contorno);
+  border-radius: var(--radio);
+  color: var(--tinta-tenue);
+  font-size: var(--t-cuerpo);
+}
+
+.b-seccion {
+  padding: 0 var(--margen-pagina) var(--e8);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   C · ESCRITORIO
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.c-marco {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.c-barra {
+  height: 68px;
+  flex: none;
+  background: var(--estructura);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: var(--e5);
+  padding: 0 var(--margen-pagina);
+}
+
+.c-secciones {
+  height: 52px;
+  flex: none;
+  background: var(--papel);
+  display: flex;
+  align-items: stretch;
+  gap: var(--e1);
+  padding: 0 var(--margen-pagina);
+}
+
+.c-seccion {
+  display: flex;
+  align-items: center;
+  gap: var(--e2);
+  padding: 0 var(--e4);
+  font-size: var(--t-menor);
+  font-weight: 500;
+  color: var(--tinta-suave);
+  cursor: pointer;
+}
+
+.c-seccion--on {
+  background: var(--pagina);
+  color: var(--estructura);
+  font-weight: 600;
+}
+
+.c-cuerpo {
+  flex: 1;
+  overflow: auto;
+  background: var(--pagina);
+}
+
+.c-ancho {
+  padding: var(--e7) var(--margen-pagina) var(--e9);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Piezas compartidas por las tres, con tratamiento propio en cada una
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Login. Página completa, dos zonas, fotografía real ──────────────── */
+
+.login {
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+}
+
+.login--a { grid-template-columns: 5fr 7fr; }
+.login--b { grid-template-columns: 7fr 5fr; }
+.login--c { grid-template-rows: 1fr auto; }
+
+.login__panel {
+  background: var(--papel);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--e10) var(--e9);
+  overflow: auto;
+}
+
+.login__forma {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--e4);
+}
+
+.login__visual {
+  position: relative;
+  overflow: hidden;
+  background: var(--estructura);
+}
+
+.login__foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Mensaje sobre bloque sólido, no sobre velo ni degradado */
+.login__mensaje {
+  position: absolute;
+  left: var(--e7);
+  bottom: var(--e7);
+  right: var(--e7);
+  max-width: 420px;
+  padding: var(--e5);
+  background: var(--estructura);
+  color: #ffffff;
+  border-radius: var(--radio);
+}
+
+.login__mensaje p {
+  font-size: var(--t-lead);
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.login__mensaje .etiqueta {
+  color: var(--acento-calido);
+  display: block;
+  margin-bottom: var(--e2);
+}
+
+/* ── Banda editorial del home. Composición distinta de las interiores ── */
+
+.banda {
+  display: grid;
+  grid-template-columns: 6fr 6fr;
+  background: var(--estructura);
+  color: #ffffff;
+  border-radius: var(--radio);
+  overflow: hidden;
+  min-height: 300px;
+}
+
+.banda__texto {
+  padding: var(--e7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--e4);
+}
+
+.banda__texto h1 {
+  color: #ffffff;
+}
+
+.banda__texto .etiqueta {
+  color: var(--acento-calido);
+}
+
+.banda__texto p {
+  color: var(--claro);
+  font-size: var(--t-lead);
+  line-height: 1.5;
+  max-width: 44ch;
+}
+
+.banda__foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  min-height: 300px;
+}
+
+/* Variante sólida sin fotografía, para la barra de cifras */
+.banda--cifras {
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--heroe);
+  min-height: 0;
+}
+
+.cifra {
+  padding: var(--e5) var(--e6);
+}
+
+.cifra__n {
+  font-size: var(--t-h2);
+  font-weight: 600;
+  color: var(--acento-calido);
+  line-height: 1;
+}
+
+.cifra__e {
+  margin-top: var(--e2);
+  font-size: var(--t-menor);
+  color: #ffffff;
+}
+
+/* ── Selector de modo. Tres bloques sólidos, no cards blancas ────────── */
+
+.modos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--e4);
+}
+
+.modo {
+  padding: var(--e6);
+  border-radius: var(--radio);
+  display: flex;
+  flex-direction: column;
+  gap: var(--e3);
+  min-height: 260px;
+  cursor: pointer;
+}
+
+.modo--web {
+  background: var(--estructura);
+  color: #ffffff;
+}
+.modo--email {
+  background: var(--acento-frio);
+  color: var(--estructura);
+}
+.modo--libre {
+  background: var(--arenisca);
+  color: var(--estructura);
+}
+
+.modo__n {
+  font-size: var(--t-h3);
+  font-weight: 600;
+}
+
+.modo__d {
+  font-size: var(--t-menor);
+  line-height: 1.55;
+  flex: 1;
+}
+
+.modo--web .modo__d { color: var(--claro); }
+
+/* ── Editor. Estructura distinta en cada propuesta ───────────────────── */
+
+.ed {
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+  background: var(--paloma);
+}
+
+/* A: tres paneles clásicos */
+.ed--a { grid-template-columns: 264px 1fr 304px; }
+
+/* B: paneles flotantes sobre el lienzo */
+.ed--b { grid-template-columns: 1fr; position: relative; }
+
+/* C: propiedades en barra horizontal, un solo panel lateral */
+.ed--c { grid-template-columns: 240px 1fr; }
+
+.ed__panel {
+  background: var(--papel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ed__panel-t {
+  height: 48px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--e2);
+  padding: 0 var(--e4);
+  background: var(--paloma);
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+}
+
+.ed__panel-c {
+  flex: 1;
+  overflow: auto;
+  padding: var(--e3);
+}
+
+.ed__lienzo {
+  overflow: auto;
+  padding: var(--e6);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.ed__hoja {
+  background: var(--papel);
+  width: 100%;
+  max-width: 900px;
+  min-height: 100%;
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+
+/* Componentes del panel de inserción */
+.comp {
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  padding: var(--e2) var(--e3);
+  border-radius: var(--radio);
+  cursor: grab;
+}
+
+.comp:hover {
+  background: var(--pagina);
+}
+
+.comp__ico {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radio);
+  background: var(--pagina);
+  color: var(--heroe);
+}
+
+.comp__n {
+  font-size: var(--t-menor);
+  font-weight: 500;
+}
+
+.comp__d {
+  font-size: var(--t-micro);
+  color: var(--tinta-tenue);
+}
+
+/* Bloque seleccionado en el lienzo */
+.sel {
+  position: relative;
+  outline: 2px solid var(--heroe);
+  outline-offset: -2px;
+}
+
+.sel__et {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(-100%);
+  height: 24px;
+  padding: 0 var(--e2);
+  display: flex;
+  align-items: center;
+  background: var(--heroe);
+  color: #ffffff;
+  font-size: var(--t-micro);
+  font-weight: 500;
+  border-radius: var(--radio) var(--radio) 0 0;
+  white-space: nowrap;
+}
+
+/* Mapa de caja del inspector */
+.caja {
+  background: var(--pagina);
+  border-radius: var(--radio);
+  padding: var(--e3);
+  text-align: center;
+  font-size: var(--t-micro);
+  color: var(--tinta-tenue);
+}
+
+.caja__m {
+  background: var(--arenisca);
+  border-radius: var(--radio);
+  padding: var(--e3);
+}
+
+.caja__p {
+  background: var(--claro);
+  border-radius: var(--radio);
+  padding: var(--e3);
+}
+
+.caja__c {
+  background: var(--papel);
+  border-radius: var(--radio);
+  padding: var(--e4) var(--e3);
+  color: var(--estructura);
+  font-weight: 600;
+}
+
+/* Ruta de selección del inspector */
+.ruta-sel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: var(--e3) var(--e4);
+  background: var(--pagina);
+  font-size: var(--t-micro);
+  color: var(--tinta-suave);
+}
+
+.ruta-sel b {
+  color: var(--estructura);
+  font-weight: 600;
+}
+
+/* ── Estado vacío ────────────────────────────────────────────────────── */
+
+.vacio {
+  padding: var(--e9) var(--e6);
+  text-align: center;
+  background: var(--papel);
+  border-radius: var(--radio);
+}
+
+.vacio h3 {
+  margin-bottom: var(--e2);
+}
+
+.vacio p {
+  color: var(--tinta-suave);
+  max-width: 48ch;
+  margin: 0 auto var(--e5);
+}
+
+/* ── Móvil ───────────────────────────────────────────────────────────── */
+
+.movil .a-marco,
+.movil .b-marco {
+  grid-template-columns: 1fr;
+}
+
+.movil .a-lateral,
+.movil .b-riel {
+  display: none;
+}
+
+.movil .a-barra,
+.movil .c-barra {
+  height: 56px;
+  padding: 0 var(--e4);
+}
+
+.movil .a-cuerpo,
+.movil .b-cabecera,
+.movil .b-seccion,
+.movil .c-ancho {
+  padding-left: var(--e4);
+  padding-right: var(--e4);
+}
+
+.movil .banda,
+.movil .modos,
+.movil .banda--cifras {
+  grid-template-columns: 1fr;
+}
+
+.movil .login {
+  grid-template-columns: 1fr;
+  grid-template-rows: 220px 1fr;
+}
+
+.movil .login__panel {
+  padding: var(--e6) var(--e4);
+}
+
+.movil .login__mensaje {
+  display: none;
+}
+
+.movil h1 {
+  font-size: var(--t-h2);
+}
+
+.movil .c-secciones {
+  overflow-x: auto;
+  padding: 0 var(--e4);
+}
+
+/* Barra inferior de navegación en móvil */
+.movil-nav {
+  display: none;
+  height: 64px;
+  flex: none;
+  background: var(--papel);
+  align-items: stretch;
+}
+
+.movil .movil-nav {
+  display: flex;
+}
+
+.movil-nav__i {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--tinta-tenue);
+}
+
+.movil-nav__i--on {
+  color: var(--heroe);
+  font-weight: 600;
+}

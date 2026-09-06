@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fast Creative Builder · Tres propuestas de interfaz</title>
+<link rel="stylesheet" href="sistema_mockups_fast_creative_builder.css">
+<link rel="stylesheet" href="propuestas_mockups_fast_creative_builder.css">
+<style>
+/* Cromo del visor. Deliberadamente neutro y oscuro para no competir con
+   las propuestas ni contaminar la lectura del color de marca. */
+:root {
+  --v-fondo: #16181c;
+  --v-panel: #1e2126;
+  --v-alto: #2a2e35;
+  --v-borde: #363b44;
+  --v-txt: #e7e9ec;
+  --v-txt2: #9aa2ae;
+  --v-acento: #5495cf;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--v-fondo);
+  color: var(--v-txt);
+  font-size: 14px;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  overflow: hidden;
+}
+a { color: var(--v-acento); }
+
+.v-lateral { background: var(--v-panel); display: flex; flex-direction: column; overflow: hidden; }
+.v-cab { padding: 20px; }
+.v-cab h1 { margin: 0 0 4px; font-size: 15px; }
+.v-cab p { margin: 0; font-size: 12px; color: var(--v-txt2); line-height: 1.5; }
+
+.v-props { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+.v-prop {
+  text-align: left; padding: 12px 14px; border-radius: 8px; cursor: pointer;
+  background: var(--v-alto); color: var(--v-txt); border: 1px solid transparent;
+  font-family: inherit; font-size: 13px; line-height: 1.45;
+}
+.v-prop b { display: block; font-size: 13px; margin-bottom: 3px; }
+.v-prop span { color: var(--v-txt2); font-size: 12px; }
+.v-prop[aria-pressed="true"] { border-color: var(--v-acento); background: #24303d; }
+.v-prop[aria-pressed="true"] span { color: #bcd4ea; }
+
+.v-lista { flex: 1; overflow: auto; padding: 8px 12px 24px; }
+.v-grupo { padding: 14px 8px 6px; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: var(--v-txt2); }
+.v-item {
+  display: block; width: 100%; text-align: left; padding: 9px 10px; border-radius: 8px;
+  background: transparent; color: var(--v-txt); border: 0; cursor: pointer;
+  font-family: inherit; font-size: 13px; line-height: 1.35;
+}
+.v-item:hover { background: var(--v-alto); }
+.v-item[aria-current="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
+.v-item small { display: block; font-size: 11px; opacity: .7; font-weight: 400; }
+
+.v-main { display: flex; flex-direction: column; overflow: hidden; }
+.v-barra {
+  height: 56px; flex: none; display: flex; align-items: center; gap: 16px;
+  padding: 0 20px; background: var(--v-panel);
+}
+.v-titulo { font-size: 14px; font-weight: 700; }
+.v-ruta { font-size: 12px; color: var(--v-txt2); font-family: ui-monospace, Consolas, monospace; }
+.v-crece { flex: 1; }
+.v-grupo-btn { display: flex; gap: 2px; background: var(--v-alto); padding: 3px; border-radius: 8px; }
+.v-btn {
+  padding: 7px 12px; border: 0; border-radius: 6px; background: transparent;
+  color: var(--v-txt2); font-family: inherit; font-size: 12px; cursor: pointer;
+}
+.v-btn[aria-pressed="true"] { background: var(--v-acento); color: #10182c; font-weight: 700; }
+
+.v-escena { flex: 1; overflow: auto; padding: 28px; display: flex; justify-content: center; align-items: flex-start; }
+.v-marco {
+  background: #fff; border-radius: 10px; overflow: hidden; flex: none;
+  transform-origin: top center; box-shadow: 0 8px 40px rgba(0,0,0,.45);
+}
+
+.v-notas { flex: none; background: var(--v-panel); padding: 14px 20px; font-size: 12px; color: var(--v-txt2); line-height: 1.6; }
+.v-notas b { color: var(--v-txt); }
+
+body.solo { grid-template-columns: 1fr; }
+body.solo .v-lateral, body.solo .v-notas { display: none; }
+body.solo .v-escena { padding: 0; align-items: stretch; }
+body.solo .v-marco { border-radius: 0; box-shadow: none; }
+
+@media (max-width: 900px) {
+  body { grid-template-columns: 1fr; }
+  .v-lateral { display: none; }
+}
+</style>
+</head>
+<body>
+
+<aside class="v-lateral">
+  <div class="v-cab">
+    <h1>Fast Creative Builder</h1>
+    <p>Tres propuestas de interfaz completa. Dirección Gamonal, color y tipografía Zurich.</p>
+  </div>
+
+  <div class="v-props" id="props"></div>
+  <nav class="v-lista" id="lista" aria-label="Pantallas"></nav>
+</aside>
+
+<main class="v-main">
+  <header class="v-barra">
+    <span class="v-titulo" id="tituloPantalla">Acceso</span>
+    <span class="v-ruta" id="rutaPantalla">/login</span>
+    <span class="v-crece"></span>
+
+    <div class="v-grupo-btn" role="group" aria-label="Dispositivo">
+      <button class="v-btn" data-disp="escritorio" aria-pressed="true">Escritorio</button>
+      <button class="v-btn" data-disp="tableta" aria-pressed="false">Tableta</button>
+      <button class="v-btn" data-disp="movil" aria-pressed="false">Móvil</button>
+    </div>
+
+    <div class="v-grupo-btn">
+      <button class="v-btn" id="btnCuadricula" aria-pressed="false">Cuadrícula de 12</button>
+      <button class="v-btn" id="btnSolo" aria-pressed="false">Sin cromo</button>
+    </div>
+  </header>
+
+  <div class="v-escena">
+    <div class="v-marco" id="marco"><div class="p" id="pantalla"></div></div>
+  </div>
+
+  <footer class="v-notas" id="notas"></footer>
+</main>
+
+<script src="base_mockups_fast_creative_builder.js"></script>
+<script src="pantallas_mockups_fast_creative_builder.js"></script>
+<script src="editor_mockups_fast_creative_builder.js"></script>
+<script src="interiores_mockups_fast_creative_builder.js"></script>
+<script>
+var PROPUESTAS = [
+  {
+    id: 'a',
+    n: 'A · Taller',
+    d: 'Barra lateral de destinos y barra superior de acciones. La ruta de selección siempre visible bajo la barra. Densidad media, orientada a trabajar rápido.'
+  },
+  {
+    id: 'b',
+    n: 'B · Lienzo',
+    d: 'Riel de íconos y paneles flotantes. El home abre por búsqueda. En el editor el inspector se ancla junto a la selección y el lienzo ocupa toda la pantalla.'
+  },
+  {
+    id: 'c',
+    n: 'C · Escritorio',
+    d: 'Barra superior ancha con secciones, sin lateral. El home abre con el resumen operativo. Las propiedades van en una barra horizontal, no en un panel.'
+  }
+];
+
+var TAMANOS = {
+  escritorio: { w: 1440, h: 900 },
+  tableta: { w: 834, h: 1100 },
+  movil: { w: 390, h: 844 }
+};
+
+var estado = { propuesta: 'a', pantalla: 'login', dispositivo: 'escritorio', cuadricula: false, solo: false };
+
+function pintarPropuestas() {
+  document.getElementById('props').innerHTML = PROPUESTAS.map(function (p) {
+    return (
+      '<button class="v-prop" data-prop="' + p.id + '" aria-pressed="' + (p.id === estado.propuesta) + '">' +
+      '<b>' + p.n + '</b><span>' + p.d + '</span></button>'
+    );
+  }).join('');
+}
+
+function pintarLista() {
+  var html = '';
+  var grupo = null;
+  PANTALLAS.forEach(function (s) {
+    if (s.g !== grupo) { grupo = s.g; html += '<div class="v-grupo">' + grupo + '</div>'; }
+    html +=
+      '<button class="v-item" data-pant="' + s.id + '" aria-current="' + (s.id === estado.pantalla) + '">' +
+      s.n + '<small>' + s.ruta + '</small></button>';
+  });
+  document.getElementById('lista').innerHTML = html;
+}
+
+function pantallaActual() {
+  for (var i = 0; i < PANTALLAS.length; i++) if (PANTALLAS[i].id === estado.pantalla) return PANTALLAS[i];
+  return PANTALLAS[0];
+}
+
+function pintar() {
+  var s = pantallaActual();
+  var t = TAMANOS[estado.dispositivo];
+  var marco = document.getElementById('marco');
+  var lienzo = document.getElementById('pantalla');
+
+  document.getElementById('tituloPantalla').textContent = s.n;
+  document.getElementById('rutaPantalla').textContent = s.ruta;
+
+  marco.style.width = t.w + 'px';
+  marco.style.height = t.h + 'px';
+
+  lienzo.className = 'p' + (estado.dispositivo === 'movil' ? ' movil' : '') + (estado.cuadricula ? ' mostrar-cuadricula' : '');
+  lienzo.setAttribute('data-propuesta', estado.propuesta);
+  lienzo.innerHTML =
+    s.f(estado.propuesta) +
+    (estado.cuadricula
+      ? '<div class="cuadricula">' + new Array(13).join('<span></span>') + '</div>'
+      : '');
+
+  // Escala para que la maqueta quepa en la ventana sin recortarse
+  var escena = document.querySelector('.v-escena');
+  var holgura = estado.solo ? 0 : 56;
+  var dispW = escena.clientWidth - holgura;
+  var dispH = escena.clientHeight - holgura;
+  var escala = Math.min(1, dispW / t.w, dispH / t.h);
+  marco.style.transform = 'scale(' + escala + ')';
+  marco.style.marginBottom = -(t.h * (1 - escala)) + 'px';
+
+  var p = PROPUESTAS.filter(function (x) { return x.id === estado.propuesta; })[0];
+  document.getElementById('notas').innerHTML =
+    '<b>' + p.n + '</b> · ' + p.d +
+    ' &nbsp;—&nbsp; Escala ' + Math.round(escala * 100) + '% sobre ' + t.w + '×' + t.h + '. ' +
+    'Las fotografías son vistas previas de Envato con marca de agua; los archivos licenciados se sustituyen al cierre.';
+}
+
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.prop) { estado.propuesta = b.dataset.prop; pintarPropuestas(); pintar(); }
+  else if (b.dataset.pant) { estado.pantalla = b.dataset.pant; pintarLista(); pintar(); }
+  else if (b.dataset.disp) {
+    estado.dispositivo = b.dataset.disp;
+    document.querySelectorAll('[data-disp]').forEach(function (x) {
+      x.setAttribute('aria-pressed', String(x.dataset.disp === estado.dispositivo));
+    });
+    pintar();
+  } else if (b.id === 'btnSolo') {
+    estado.solo = !estado.solo;
+    b.setAttribute('aria-pressed', String(estado.solo));
+    document.body.classList.toggle('solo', estado.solo);
+    pintar();
+  } else if (b.id === 'btnCuadricula') {
+    estado.cuadricula = !estado.cuadricula;
+    b.setAttribute('aria-pressed', String(estado.cuadricula));
+    pintar();
+  }
+});
+
+window.addEventListener('resize', pintar);
+
+pintarPropuestas();
+pintarLista();
+pintar();
+</script>
+</body>
+</html>

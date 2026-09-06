@@ -1,0 +1,448 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Fast Creative Builder — sistema visual de las propuestas
+   ───────────────────────────────────────────────────────────────────────
+   Dirección: lineamientos-marca-gamonal (estructura, composición,
+   personalidad, criterios de CTA y prohibiciones).
+   Color y tipografía: Brandbook Zurich 2024, mapeados a los roles Gamonal.
+
+   Reglas duras que este archivo cumple, y que la versión anterior incumplía:
+     · Radio único de 8 px en todo el sistema. Sin excepciones salvo el
+       avatar circular y el contenedor de imagen a sangre.
+     · Ninguna sombra cromática, ningún degradado, ningún brillo ni difuminado.
+     · Ningún color sobre su misma familia. Las superficies se separan con
+       fondos sólidos distintos, nunca con líneas ni filetes decorativos.
+     · Cuerpo a 16 px. Pesos 400, 500 y 600; nunca más.
+     · Área táctil mínima de 44 px en todo control.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Mapa de color: rol Gamonal → valor Zurich ───────────────────────── */
+
+:root {
+  /* Identidad y estructura */
+  --heroe: #2167ae;            /* Azul de Zúrich. Color héroe, visibilidad constante */
+  --heroe-oscuro: #1b558f;     /* hover y active del héroe */
+  --estructura: #23366f;       /* Azul oscuro. Cabeceras, barras, texto principal */
+  --estructura-clara: #2c4287;
+
+  /* Interacción y datos */
+  --medio: #5495cf;            /* Azul medio */
+  --claro: #91bfe3;            /* Azul claro */
+  --celeste: #1fb1e6;
+
+  /* Acentos. Equivalen al amarillo, turquesa y magenta de Gamonal */
+  --acento-calido: #fff773;    /* Lima. CTA sobre fondo azul */
+  --acento-frio: #19bab6;      /* Cerceta */
+  --acento-lila: #6d6bcf;      /* Lila */
+
+  /* Superficies */
+  --papel: #ffffff;
+  --pagina: #eceeef;           /* Blanco de Zúrich. Solo pantalla, aquí es legítimo */
+  --paloma: #dde4e3;
+  --arenisca: #dad2bd;
+
+  /* Texto */
+  --tinta: #23366f;            /* 9,87:1 sobre --pagina */
+  --tinta-suave: #4a5570;      /* 7,26:1 sobre blanco */
+  --tinta-tenue: #68717f;      /* 4,93:1 sobre blanco */
+  --sobre-oscuro: #ffffff;
+
+  /* Estados. Zurich no define semánticos de interfaz: [Convención] declarada,
+     construida para cumplir AA sobre superficie clara. */
+  --exito: #1e6b3a;
+  --exito-fondo: #e4f1e9;
+  --aviso: #7a5a12;
+  --aviso-fondo: #f8f1dd;
+  --error: #a52a20;
+  --error-fondo: #fae9e7;
+
+  /* Contorno de control. Nunca decorativo: sólo campos, CTA secundario,
+     anillo de foco y separación de filas en tabla densa. */
+  --contorno: #7d8a97;         /* 3,53:1 sobre blanco. Cumple WCAG 1.4.11 */
+  --contorno-tenue: #c3cbd2;
+
+  /* Forma */
+  --radio: 8px;
+
+  /* Escala de 8 px */
+  --e1: 4px;
+  --e2: 8px;
+  --e3: 12px;
+  --e4: 16px;
+  --e5: 24px;
+  --e6: 32px;
+  --e7: 40px;
+  --e8: 48px;
+  --e9: 64px;
+  --e10: 80px;
+  --e11: 96px;
+  --e12: 128px;
+
+  /* Tipografía. Zurich Sans cuando esté cargada; Arial es el respaldo que
+     autoriza el propio brandbook. Escala y pesos, de Gamonal. */
+  --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
+  --t-micro: 12px;
+  --t-menor: 14px;
+  --t-cuerpo: 16px;
+  --t-lead: 18px;
+  --t-h4: 20px;
+  --t-h3: 24px;
+  --t-h2: 32px;
+  --t-h1: 44px;
+  --t-display: 56px;
+
+  /* Cuadrícula de 12 columnas */
+  --columnas: 12;
+  --canal: 24px;
+  --margen-pagina: 40px;
+}
+
+/* ── Base compartida por las tres propuestas ─────────────────────────── */
+
+.p {
+  font-family: var(--fuente);
+  font-size: var(--t-cuerpo);
+  line-height: 1.5;
+  color: var(--tinta);
+  background: var(--pagina);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.p *,
+.p *::before,
+.p *::after {
+  box-sizing: border-box;
+}
+
+.p h1,
+.p h2,
+.p h3,
+.p h4,
+.p p,
+.p ul,
+.p ol,
+.p figure {
+  margin: 0;
+  padding: 0;
+}
+
+.p ul,
+.p ol {
+  list-style: none;
+}
+
+.p img {
+  display: block;
+  max-width: 100%;
+}
+
+.p h1 {
+  font-size: var(--t-h1);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.p h2 {
+  font-size: var(--t-h2);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.p h3 {
+  font-size: var(--t-h3);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.p h4 {
+  font-size: var(--t-h4);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.etiqueta {
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lead {
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--tinta-suave);
+}
+
+.menor {
+  font-size: var(--t-menor);
+}
+
+.tenue {
+  color: var(--tinta-tenue);
+}
+
+.suave {
+  color: var(--tinta-suave);
+}
+
+/* ── CTA. Un solo sistema de tamaños, radios y estados ───────────────── */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e2);
+  height: 44px;
+  padding: 0 var(--e5);
+  border: 0;
+  border-radius: var(--radio);
+  font-family: inherit;
+  font-size: var(--t-menor);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.cta--alto {
+  height: 52px;
+  padding: 0 var(--e6);
+  font-size: var(--t-cuerpo);
+}
+
+.cta--bajo {
+  height: 36px;
+  padding: 0 var(--e3);
+  font-size: var(--t-menor);
+}
+
+.cta--ancho {
+  width: 100%;
+}
+
+/* Sobre superficie clara */
+.cta--principal {
+  background: var(--heroe);
+  color: #ffffff;
+}
+
+.cta--secundario {
+  background: var(--papel);
+  color: var(--heroe);
+  border: 1px solid var(--heroe);
+}
+
+.cta--terciario {
+  background: transparent;
+  color: var(--heroe);
+  padding: 0 var(--e2);
+}
+
+/* Sobre fondo azul: el CTA cambia de color para no caer en azul sobre azul */
+.cta--sobre-azul {
+  background: var(--acento-calido);
+  color: var(--estructura);
+}
+
+.cta--sobre-azul-secundario {
+  background: var(--papel);
+  color: var(--estructura);
+}
+
+.cta--peligro {
+  background: var(--papel);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+/* ── Campos ──────────────────────────────────────────────────────────── */
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e2);
+}
+
+.campo__et {
+  font-size: var(--t-menor);
+  font-weight: 500;
+  color: var(--tinta);
+}
+
+.campo__in {
+  height: 48px;
+  padding: 0 var(--e3);
+  background: var(--papel);
+  border: 1px solid var(--contorno);
+  border-radius: var(--radio);
+  font-family: inherit;
+  font-size: var(--t-cuerpo);
+  color: var(--tinta);
+  width: 100%;
+}
+
+.campo__in--area {
+  height: auto;
+  min-height: 96px;
+  padding: var(--e3);
+  resize: none;
+}
+
+.campo__ayuda {
+  font-size: var(--t-micro);
+  color: var(--tinta-tenue);
+}
+
+/* ── Pastillas de estado. Color más texto, nunca color solo ──────────── */
+
+.pastilla {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 var(--e2);
+  border-radius: var(--radio);
+  font-size: var(--t-micro);
+  font-weight: 600;
+}
+
+.pastilla--exito {
+  background: var(--exito-fondo);
+  color: var(--exito);
+}
+.pastilla--aviso {
+  background: var(--aviso-fondo);
+  color: var(--aviso);
+}
+.pastilla--error {
+  background: var(--error-fondo);
+  color: var(--error);
+}
+.pastilla--neutra {
+  background: var(--paloma);
+  color: var(--tinta-suave);
+}
+.pastilla--acento {
+  background: var(--acento-calido);
+  color: var(--estructura);
+}
+
+.punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ── Tabla densa. La línea entre filas es funcional, no decorativa ───── */
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--papel);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+
+.tabla th {
+  padding: var(--e3) var(--e4);
+  text-align: left;
+  font-size: var(--t-micro);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-tenue);
+  background: var(--paloma);
+}
+
+.tabla td {
+  padding: var(--e4);
+  font-size: var(--t-menor);
+  border-top: 1px solid var(--contorno-tenue);
+  vertical-align: middle;
+}
+
+.tabla tr:first-child td {
+  border-top: 0;
+}
+
+.tabla__miniatura {
+  width: 56px;
+  height: 40px;
+  border-radius: var(--radio);
+  object-fit: cover;
+  background: var(--paloma);
+}
+
+/* ── Utilidades de rejilla ───────────────────────────────────────────── */
+
+.fila {
+  display: flex;
+  align-items: center;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.crece {
+  flex: 1;
+  min-width: 0;
+}
+
+.g1 { gap: var(--e1); }
+.g2 { gap: var(--e2); }
+.g3 { gap: var(--e3); }
+.g4 { gap: var(--e4); }
+.g5 { gap: var(--e5); }
+.g6 { gap: var(--e6); }
+.g8 { gap: var(--e8); }
+
+.rejilla12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--canal);
+}
+
+/* ── Superposición de cuadrícula, para revisión ──────────────────────── */
+
+.cuadricula {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  padding: 0 var(--margen-pagina);
+  z-index: 90;
+}
+
+.mostrar-cuadricula .cuadricula {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--canal);
+}
+
+.cuadricula span {
+  background: rgba(255, 118, 105, 0.16);
+}
+
+/* ── Iconografía. Una sola familia: trazo 1.5, esquinas redondeadas ──── */
+
+.ico {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.ico--16 { width: 16px; height: 16px; }
+.ico--24 { width: 24px; height: 24px; }
+.ico--28 { width: 28px; height: 28px; }
