@@ -33,3 +33,7 @@ npm-debug.log*
 
 # Sondas temporales que dejan los subagentes al verificar
 mockups/_*
+
+# Archivos de bloqueo de Office
+~$*
+mockups/zprobe*
