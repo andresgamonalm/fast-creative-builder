@@ -145,8 +145,8 @@ body.solo .marco { border-radius: 0; box-shadow: none; }
     <p>Quedan registrados aquí. Cuando termines, cópialos y me los pasas.</p>
   </div>
   <div class="presets">
-    <button class="preset" data-preset="pastel"><b>Con color</b><br>Bandas de sección</button>
-    <button class="preset" data-preset="sobrio"><b>Sobrio</b><br>Neutros y azul</button>
+    <button class="preset" data-preset="elegido"><b>Tus colores</b><br>Los que elegiste</button>
+    <button class="preset" data-preset="sobrio"><b>Sobrio</b><br>Todo en neutros</button>
   </div>
   <div class="cambios" id="cambios"></div>
   <div class="der-pie">
@@ -189,42 +189,37 @@ var NOMBRE_COLOR = {};
 PALETA.forEach(function (c) { NOMBRE_COLOR[c[1].toUpperCase()] = c[0]; });
 
 /* ═══ Dos puntos de partida ═════════════════════════════════════════════ */
+/* ═══ El punto de partida ═══════════════════════════════════════════════
+   «Tus colores» es lo que dice la hoja de estilos, sin nada encima: los
+   colores que eligió el usuario el 6 de septiembre. «Sobrio» es la única
+   alternativa, y se aplica escribiendo tokens sobre esa base.         */
 var PRESETS = {
-  pastel: {
-    '--fondo-app': '#ECEEEF', '--superficie': '#FFFFFF', '--neutra': '#ECEEEF',
-    '--banda-a': '#A6E9AB', '--banda-b': '#ECEEEF', '--banda-c': '#DDE4E3',
-    '--banda-d': '#DAD2BD', '--banda-e': '#91BFE3',
-    '--estructura': '#23366F', '--sobre-estructura': '#FFFFFF', '--sobre-estructura-suave': '#91BFE3',
-    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#4A5570', '--texto-tenue': '#68717F',
-    '--accion': '#2167AE', '--accion-texto': '#FFFFFF',
-    '--conversion': '#CC4038', '--conversion-texto': '#FFFFFF',
-    '--secundario-linea': '#2167AE', '--secundario-texto': '#2167AE',
-    '--acento': '#FFF773',
-    '--exito': '#1E6B3A', '--exito-fondo': '#E4F1E9', '--aviso': '#7A5A12', '--aviso-fondo': '#F8F1DD',
-    '--error': '#A52A20', '--error-fondo': '#FAE9E7',
-    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#CC4038',
-    '--escala': '1', '--peso-titular': '400', '--radio-cta': '999px'
-  },
   sobrio: {
     '--fondo-app': '#ECEEEF', '--superficie': '#FFFFFF', '--neutra': '#ECEEEF',
+    '--banda-inicio': '#FFFFFF', '--banda-crear': '#FFFFFF',
+    '--banda-trabajo': '#ECEEEF', '--sobre-trabajo': '#23366F',
+    '--banda-papelera': '#ECEEEF', '--banda-biblioteca': '#ECEEEF',
+    '--banda-config': '#ECEEEF', '--sobre-config': '#23366F',
     '--banda-a': '#FFFFFF', '--banda-b': '#ECEEEF', '--banda-c': '#FFFFFF',
     '--banda-d': '#DDE4E3', '--banda-e': '#FFFFFF',
     '--estructura': '#23366F', '--sobre-estructura': '#FFFFFF', '--sobre-estructura-suave': '#91BFE3',
-    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#4A5570', '--texto-tenue': '#68717F',
+    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#3F4A63', '--texto-tenue': '#4F5A6E',
     '--accion': '#2167AE', '--accion-texto': '#FFFFFF',
     '--conversion': '#2167AE', '--conversion-texto': '#FFFFFF',
     '--secundario-linea': '#7D8A97', '--secundario-texto': '#23366F',
     '--acento': '#FFF773',
     '--exito': '#1E6B3A', '--exito-fondo': '#E4F1E9', '--aviso': '#7A5A12', '--aviso-fondo': '#F8F1DD',
     '--error': '#A52A20', '--error-fondo': '#FAE9E7',
-    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#FF7569',
-    '--escala': '0.95', '--peso-titular': '500', '--radio-cta': '8px'
+    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#CC4038',
+    '--escala': '0.95', '--peso-titular': '600', '--radio-cta': '8px'
   }
 };
-var presetActivo = 'pastel';
+var presetActivo = 'elegido';
 function aplicarPreset(n) {
   presetActivo = n;
   var r = document.documentElement.style, t = PRESETS[n];
+  /* Se limpia siempre: «tus colores» es la hoja de estilos sin overrides */
+  for (var k in PRESETS.sobrio) r.removeProperty(k);
   for (var k in t) r.setProperty(k, t[k]);
   document.querySelectorAll('[data-preset]').forEach(function (b) {
     b.style.borderColor = b.dataset.preset === n ? 'var(--v-acento)' : 'var(--v-borde)';
@@ -508,7 +503,7 @@ document.addEventListener('click', function (ev) {
 window.addEventListener('resize', pintar);
 window.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarGlobo(); });
 
-aplicarPreset(recuperar() || 'pastel');
+aplicarPreset(recuperar() || 'elegido');
 pintarProps();
 pintarLista();
 pintarCambios();

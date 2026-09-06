@@ -41,27 +41,12 @@
   --superficie: #FFFFFF;
   --neutra: #ECEEEF;
 
-  /* ── Bandas de sección ───────────────────────────────────────────────
-     Cada zona del aplicativo tiene su color de cabecera, elegido por el
-     usuario el 6 de septiembre. El color del texto viaja con la banda:
-     no se decide pantalla a pantalla. Ver DEC-024.                     */
-  --banda-inicio: #DDE4E3;                /* paloma  · portada de inicio */
-  --banda-crear: #ECEEEF;                 /* blanco de Zúrich · elegir modo */
-  --banda-trabajo: #2167AE;               /* azul de Zúrich · proyectos y ficha */
-  --sobre-trabajo: #FFFFFF;
-  --banda-papelera: #A6E9AB;              /* menta */
-  --banda-biblioteca: #FFF773;            /* limón */
-  --banda-config: #1FB1E6;                /* celeste */
-  --sobre-config: #FFFFFF;                /* decisión del usuario: ver DEC-025 */
-
-  /* Superficies suaves de uso general: cajas, mesas de trabajo, paneles.
-     No son cabeceras de zona; el limón y el celeste se quedan arriba,
-     como acento y como cabecera, y no se usan a sangre. */
+  /* ── Bandas de sección ───────────────────────────────────────────── */
   --banda-a: #DAD2BD;
-  --banda-b: #2167AE;   /* la única fuerte: portada de la propuesta B */
+  --banda-b: #91BFE3;
   --banda-c: #A6E9AB;
   --banda-d: #DDE4E3;
-  --banda-e: #ECEEEF;
+  --banda-e: #DDE4E3;
 
   /* ── Estructura: lateral, barras y fondos oscuros ────────────────── */
   --estructura: #23366F;
@@ -71,19 +56,16 @@
   /* ── Texto ───────────────────────────────────────────────────────── */
   --titular: #23366F;
   --texto: #23366F;
-  --texto-suave: #3F4A63;
-  --texto-tenue: #4F5A6E;   /* aclarado más y no pasaba sobre menta ni gris */
+  --texto-suave: #4A5570;
+  --texto-tenue: #68717F;
 
-  /* ── Botones ─────────────────────────────────────────────────────────
-     El botón principal es azul oscuro; la acción que cierra el trabajo
-     —exportar, insertar— es limón con texto azul oscuro. El coral sale
-     del sistema: el usuario no lo eligió en ninguna pantalla.          */
-  --accion: #23366F;
+  /* ── Botones ─────────────────────────────────────────────────────── */
+  --accion: #2167AE;
   --accion-texto: #FFFFFF;
-  --conversion: #FFF773;
-  --conversion-texto: #23366F;
-  --secundario-linea: #1B5A93;
-  --secundario-texto: #1B5A93;   /* el azul héroe no llega a 4,5 sobre arenisca */
+  --conversion: #CC4038;
+  --conversion-texto: #FFFFFF;
+  --secundario-linea: #2167AE;
+  --secundario-texto: #2167AE;
 
   /* ── Acentos y estados ───────────────────────────────────────────── */
   --acento: #FFF773;
@@ -104,8 +86,7 @@
   --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
   --base: 16px;
   --escala: 1;
-  --peso-titular: 700;   /* el usuario pidió titulares en negrita */
-  --peso-subtitulo: 600;
+  --peso-titular: 400;
   --peso-texto: 400;
 
   /* ── Forma ───────────────────────────────────────────────────────── */
@@ -147,8 +128,6 @@
   --tinta-tenue: var(--texto-tenue);
   --azul-claro: var(--sobre-estructura-suave);
   --banda-lima: var(--acento);
-  --banda-paloma: #DDE4E3;
-  --celeste: #1FB1E6;
 }
 
 
@@ -176,8 +155,8 @@
 /* Titulares grandes y de peso normal, como en la referencia */
 .p h1 { font-size: var(--t-h1); font-weight: var(--peso-titular); line-height: 1.12; letter-spacing: -0.015em; color: var(--titular); }
 .p h2 { font-size: var(--t-h2); font-weight: var(--peso-titular); line-height: 1.18; letter-spacing: -0.01em; color: var(--titular); }
-.p h3 { font-size: var(--t-h3); font-weight: var(--peso-subtitulo); line-height: 1.25; color: var(--titular); }
-.p h4 { font-size: var(--t-h4); font-weight: var(--peso-subtitulo); line-height: 1.35; color: var(--titular); }
+.p h3 { font-size: var(--t-h3); font-weight: calc(var(--peso-titular) + 100); line-height: 1.25; color: var(--titular); }
+.p h4 { font-size: var(--t-h4); font-weight: calc(var(--peso-titular) + 200); line-height: 1.35; color: var(--titular); }
 
 .etiqueta { font-size: var(--t-micro); font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; }
 .lead { font-size: var(--t-lead); line-height: 1.6; color: var(--tinta-suave); }
@@ -255,9 +234,7 @@
 .banda--corta { padding: var(--e9) var(--margen); }
 
 .banda--a { background: var(--banda-a); }
-.banda--b { background: var(--banda-b); color: var(--sobre-trabajo); }
-.banda--b h1, .banda--b h2, .banda--b h3,
-.banda--b .lead, .banda--b .etiqueta, .banda--b .suave, .banda--b .tenue { color: var(--sobre-trabajo); }
+.banda--b { background: var(--banda-b); }
 .banda--c { background: var(--banda-c); }
 .banda--d { background: var(--banda-d); }
 .banda--e { background: var(--banda-e); }
@@ -265,20 +242,6 @@
 .banda--superficie { background: var(--superficie); }
 .banda--estructura { background: var(--estructura); color: var(--sobre-estructura); }
 .banda--estructura h1, .banda--estructura h2, .banda--estructura h3 { color: var(--sobre-estructura); }
-
-/* Cabeceras por zona. Antes se pedían por nombre —hueso, rosa, arenisca—
-   y esas clases no existían: las bandas salían sin fondo. De ahí que
-   hubiera que pintarlas a mano una por una. */
-.banda--inicio { background: var(--banda-inicio); }
-.banda--crear { background: var(--banda-crear); }
-.banda--papelera { background: var(--banda-papelera); }
-.banda--biblioteca { background: var(--banda-biblioteca); }
-.banda--config { background: var(--banda-config); color: var(--sobre-config); }
-
-.banda--trabajo { background: var(--banda-trabajo); color: var(--sobre-trabajo); }
-.banda--trabajo h1, .banda--trabajo h2, .banda--trabajo h3,
-.banda--trabajo .lead, .banda--trabajo .etiqueta,
-.banda--trabajo .suave, .banda--trabajo .tenue { color: var(--sobre-trabajo); }
 
 .contenedor { max-width: 1120px; margin: 0 auto; }
 
@@ -310,9 +273,9 @@
   border-radius: 50%;
   z-index: 3;
 }
-.burbuja--1 { width: 34px; height: 34px; background: #DDE4E3; }
-.burbuja--2 { width: 52px; height: 52px; background: #FFF773; }
-.burbuja--3 { width: 26px; height: 26px; background: #5495CF; }
+.burbuja--1 { width: 34px; height: 34px; background: var(--navy); }
+.burbuja--2 { width: 52px; height: 52px; background: var(--heroe); }
+.burbuja--3 { width: 26px; height: 26px; background: var(--azul-claro); }
 
 /* ── Campos ──────────────────────────────────────────────────────────── */
 
@@ -343,7 +306,7 @@
 .pastilla--exito { background: var(--exito-fondo); color: var(--exito); }
 .pastilla--aviso { background: var(--aviso-fondo); color: var(--aviso); }
 .pastilla--error { background: var(--error-fondo); color: var(--error); }
-.pastilla--neutra { background: var(--banda-paloma); color: var(--texto); }
+.pastilla--neutra { background: var(--banda-paloma); color: var(--tinta-suave); }
 .pastilla--acento { background: var(--banda-lima); color: var(--navy); }
 .punto { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
@@ -362,11 +325,9 @@
 .acceso:hover { border-color: var(--heroe); }
 .acceso__ico {
   width: 56px; height: 56px; border-radius: 50%;
-  background: var(--estructura); color: var(--sobre-estructura);
+  background: var(--azul-claro); color: var(--navy);
   display: grid; place-items: center;
 }
-/* El primero de la fila es el acento: limón con el icono en azul oscuro */
-.acceso:first-child .acceso__ico { background: var(--acento); color: var(--estructura); }
 .acceso__n { font-size: var(--t-menor); font-weight: 600; line-height: 1.3; }
 
 /* ── Tabla ───────────────────────────────────────────────────────────── */
@@ -406,39 +367,6 @@
 @media (prefers-reduced-motion: reduce) {
   .p *, .p *::before, .p *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
-
-/* Todo fondo celeste lleva el texto en blanco. Es una decisión expresa
-   del usuario del 6 de septiembre: blanco sobre #1FB1E6 mide 2,47:1 y no
-   alcanza el 4,5 de AA. Queda así por indicación suya. Ver DEC-025. */
-.banda--config h1, .banda--config h2, .banda--config h3, .banda--config h4,
-.banda--config .lead, .banda--config .etiqueta, .banda--config p,
-.banda--config .suave, .banda--config .tenue { color: var(--sobre-config); }
-
-/* ── Botón contra el fondo que lo rodea (DEC-015) ─────────────────────
-   Dos condiciones a la vez: 3:1 de separación y familias distintas.
-   Donde el color elegido no llega, no se cambia el color: se le pone
-   contorno azul oscuro, que sí separa y no altera la decisión.       */
-.cta--conversion { box-shadow: inset 0 0 0 1px var(--estructura); }
-
-/* Sobre azul oscuro y sobre el azul de Zúrich, el botón principal se
-   invierte: fondo blanco y texto azul oscuro. En azul sobre azul no se
-   distingue el botón del fondo. */
-.c-barra .cta--principal,
-.ed-barra--navy .cta--principal,
-.banda--estructura .cta--principal {
-  background: var(--sobre-estructura); color: var(--estructura);
-}
-/* Estas dos bandas cambian de color según el punto de partida, así que el
-   botón se define contra la propia banda y no contra un color fijo. */
-.banda--trabajo .cta--principal { background: var(--sobre-trabajo); color: var(--banda-trabajo); }
-.banda--b .cta--principal { background: var(--sobre-trabajo); color: var(--banda-b); }
-.c-barra .cta--principal:hover,
-.ed-barra--navy .cta--principal:hover,
-.banda--trabajo .cta--principal:hover,
-.banda--b .cta--principal:hover { opacity: .88; }
-
-/* Sobre el panel azul oscuro, el contorno del botón de cierre va en claro */
-.panel--oscuro .cta--conversion { box-shadow: inset 0 0 0 1px var(--sobre-estructura); }
 
 </style>
 <style>
@@ -506,12 +434,11 @@
 .login__panel { background: var(--superficie); display: flex; flex-direction: column; justify-content: center; padding: var(--e10) var(--e9); overflow: auto; }
 .login__forma { width: 100%; max-width: 384px; display: flex; flex-direction: column; gap: var(--e4); }
 .login__visual { position: relative; overflow: hidden; display: grid; place-items: center; padding: var(--e8); }
-/* El panel visual del acceso es azul oscuro en las tres propuestas.
-   Sobre ese fondo, el mensaje va en blanco y la etiqueta en limón. */
-.login__visual--rosa, .login__visual--celeste, .login__visual--ambar { background: var(--estructura); }
+.login__visual--rosa { background: var(--banda-b); }
+.login__visual--celeste { background: var(--banda-b); }
+.login__visual--ambar { background: var(--banda-a); }
 .login__pie-msg { position: absolute; left: var(--e8); right: var(--e8); bottom: var(--e8); max-width: 420px; }
-.login__pie-msg h3 { color: var(--sobre-estructura); font-weight: var(--peso-subtitulo); }
-.login__visual .etiqueta { color: var(--acento); }
+.login__pie-msg h3 { color: var(--estructura); font-weight: 400; }
 
 /* ═══ Editor ════════════════════════════════════════════════════════════ */
 
@@ -604,7 +531,7 @@
 .guia--h { left: 0; right: 0; height: 1px; }
 .guia__n {
   position: absolute; top: 0; left: 4px;
-  background: var(--estructura); color: #fff;
+  background: var(--celeste); color: #fff;
   font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px;
   font-variant-numeric: tabular-nums; white-space: nowrap;
 }
@@ -622,11 +549,11 @@
 /* Cotas de distancia entre elementos */
 .cota { position: absolute; z-index: 41; display: flex; align-items: center; justify-content: center; }
 .cota--v { flex-direction: column; }
-.cota__linea { background: var(--cota); }
+.cota__linea { background: var(--conversion); }
 .cota--v .cota__linea { width: 1px; flex: 1; }
 .cota--h .cota__linea { height: 1px; flex: 1; }
 .cota__n {
-  background: var(--cota); color: #fff;
+  background: var(--conversion); color: #fff;
   font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 3px;
   font-variant-numeric: tabular-nums;
 }
@@ -640,7 +567,7 @@
 .hoja__cifras { position: relative; display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 40px; }
 .hoja__cifras div { background: var(--neutra); padding: 24px; border-radius: 8px; }
 .hoja__cifras b { display: block; font-size: 28px; font-weight: 600; color: var(--accion); }
-.hoja__cifras div span { font-size: 14px; color: var(--texto-suave); }
+.hoja__cifras span { font-size: 14px; color: var(--texto-suave); }
 .hoja__texto { position: relative; padding: 0 40px 48px; }
 .hoja__texto p { font-size: 16px; line-height: 1.65; color: var(--texto-suave); max-width: 62ch; }
 
@@ -915,29 +842,6 @@
 .movil [style*="grid-template-columns:repeat(4,1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
 .movil .email__pie, .movil .email__cab { padding-left: var(--e3); padding-right: var(--e3); }
 
-/* ── Tarjetas de modo sobre fondo oscuro ──────────────────────────────
-   Web y Email van sobre azul; todo lo que llevan dentro tiene que
-   pasar a blanco, incluidos el titular y la bajada.                  */
-.modo--oscuro, .modo--oscuro h3, .modo--oscuro p { color: var(--sobre-estructura); }
-
-/* ── Panel de aviso y panel lateral en azul oscuro ────────────────────
-   La barra de la papelera y el panel de dominios permitidos usan el
-   azul oscuro con el texto en blanco, según lo elegido.              */
-.panel--oscuro { background: var(--estructura); color: var(--sobre-estructura); }
-.panel--oscuro h3, .panel--oscuro h4, .panel--oscuro p,
-.panel--oscuro .menor, .panel--oscuro .suave, .panel--oscuro .tenue { color: var(--sobre-estructura); }
-.panel--oscuro .ico { color: var(--acento); }
-
-/* La barra del editor es azul oscuro: lo que va encima se aclara. */
-.ed-barra--navy .cta--secundario { color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); }
-.ed-barra--navy .cta--secundario:hover { background: rgba(255,255,255,.12); }
-.ed-barra--navy .suave, .ed-barra--navy .tenue { color: var(--sobre-estructura-suave); }
-
-/* Formato de exportación elegido: azul oscuro, con su apoyo aclarado */
-.formato { padding: var(--e4); border-radius: var(--radio); background: var(--neutra); }
-.formato--on { background: var(--estructura); color: var(--sobre-estructura); }
-.formato--on .suave, .formato--on .tenue { color: var(--sobre-estructura-suave); }
-
 </style>
 <style>
 :root {
@@ -1078,8 +982,8 @@ body.solo .marco { border-radius: 0; box-shadow: none; }
     <p>Quedan registrados aquí. Cuando termines, cópialos y me los pasas.</p>
   </div>
   <div class="presets">
-    <button class="preset" data-preset="elegido"><b>Tus colores</b><br>Los que elegiste</button>
-    <button class="preset" data-preset="sobrio"><b>Sobrio</b><br>Todo en neutros</button>
+    <button class="preset" data-preset="pastel"><b>Con color</b><br>Bandas de sección</button>
+    <button class="preset" data-preset="sobrio"><b>Sobrio</b><br>Neutros y azul</button>
   </div>
   <div class="cambios" id="cambios"></div>
   <div class="der-pie">
@@ -1440,7 +1344,7 @@ function tablaProyectos(limite) {
                : '<span class="tabla__miniatura fila" style="justify-content:center;color:var(--texto-tenue)">' + ico(p.m === 'Email' ? 'correo' : 'imagen', 'ico--16') + '</span>') +
         '<div><div style="font-weight:500">' + esc(p.n) + '</div>' +
         '<div class="micro tenue">' + esc(p.a) + '</div></div></div></td>' +
-      '<td data-et="Modo"><span style="color:#2167AE;font-weight:500">' + esc(p.m) + '</span></td>' +
+      '<td data-et="Modo">' + esc(p.m) + '</td>' +
       '<td data-et="Estado"><span class="pastilla pastilla--' + ESTADO_PASTILLA[p.e] + '"><span class="punto"></span>' + esc(p.e) + '</span></td>' +
       '<td data-et="Editado" class="tenue">' + esc(p.f) + '</td>' +
       '<td><button class="cta cta--bajo cta--secundario">Abrir</button></td>' +
@@ -1453,18 +1357,18 @@ function tablaProyectos(limite) {
 function selectorModos() {
   return (
     '<div class="modos cuadro-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--e4)">' +
-      '<div class="modo modo--oscuro" style="background:#23366F">' +
-        '<span class="acceso__ico" style="background:var(--superficie);color:#23366F">' + ico('escritorio', 'ico--24') + '</span>' +
-        '<h3>Web</h3><p class="menor">Landing pages y páginas de campaña. Sale en HTML, JPG, PNG y fragmento para el gestor de contenidos.</p>' +
-        '<button class="cta" style="align-self:flex-start;background:#FFFFFF;color:#23366F">Empezar</button></div>' +
-      '<div class="modo modo--oscuro" style="background:#2167AE">' +
-        '<span class="acceso__ico" style="background:var(--superficie);color:#2167AE">' + ico('correo', 'ico--24') + '</span>' +
-        '<h3>Email</h3><p class="menor">Piezas de correo de 600 px, con estructura segura y un respaldo elegido para cada bloque interactivo.</p>' +
-        '<button class="cta" style="align-self:flex-start;background:#FFFFFF;color:#2167AE">Empezar</button></div>' +
-      '<div class="modo" style="background:#DAD2BD">' +
-        '<span class="acceso__ico" style="background:var(--superficie);color:#23366F">' + ico('imagen', 'ico--24') + '</span>' +
-        '<h3>Estilo libre</h3><p class="menor">Key visuals y gráficas. Mesa de trabajo con capas, guías y reglas en píxeles reales.</p>' +
-        '<button class="cta" style="align-self:flex-start;background:#23366F;color:#FFFFFF">Empezar</button></div>' +
+      '<div class="modo" style="background:var(--banda-e)">' +
+        '<span class="acceso__ico" style="background:var(--superficie)">' + ico('escritorio', 'ico--24') + '</span>' +
+        '<h3>Web</h3><p class="menor suave">Landing pages y páginas de campaña. Sale en HTML, JPG, PNG y fragmento para el gestor de contenidos.</p>' +
+        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
+      '<div class="modo" style="background:var(--banda-b)">' +
+        '<span class="acceso__ico" style="background:var(--superficie)">' + ico('correo', 'ico--24') + '</span>' +
+        '<h3>Email</h3><p class="menor suave">Piezas de correo de 600 px, con estructura segura y un respaldo elegido para cada bloque interactivo.</p>' +
+        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
+      '<div class="modo" style="background:var(--banda-c)">' +
+        '<span class="acceso__ico" style="background:var(--superficie)">' + ico('imagen', 'ico--24') + '</span>' +
+        '<h3>Estilo libre</h3><p class="menor suave">Key visuals y gráficas. Mesa de trabajo con capas, guías y reglas en píxeles reales.</p>' +
+        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
     '</div>'
   );
 }
@@ -1475,18 +1379,18 @@ var HOME = {
   /* A · abre con una banda ámbar y la foto en círculo */
   a: function () {
     var cuerpo =
-      '<section class="banda banda--inicio">' +
+      '<section class="banda banda--a">' +
         '<div class="contenedor fila g9 fila--apila hero-split" style="display:grid;grid-template-columns:7fr 5fr;align-items:center">' +
           '<div class="col g4">' +
             '<span class="etiqueta">Martes 6 de septiembre</span>' +
             '<h1>Buenos días, Andrés</h1>' +
             '<p class="lead" style="color:var(--estructura);max-width:46ch">Tienes tres piezas esperando revisión y dos campañas en borrador.</p>' +
             '<div class="fila g3" style="margin-top:var(--e2)">' +
-              '<button class="cta cta--alto" style="background:#1FB1E6;color:#FFFFFF;box-shadow:inset 0 0 0 1px var(--estructura)">Revisar pendientes</button>' +
-              '<button class="cta cta--alto" style="background:#2167AE;color:#ECEEEF">Ver proyectos</button>' +
+              '<button class="cta cta--principal cta--alto">Revisar pendientes</button>' +
+              '<button class="cta cta--secundario cta--alto">Ver proyectos</button>' +
             '</div>' +
           '</div>' +
-          '<div style="justify-self:center">' + circuloFoto(FOTO.home, 240, '#5495CF') + '</div>' +
+          '<div style="justify-self:center">' + circuloFoto(FOTO.home, 240, 'var(--acento)') + '</div>' +
         '</div>' +
       '</section>' +
 
@@ -1586,7 +1490,7 @@ var HOME = {
           '<div style="justify-self:center">' + circuloFoto(FOTO.pieza2, 220, 'var(--superficie)') + '</div>' +
           '<div class="col g4"><span class="etiqueta">Empieza aquí</span>' +
             '<h2>Web, correo o gráfica</h2>' +
-            '<p class="lead" style="max-width:48ch">Los tres modos comparten el mismo catálogo de componentes y las mismas exportaciones.</p>' +
+            '<p class="lead" style="color:var(--estructura);max-width:48ch">Los tres modos comparten el mismo catálogo de componentes y las mismas exportaciones.</p>' +
             '<button class="cta cta--principal cta--alto" style="align-self:flex-start">Elegir modo</button></div>' +
         '</div>' +
       '</section>' +
@@ -1989,7 +1893,7 @@ var EDITOR = { a: editorA, b: editorB, c: editorC };
 
 function envolver(prop, cfg) {
   var cabecera =
-    '<section class="banda banda--corta banda--' + (cfg.banda || 'crear') + '">' +
+    '<section class="banda banda--corta banda--' + (cfg.banda || 'hueso') + '">' +
       '<div class="contenedor fila g5 fila--apila" style="align-items:flex-end">' +
         '<div class="crece">' +
           (cfg.migas ? '<span class="etiqueta tenue">' + cfg.migas + '</span>' : '') +
@@ -2098,7 +2002,7 @@ function pRecuperar(prop) {
 
 function pCrear(prop) {
   return envolver(prop, {
-    activo: 'inicio', banda: 'crear', titulo: 'Elige el modo',
+    activo: 'inicio', banda: 'hueso', titulo: 'Elige el modo',
     bajada: 'Los tres comparten el mismo catálogo y las mismas exportaciones. Lo que cambia son las reglas de construcción.',
     cuerpo: selectorModos() +
       '<div style="margin-top:var(--e8)"><h3 style="margin-bottom:var(--e5)">O duplica algo que ya hiciste</h3>' + tablaProyectos(3) + '</div>'
@@ -2117,7 +2021,7 @@ function pProyectos(prop) {
       '<button class="cta cta--terciario">' + ico('papelera', 'ico--16') + 'Papelera</button>' +
     '</div>';
   return envolver(prop, {
-    activo: 'proyectos', banda: 'trabajo', titulo: 'Proyectos',
+    activo: 'proyectos', banda: 'celeste', titulo: 'Proyectos',
     bajada: 'Ves solo los tuyos. El administrador ve los de todo el equipo.',
     cuerpo: filtros + tablaProyectos()
   });
@@ -2137,7 +2041,7 @@ function pFicha(prop) {
           '</tbody></table></div>' +
       '</div>' +
       '<div style="grid-column:span 4" class="col g4">' +
-        '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e5)">' +
+        '<div style="background:var(--banda-c);border-radius:var(--radio);padding:var(--e5)">' +
           '<span class="etiqueta">Estado</span>' +
           '<h4 style="margin:var(--e2) 0 var(--e2);font-weight:400;font-size:22px">Aprobado</h4>' +
           '<p class="micro suave" style="margin-bottom:var(--e4)">Por Andrés Gamonal el 4 de septiembre.</p>' +
@@ -2151,7 +2055,7 @@ function pFicha(prop) {
       '</div>' +
     '</div>';
   return envolver(prop, {
-    activo: 'proyectos', banda: 'trabajo', migas: 'Proyectos',
+    activo: 'proyectos', banda: 'hueso', migas: 'Proyectos',
     titulo: 'Seguro de hogar — landing de campaña',
     accion: '<button class="cta cta--principal cta--alto">Abrir en el editor</button>',
     cuerpo: cuerpo
@@ -2160,7 +2064,7 @@ function pFicha(prop) {
 
 function pPapelera(prop) {
   var cuerpo =
-    '<div style="padding:var(--e4) var(--e5);border-radius:var(--radio);margin-bottom:var(--e5)" class="fila g3 panel--oscuro">' +
+    '<div style="background:var(--banda-d);padding:var(--e4) var(--e5);border-radius:var(--radio);margin-bottom:var(--e5)" class="fila g3">' +
       ico('reloj', 'ico--16') + '<span class="menor">Lo que borras se guarda 30 días. Después se elimina de verdad.</span></div>' +
     '<table class="tabla"><thead><tr><th>Proyecto</th><th>Modo</th><th>Borrado</th><th></th></tr></thead><tbody>' +
       '<tr><td data-et="Proyecto"><b>Campaña invierno 2025</b></td><td data-et="Modo">Web</td>' +
@@ -2172,7 +2076,7 @@ function pPapelera(prop) {
       '<td><div class="fila g2"><button class="cta cta--bajo cta--secundario">' + ico('restaurar', 'ico--16') + 'Restaurar</button>' +
       '<button class="cta cta--bajo cta--peligro">Eliminar</button></div></td></tr>' +
     '</tbody></table>';
-  return envolver(prop, { activo: 'proyectos', banda: 'papelera', migas: 'Proyectos', titulo: 'Papelera', cuerpo: cuerpo });
+  return envolver(prop, { activo: 'proyectos', banda: 'hueso', migas: 'Proyectos', titulo: 'Papelera', cuerpo: cuerpo });
 }
 
 /* ═══ Biblioteca ════════════════════════════════════════════════════════ */
@@ -2210,7 +2114,7 @@ function pBiblioteca(prop, tipo) {
   }
 
   return envolver(prop, {
-    activo: 'biblioteca', banda: 'biblioteca', titulo: 'Biblioteca',
+    activo: 'biblioteca', banda: 'rosa', titulo: 'Biblioteca',
     bajada: 'Tus materiales. Nadie más los ve, salvo el administrador.',
     accion: '<button class="cta cta--principal cta--alto">' + ico('mas', 'ico--16') + 'Subir</button>',
     pestanas: pestanas(['Imágenes', 'Logos', 'Tipografías'], tipo),
@@ -2237,14 +2141,14 @@ function pConfigGeneral(prop) {
         '</div>' +
       '</div>' +
       '<div style="grid-column:span 5" class="col g4">' +
-        '<div class="panel--oscuro" style="border-radius:var(--radio);padding:var(--e6)">' +
+        '<div style="background:var(--banda-e);border-radius:var(--radio);padding:var(--e6)">' +
           '<h4 style="margin-bottom:var(--e2)">Dominios permitidos</h4>' +
           '<p class="menor" style="margin-bottom:var(--e4)">Sólo se puede insertar contenido de estos servicios.</p>' +
           '<div class="fila g2" style="flex-wrap:wrap">' +
             ['YouTube','Vimeo','Spotify','Power BI','Looker Studio','Typeform','Calendly'].map(function (d) {
               return '<span class="pastilla" style="background:var(--superficie);color:var(--estructura)">' + d + '</span>';
             }).join('') + '</div>' +
-          '<button class="cta cta--conversion cta--bajo" style="margin-top:var(--e4)">' + ico('mas', 'ico--16') + 'Añadir</button></div>' +
+          '<button class="cta cta--secundario cta--bajo" style="margin-top:var(--e4)">' + ico('mas', 'ico--16') + 'Añadir</button></div>' +
         '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
           '<h4 style="margin-bottom:var(--e3)">Formatos de estilo libre</h4>' +
           '<div class="fila g2" style="flex-wrap:wrap">' +
@@ -2253,7 +2157,7 @@ function pConfigGeneral(prop) {
       '</div>' +
     '</div>';
   return envolver(prop, {
-    activo: 'config', banda: 'config', titulo: 'Configuración',
+    activo: 'config', banda: 'arenisca', titulo: 'Configuración',
     pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'General'), cuerpo: cuerpo
   });
 }
@@ -2273,7 +2177,7 @@ function pConfigUsuarios(prop) {
         '<td><button class="cta cta--bajo cta--secundario">' + (g[5] === 'Sin entrar' ? 'Reenviar' : 'Editar') + '</button></td></tr>';
     }).join('') + '</tbody></table>';
   return envolver(prop, {
-    activo: 'config', banda: 'config', titulo: 'Configuración', bajada: 'Tres de quince cuentas usadas.',
+    activo: 'config', banda: 'arenisca', titulo: 'Configuración', bajada: 'Tres de quince cuentas usadas.',
     accion: '<button class="cta cta--principal cta--alto">' + ico('personas', 'ico--16') + 'Invitar</button>',
     pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'Usuarios'), cuerpo: cuerpo
   });
@@ -2298,7 +2202,7 @@ function pConfigPermisos(prop) {
         '</div></div>' +
     '</div>';
   return envolver(prop, {
-    activo: 'config', banda: 'config', titulo: 'Configuración',
+    activo: 'config', banda: 'arenisca', titulo: 'Configuración',
     pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'Permisos'), cuerpo: cuerpo
   });
 }
@@ -2321,10 +2225,10 @@ function pExportar(prop) {
           '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e3)">' +
             [['HTML','Completo',1],['Fragmento','Para el CMS',0],['JPG','Tres tamaños',0],['PNG','Con transparencia',0]]
               .map(function (f) {
-                return '<div class="formato' + (f[2] ? ' formato--on' : '') + '">' +
+                return '<div style="background:' + (f[2] ? 'var(--banda-b)' : 'var(--neutra)') + ';padding:var(--e4);border-radius:var(--radio)">' +
                   '<div style="font-weight:600">' + f[0] + '</div><div class="micro suave">' + f[1] + '</div></div>';
               }).join('') + '</div></div>' +
-        '<div style="padding:var(--e4);border-radius:var(--radio)" class="fila g3 panel--oscuro">' +
+        '<div style="background:var(--banda-d);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
           ico('reloj', 'ico--16') + '<span class="menor">La portada lleva un carrusel. Elige qué diapositiva se congela en la imagen.</span></div>' +
         '<div><div class="etiqueta tenue" style="margin-bottom:var(--e3)">Estado que se congela</div>' +
           '<div class="opciones"><span class="opcion opcion--on">Diapositiva 1</span>' +
@@ -2343,14 +2247,14 @@ function pInsercion(prop) {
       '<div style="padding:var(--e6)" class="col g5">' +
         campo('Pega lo que sea', 'text', 'https://youtu.be/aB3xK9pQ2Lm') +
         '<p class="campo__ayuda" style="margin-top:-12px">Una dirección, un código de inserción o un identificador. Lo reconocemos solo.</p>' +
-        '<div style="padding:var(--e4);border-radius:var(--radio)" class="fila g3 panel--oscuro">' +
+        '<div style="background:var(--banda-c);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
           ico('ojo', 'ico--16') + '<span class="menor"><b>YouTube reconocido.</b> Proporción 16:9 y portada tomada del propio video.</span></div>' +
         '<div><div class="etiqueta tenue" style="margin-bottom:var(--e2)">Respaldo en correo y en imagen</div>' +
           '<p class="menor suave" style="margin-bottom:var(--e3)">Ningún marco insertado sobrevive a un cliente de correo ni a una captura.</p>' +
           '<div class="opciones"><span class="opcion opcion--on">Portada enlazada</span>' +
           '<span class="opcion">Imagen propia</span><span class="opcion">Texto enlazado</span></div></div>' +
         '<div class="fila g3"><div class="crece"></div><button class="cta cta--secundario">Cancelar</button>' +
-          '<button class="cta cta--conversion">Insertar</button></div>' +
+          '<button class="cta cta--principal">Insertar</button></div>' +
       '</div></div>';
   return conModal(EDITOR[prop]('web'), modal);
 }
@@ -2396,37 +2300,42 @@ var NOMBRE_COLOR = {};
 PALETA.forEach(function (c) { NOMBRE_COLOR[c[1].toUpperCase()] = c[0]; });
 
 /* ═══ Dos puntos de partida ═════════════════════════════════════════════ */
-/* ═══ El punto de partida ═══════════════════════════════════════════════
-   «Tus colores» es lo que dice la hoja de estilos, sin nada encima: los
-   colores que eligió el usuario el 6 de septiembre. «Sobrio» es la única
-   alternativa, y se aplica escribiendo tokens sobre esa base.         */
 var PRESETS = {
+  pastel: {
+    '--fondo-app': '#ECEEEF', '--superficie': '#FFFFFF', '--neutra': '#ECEEEF',
+    '--banda-a': '#A6E9AB', '--banda-b': '#ECEEEF', '--banda-c': '#DDE4E3',
+    '--banda-d': '#DAD2BD', '--banda-e': '#91BFE3',
+    '--estructura': '#23366F', '--sobre-estructura': '#FFFFFF', '--sobre-estructura-suave': '#91BFE3',
+    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#4A5570', '--texto-tenue': '#68717F',
+    '--accion': '#2167AE', '--accion-texto': '#FFFFFF',
+    '--conversion': '#CC4038', '--conversion-texto': '#FFFFFF',
+    '--secundario-linea': '#2167AE', '--secundario-texto': '#2167AE',
+    '--acento': '#FFF773',
+    '--exito': '#1E6B3A', '--exito-fondo': '#E4F1E9', '--aviso': '#7A5A12', '--aviso-fondo': '#F8F1DD',
+    '--error': '#A52A20', '--error-fondo': '#FAE9E7',
+    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#CC4038',
+    '--escala': '1', '--peso-titular': '400', '--radio-cta': '999px'
+  },
   sobrio: {
     '--fondo-app': '#ECEEEF', '--superficie': '#FFFFFF', '--neutra': '#ECEEEF',
-    '--banda-inicio': '#FFFFFF', '--banda-crear': '#FFFFFF',
-    '--banda-trabajo': '#ECEEEF', '--sobre-trabajo': '#23366F',
-    '--banda-papelera': '#ECEEEF', '--banda-biblioteca': '#ECEEEF',
-    '--banda-config': '#ECEEEF', '--sobre-config': '#23366F',
     '--banda-a': '#FFFFFF', '--banda-b': '#ECEEEF', '--banda-c': '#FFFFFF',
     '--banda-d': '#DDE4E3', '--banda-e': '#FFFFFF',
     '--estructura': '#23366F', '--sobre-estructura': '#FFFFFF', '--sobre-estructura-suave': '#91BFE3',
-    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#3F4A63', '--texto-tenue': '#4F5A6E',
+    '--titular': '#23366F', '--texto': '#23366F', '--texto-suave': '#4A5570', '--texto-tenue': '#68717F',
     '--accion': '#2167AE', '--accion-texto': '#FFFFFF',
     '--conversion': '#2167AE', '--conversion-texto': '#FFFFFF',
     '--secundario-linea': '#7D8A97', '--secundario-texto': '#23366F',
     '--acento': '#FFF773',
     '--exito': '#1E6B3A', '--exito-fondo': '#E4F1E9', '--aviso': '#7A5A12', '--aviso-fondo': '#F8F1DD',
     '--error': '#A52A20', '--error-fondo': '#FAE9E7',
-    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#CC4038',
-    '--escala': '0.95', '--peso-titular': '600', '--radio-cta': '8px'
+    '--contorno': '#7D8A97', '--contorno-tenue': '#DDE1E5', '--seleccion': '#2167AE', '--cota': '#FF7569',
+    '--escala': '0.95', '--peso-titular': '500', '--radio-cta': '8px'
   }
 };
-var presetActivo = 'elegido';
+var presetActivo = 'pastel';
 function aplicarPreset(n) {
   presetActivo = n;
   var r = document.documentElement.style, t = PRESETS[n];
-  /* Se limpia siempre: «tus colores» es la hoja de estilos sin overrides */
-  for (var k in PRESETS.sobrio) r.removeProperty(k);
   for (var k in t) r.setProperty(k, t[k]);
   document.querySelectorAll('[data-preset]').forEach(function (b) {
     b.style.borderColor = b.dataset.preset === n ? 'var(--v-acento)' : 'var(--v-borde)';
@@ -2710,7 +2619,7 @@ document.addEventListener('click', function (ev) {
 window.addEventListener('resize', pintar);
 window.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrarGlobo(); });
 
-aplicarPreset(recuperar() || 'elegido');
+aplicarPreset(recuperar() || 'pastel');
 pintarProps();
 pintarLista();
 pintarCambios();

@@ -4,7 +4,7 @@
 
 function envolver(prop, cfg) {
   var cabecera =
-    '<section class="banda banda--corta banda--' + (cfg.banda || 'hueso') + '">' +
+    '<section class="banda banda--corta banda--' + (cfg.banda || 'crear') + '">' +
       '<div class="contenedor fila g5 fila--apila" style="align-items:flex-end">' +
         '<div class="crece">' +
           (cfg.migas ? '<span class="etiqueta tenue">' + cfg.migas + '</span>' : '') +
@@ -113,7 +113,7 @@ function pRecuperar(prop) {
 
 function pCrear(prop) {
   return envolver(prop, {
-    activo: 'inicio', banda: 'hueso', titulo: 'Elige el modo',
+    activo: 'inicio', banda: 'crear', titulo: 'Elige el modo',
     bajada: 'Los tres comparten el mismo catálogo y las mismas exportaciones. Lo que cambia son las reglas de construcción.',
     cuerpo: selectorModos() +
       '<div style="margin-top:var(--e8)"><h3 style="margin-bottom:var(--e5)">O duplica algo que ya hiciste</h3>' + tablaProyectos(3) + '</div>'
@@ -132,7 +132,7 @@ function pProyectos(prop) {
       '<button class="cta cta--terciario">' + ico('papelera', 'ico--16') + 'Papelera</button>' +
     '</div>';
   return envolver(prop, {
-    activo: 'proyectos', banda: 'celeste', titulo: 'Proyectos',
+    activo: 'proyectos', banda: 'trabajo', titulo: 'Proyectos',
     bajada: 'Ves solo los tuyos. El administrador ve los de todo el equipo.',
     cuerpo: filtros + tablaProyectos()
   });
@@ -152,7 +152,7 @@ function pFicha(prop) {
           '</tbody></table></div>' +
       '</div>' +
       '<div style="grid-column:span 4" class="col g4">' +
-        '<div style="background:var(--banda-c);border-radius:var(--radio);padding:var(--e5)">' +
+        '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e5)">' +
           '<span class="etiqueta">Estado</span>' +
           '<h4 style="margin:var(--e2) 0 var(--e2);font-weight:400;font-size:22px">Aprobado</h4>' +
           '<p class="micro suave" style="margin-bottom:var(--e4)">Por Andrés Gamonal el 4 de septiembre.</p>' +
@@ -166,7 +166,7 @@ function pFicha(prop) {
       '</div>' +
     '</div>';
   return envolver(prop, {
-    activo: 'proyectos', banda: 'hueso', migas: 'Proyectos',
+    activo: 'proyectos', banda: 'trabajo', migas: 'Proyectos',
     titulo: 'Seguro de hogar — landing de campaña',
     accion: '<button class="cta cta--principal cta--alto">Abrir en el editor</button>',
     cuerpo: cuerpo
@@ -175,7 +175,7 @@ function pFicha(prop) {
 
 function pPapelera(prop) {
   var cuerpo =
-    '<div style="background:var(--banda-d);padding:var(--e4) var(--e5);border-radius:var(--radio);margin-bottom:var(--e5)" class="fila g3">' +
+    '<div style="padding:var(--e4) var(--e5);border-radius:var(--radio);margin-bottom:var(--e5)" class="fila g3 panel--oscuro">' +
       ico('reloj', 'ico--16') + '<span class="menor">Lo que borras se guarda 30 días. Después se elimina de verdad.</span></div>' +
     '<table class="tabla"><thead><tr><th>Proyecto</th><th>Modo</th><th>Borrado</th><th></th></tr></thead><tbody>' +
       '<tr><td data-et="Proyecto"><b>Campaña invierno 2025</b></td><td data-et="Modo">Web</td>' +
@@ -187,7 +187,7 @@ function pPapelera(prop) {
       '<td><div class="fila g2"><button class="cta cta--bajo cta--secundario">' + ico('restaurar', 'ico--16') + 'Restaurar</button>' +
       '<button class="cta cta--bajo cta--peligro">Eliminar</button></div></td></tr>' +
     '</tbody></table>';
-  return envolver(prop, { activo: 'proyectos', banda: 'hueso', migas: 'Proyectos', titulo: 'Papelera', cuerpo: cuerpo });
+  return envolver(prop, { activo: 'proyectos', banda: 'papelera', migas: 'Proyectos', titulo: 'Papelera', cuerpo: cuerpo });
 }
 
 /* ═══ Biblioteca ════════════════════════════════════════════════════════ */
@@ -225,7 +225,7 @@ function pBiblioteca(prop, tipo) {
   }
 
   return envolver(prop, {
-    activo: 'biblioteca', banda: 'rosa', titulo: 'Biblioteca',
+    activo: 'biblioteca', banda: 'biblioteca', titulo: 'Biblioteca',
     bajada: 'Tus materiales. Nadie más los ve, salvo el administrador.',
     accion: '<button class="cta cta--principal cta--alto">' + ico('mas', 'ico--16') + 'Subir</button>',
     pestanas: pestanas(['Imágenes', 'Logos', 'Tipografías'], tipo),
@@ -252,14 +252,14 @@ function pConfigGeneral(prop) {
         '</div>' +
       '</div>' +
       '<div style="grid-column:span 5" class="col g4">' +
-        '<div style="background:var(--banda-e);border-radius:var(--radio);padding:var(--e6)">' +
+        '<div class="panel--oscuro" style="border-radius:var(--radio);padding:var(--e6)">' +
           '<h4 style="margin-bottom:var(--e2)">Dominios permitidos</h4>' +
           '<p class="menor" style="margin-bottom:var(--e4)">Sólo se puede insertar contenido de estos servicios.</p>' +
           '<div class="fila g2" style="flex-wrap:wrap">' +
             ['YouTube','Vimeo','Spotify','Power BI','Looker Studio','Typeform','Calendly'].map(function (d) {
               return '<span class="pastilla" style="background:var(--superficie);color:var(--estructura)">' + d + '</span>';
             }).join('') + '</div>' +
-          '<button class="cta cta--secundario cta--bajo" style="margin-top:var(--e4)">' + ico('mas', 'ico--16') + 'Añadir</button></div>' +
+          '<button class="cta cta--conversion cta--bajo" style="margin-top:var(--e4)">' + ico('mas', 'ico--16') + 'Añadir</button></div>' +
         '<div style="background:var(--neutra);border-radius:var(--radio);padding:var(--e6)">' +
           '<h4 style="margin-bottom:var(--e3)">Formatos de estilo libre</h4>' +
           '<div class="fila g2" style="flex-wrap:wrap">' +
@@ -268,7 +268,7 @@ function pConfigGeneral(prop) {
       '</div>' +
     '</div>';
   return envolver(prop, {
-    activo: 'config', banda: 'arenisca', titulo: 'Configuración',
+    activo: 'config', banda: 'config', titulo: 'Configuración',
     pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'General'), cuerpo: cuerpo
   });
 }
@@ -288,7 +288,7 @@ function pConfigUsuarios(prop) {
         '<td><button class="cta cta--bajo cta--secundario">' + (g[5] === 'Sin entrar' ? 'Reenviar' : 'Editar') + '</button></td></tr>';
     }).join('') + '</tbody></table>';
   return envolver(prop, {
-    activo: 'config', banda: 'arenisca', titulo: 'Configuración', bajada: 'Tres de quince cuentas usadas.',
+    activo: 'config', banda: 'config', titulo: 'Configuración', bajada: 'Tres de quince cuentas usadas.',
     accion: '<button class="cta cta--principal cta--alto">' + ico('personas', 'ico--16') + 'Invitar</button>',
     pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'Usuarios'), cuerpo: cuerpo
   });
@@ -313,7 +313,7 @@ function pConfigPermisos(prop) {
         '</div></div>' +
     '</div>';
   return envolver(prop, {
-    activo: 'config', banda: 'arenisca', titulo: 'Configuración',
+    activo: 'config', banda: 'config', titulo: 'Configuración',
     pestanas: pestanas(['General', 'Permisos', 'Usuarios'], 'Permisos'), cuerpo: cuerpo
   });
 }
@@ -336,10 +336,10 @@ function pExportar(prop) {
           '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e3)">' +
             [['HTML','Completo',1],['Fragmento','Para el CMS',0],['JPG','Tres tamaños',0],['PNG','Con transparencia',0]]
               .map(function (f) {
-                return '<div style="background:' + (f[2] ? 'var(--banda-b)' : 'var(--neutra)') + ';padding:var(--e4);border-radius:var(--radio)">' +
+                return '<div class="formato' + (f[2] ? ' formato--on' : '') + '">' +
                   '<div style="font-weight:600">' + f[0] + '</div><div class="micro suave">' + f[1] + '</div></div>';
               }).join('') + '</div></div>' +
-        '<div style="background:var(--banda-d);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
+        '<div style="padding:var(--e4);border-radius:var(--radio)" class="fila g3 panel--oscuro">' +
           ico('reloj', 'ico--16') + '<span class="menor">La portada lleva un carrusel. Elige qué diapositiva se congela en la imagen.</span></div>' +
         '<div><div class="etiqueta tenue" style="margin-bottom:var(--e3)">Estado que se congela</div>' +
           '<div class="opciones"><span class="opcion opcion--on">Diapositiva 1</span>' +
@@ -358,14 +358,14 @@ function pInsercion(prop) {
       '<div style="padding:var(--e6)" class="col g5">' +
         campo('Pega lo que sea', 'text', 'https://youtu.be/aB3xK9pQ2Lm') +
         '<p class="campo__ayuda" style="margin-top:-12px">Una dirección, un código de inserción o un identificador. Lo reconocemos solo.</p>' +
-        '<div style="background:var(--banda-c);padding:var(--e4);border-radius:var(--radio)" class="fila g3">' +
+        '<div style="padding:var(--e4);border-radius:var(--radio)" class="fila g3 panel--oscuro">' +
           ico('ojo', 'ico--16') + '<span class="menor"><b>YouTube reconocido.</b> Proporción 16:9 y portada tomada del propio video.</span></div>' +
         '<div><div class="etiqueta tenue" style="margin-bottom:var(--e2)">Respaldo en correo y en imagen</div>' +
           '<p class="menor suave" style="margin-bottom:var(--e3)">Ningún marco insertado sobrevive a un cliente de correo ni a una captura.</p>' +
           '<div class="opciones"><span class="opcion opcion--on">Portada enlazada</span>' +
           '<span class="opcion">Imagen propia</span><span class="opcion">Texto enlazado</span></div></div>' +
         '<div class="fila g3"><div class="crece"></div><button class="cta cta--secundario">Cancelar</button>' +
-          '<button class="cta cta--principal">Insertar</button></div>' +
+          '<button class="cta cta--conversion">Insertar</button></div>' +
       '</div></div>';
   return conModal(EDITOR[prop]('web'), modal);
 }

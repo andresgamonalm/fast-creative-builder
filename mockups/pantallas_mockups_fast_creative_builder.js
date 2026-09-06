@@ -132,7 +132,7 @@ function tablaProyectos(limite) {
                : '<span class="tabla__miniatura fila" style="justify-content:center;color:var(--texto-tenue)">' + ico(p.m === 'Email' ? 'correo' : 'imagen', 'ico--16') + '</span>') +
         '<div><div style="font-weight:500">' + esc(p.n) + '</div>' +
         '<div class="micro tenue">' + esc(p.a) + '</div></div></div></td>' +
-      '<td data-et="Modo">' + esc(p.m) + '</td>' +
+      '<td data-et="Modo"><span style="color:#2167AE;font-weight:500">' + esc(p.m) + '</span></td>' +
       '<td data-et="Estado"><span class="pastilla pastilla--' + ESTADO_PASTILLA[p.e] + '"><span class="punto"></span>' + esc(p.e) + '</span></td>' +
       '<td data-et="Editado" class="tenue">' + esc(p.f) + '</td>' +
       '<td><button class="cta cta--bajo cta--secundario">Abrir</button></td>' +
@@ -145,18 +145,18 @@ function tablaProyectos(limite) {
 function selectorModos() {
   return (
     '<div class="modos cuadro-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--e4)">' +
-      '<div class="modo" style="background:var(--banda-e)">' +
-        '<span class="acceso__ico" style="background:var(--superficie)">' + ico('escritorio', 'ico--24') + '</span>' +
-        '<h3>Web</h3><p class="menor suave">Landing pages y páginas de campaña. Sale en HTML, JPG, PNG y fragmento para el gestor de contenidos.</p>' +
-        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
-      '<div class="modo" style="background:var(--banda-b)">' +
-        '<span class="acceso__ico" style="background:var(--superficie)">' + ico('correo', 'ico--24') + '</span>' +
-        '<h3>Email</h3><p class="menor suave">Piezas de correo de 600 px, con estructura segura y un respaldo elegido para cada bloque interactivo.</p>' +
-        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
-      '<div class="modo" style="background:var(--banda-c)">' +
-        '<span class="acceso__ico" style="background:var(--superficie)">' + ico('imagen', 'ico--24') + '</span>' +
-        '<h3>Estilo libre</h3><p class="menor suave">Key visuals y gráficas. Mesa de trabajo con capas, guías y reglas en píxeles reales.</p>' +
-        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
+      '<div class="modo modo--oscuro" style="background:#23366F">' +
+        '<span class="acceso__ico" style="background:var(--superficie);color:#23366F">' + ico('escritorio', 'ico--24') + '</span>' +
+        '<h3>Web</h3><p class="menor">Landing pages y páginas de campaña. Sale en HTML, JPG, PNG y fragmento para el gestor de contenidos.</p>' +
+        '<button class="cta" style="align-self:flex-start;background:#FFFFFF;color:#23366F">Empezar</button></div>' +
+      '<div class="modo modo--oscuro" style="background:#2167AE">' +
+        '<span class="acceso__ico" style="background:var(--superficie);color:#2167AE">' + ico('correo', 'ico--24') + '</span>' +
+        '<h3>Email</h3><p class="menor">Piezas de correo de 600 px, con estructura segura y un respaldo elegido para cada bloque interactivo.</p>' +
+        '<button class="cta" style="align-self:flex-start;background:#FFFFFF;color:#2167AE">Empezar</button></div>' +
+      '<div class="modo" style="background:#DAD2BD">' +
+        '<span class="acceso__ico" style="background:var(--superficie);color:#23366F">' + ico('imagen', 'ico--24') + '</span>' +
+        '<h3>Estilo libre</h3><p class="menor">Key visuals y gráficas. Mesa de trabajo con capas, guías y reglas en píxeles reales.</p>' +
+        '<button class="cta" style="align-self:flex-start;background:#23366F;color:#FFFFFF">Empezar</button></div>' +
     '</div>'
   );
 }
@@ -167,18 +167,18 @@ var HOME = {
   /* A · abre con una banda ámbar y la foto en círculo */
   a: function () {
     var cuerpo =
-      '<section class="banda banda--a">' +
+      '<section class="banda banda--inicio">' +
         '<div class="contenedor fila g9 fila--apila hero-split" style="display:grid;grid-template-columns:7fr 5fr;align-items:center">' +
           '<div class="col g4">' +
             '<span class="etiqueta">Martes 6 de septiembre</span>' +
             '<h1>Buenos días, Andrés</h1>' +
             '<p class="lead" style="color:var(--estructura);max-width:46ch">Tienes tres piezas esperando revisión y dos campañas en borrador.</p>' +
             '<div class="fila g3" style="margin-top:var(--e2)">' +
-              '<button class="cta cta--principal cta--alto">Revisar pendientes</button>' +
-              '<button class="cta cta--secundario cta--alto">Ver proyectos</button>' +
+              '<button class="cta cta--alto" style="background:#1FB1E6;color:#FFFFFF;box-shadow:inset 0 0 0 1px var(--estructura)">Revisar pendientes</button>' +
+              '<button class="cta cta--alto" style="background:#2167AE;color:#ECEEEF">Ver proyectos</button>' +
             '</div>' +
           '</div>' +
-          '<div style="justify-self:center">' + circuloFoto(FOTO.home, 240, 'var(--acento)') + '</div>' +
+          '<div style="justify-self:center">' + circuloFoto(FOTO.home, 240, '#5495CF') + '</div>' +
         '</div>' +
       '</section>' +
 
@@ -278,7 +278,7 @@ var HOME = {
           '<div style="justify-self:center">' + circuloFoto(FOTO.pieza2, 220, 'var(--superficie)') + '</div>' +
           '<div class="col g4"><span class="etiqueta">Empieza aquí</span>' +
             '<h2>Web, correo o gráfica</h2>' +
-            '<p class="lead" style="color:var(--estructura);max-width:48ch">Los tres modos comparten el mismo catálogo de componentes y las mismas exportaciones.</p>' +
+            '<p class="lead" style="max-width:48ch">Los tres modos comparten el mismo catálogo de componentes y las mismas exportaciones.</p>' +
             '<button class="cta cta--principal cta--alto" style="align-self:flex-start">Elegir modo</button></div>' +
         '</div>' +
       '</section>' +

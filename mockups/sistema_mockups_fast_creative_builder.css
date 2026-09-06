@@ -33,12 +33,27 @@
   --superficie: #FFFFFF;
   --neutra: #ECEEEF;
 
-  /* ── Bandas de sección ───────────────────────────────────────────── */
+  /* ── Bandas de sección ───────────────────────────────────────────────
+     Cada zona del aplicativo tiene su color de cabecera, elegido por el
+     usuario el 6 de septiembre. El color del texto viaja con la banda:
+     no se decide pantalla a pantalla. Ver DEC-024.                     */
+  --banda-inicio: #DDE4E3;                /* paloma  · portada de inicio */
+  --banda-crear: #ECEEEF;                 /* blanco de Zúrich · elegir modo */
+  --banda-trabajo: #2167AE;               /* azul de Zúrich · proyectos y ficha */
+  --sobre-trabajo: #FFFFFF;
+  --banda-papelera: #A6E9AB;              /* menta */
+  --banda-biblioteca: #FFF773;            /* limón */
+  --banda-config: #1FB1E6;                /* celeste */
+  --sobre-config: #FFFFFF;                /* decisión del usuario: ver DEC-025 */
+
+  /* Superficies suaves de uso general: cajas, mesas de trabajo, paneles.
+     No son cabeceras de zona; el limón y el celeste se quedan arriba,
+     como acento y como cabecera, y no se usan a sangre. */
   --banda-a: #DAD2BD;
-  --banda-b: #91BFE3;
+  --banda-b: #2167AE;   /* la única fuerte: portada de la propuesta B */
   --banda-c: #A6E9AB;
   --banda-d: #DDE4E3;
-  --banda-e: #DDE4E3;
+  --banda-e: #ECEEEF;
 
   /* ── Estructura: lateral, barras y fondos oscuros ────────────────── */
   --estructura: #23366F;
@@ -48,16 +63,19 @@
   /* ── Texto ───────────────────────────────────────────────────────── */
   --titular: #23366F;
   --texto: #23366F;
-  --texto-suave: #4A5570;
-  --texto-tenue: #68717F;
+  --texto-suave: #3F4A63;
+  --texto-tenue: #4F5A6E;   /* aclarado más y no pasaba sobre menta ni gris */
 
-  /* ── Botones ─────────────────────────────────────────────────────── */
-  --accion: #2167AE;
+  /* ── Botones ─────────────────────────────────────────────────────────
+     El botón principal es azul oscuro; la acción que cierra el trabajo
+     —exportar, insertar— es limón con texto azul oscuro. El coral sale
+     del sistema: el usuario no lo eligió en ninguna pantalla.          */
+  --accion: #23366F;
   --accion-texto: #FFFFFF;
-  --conversion: #CC4038;
-  --conversion-texto: #FFFFFF;
-  --secundario-linea: #2167AE;
-  --secundario-texto: #2167AE;
+  --conversion: #FFF773;
+  --conversion-texto: #23366F;
+  --secundario-linea: #1B5A93;
+  --secundario-texto: #1B5A93;   /* el azul héroe no llega a 4,5 sobre arenisca */
 
   /* ── Acentos y estados ───────────────────────────────────────────── */
   --acento: #FFF773;
@@ -78,7 +96,8 @@
   --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
   --base: 16px;
   --escala: 1;
-  --peso-titular: 400;
+  --peso-titular: 700;   /* el usuario pidió titulares en negrita */
+  --peso-subtitulo: 600;
   --peso-texto: 400;
 
   /* ── Forma ───────────────────────────────────────────────────────── */
@@ -120,6 +139,8 @@
   --tinta-tenue: var(--texto-tenue);
   --azul-claro: var(--sobre-estructura-suave);
   --banda-lima: var(--acento);
+  --banda-paloma: #DDE4E3;
+  --celeste: #1FB1E6;
 }
 
 
@@ -147,8 +168,8 @@
 /* Titulares grandes y de peso normal, como en la referencia */
 .p h1 { font-size: var(--t-h1); font-weight: var(--peso-titular); line-height: 1.12; letter-spacing: -0.015em; color: var(--titular); }
 .p h2 { font-size: var(--t-h2); font-weight: var(--peso-titular); line-height: 1.18; letter-spacing: -0.01em; color: var(--titular); }
-.p h3 { font-size: var(--t-h3); font-weight: calc(var(--peso-titular) + 100); line-height: 1.25; color: var(--titular); }
-.p h4 { font-size: var(--t-h4); font-weight: calc(var(--peso-titular) + 200); line-height: 1.35; color: var(--titular); }
+.p h3 { font-size: var(--t-h3); font-weight: var(--peso-subtitulo); line-height: 1.25; color: var(--titular); }
+.p h4 { font-size: var(--t-h4); font-weight: var(--peso-subtitulo); line-height: 1.35; color: var(--titular); }
 
 .etiqueta { font-size: var(--t-micro); font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; }
 .lead { font-size: var(--t-lead); line-height: 1.6; color: var(--tinta-suave); }
@@ -226,7 +247,9 @@
 .banda--corta { padding: var(--e9) var(--margen); }
 
 .banda--a { background: var(--banda-a); }
-.banda--b { background: var(--banda-b); }
+.banda--b { background: var(--banda-b); color: var(--sobre-trabajo); }
+.banda--b h1, .banda--b h2, .banda--b h3,
+.banda--b .lead, .banda--b .etiqueta, .banda--b .suave, .banda--b .tenue { color: var(--sobre-trabajo); }
 .banda--c { background: var(--banda-c); }
 .banda--d { background: var(--banda-d); }
 .banda--e { background: var(--banda-e); }
@@ -234,6 +257,20 @@
 .banda--superficie { background: var(--superficie); }
 .banda--estructura { background: var(--estructura); color: var(--sobre-estructura); }
 .banda--estructura h1, .banda--estructura h2, .banda--estructura h3 { color: var(--sobre-estructura); }
+
+/* Cabeceras por zona. Antes se pedían por nombre —hueso, rosa, arenisca—
+   y esas clases no existían: las bandas salían sin fondo. De ahí que
+   hubiera que pintarlas a mano una por una. */
+.banda--inicio { background: var(--banda-inicio); }
+.banda--crear { background: var(--banda-crear); }
+.banda--papelera { background: var(--banda-papelera); }
+.banda--biblioteca { background: var(--banda-biblioteca); }
+.banda--config { background: var(--banda-config); color: var(--sobre-config); }
+
+.banda--trabajo { background: var(--banda-trabajo); color: var(--sobre-trabajo); }
+.banda--trabajo h1, .banda--trabajo h2, .banda--trabajo h3,
+.banda--trabajo .lead, .banda--trabajo .etiqueta,
+.banda--trabajo .suave, .banda--trabajo .tenue { color: var(--sobre-trabajo); }
 
 .contenedor { max-width: 1120px; margin: 0 auto; }
 
@@ -265,9 +302,9 @@
   border-radius: 50%;
   z-index: 3;
 }
-.burbuja--1 { width: 34px; height: 34px; background: var(--navy); }
-.burbuja--2 { width: 52px; height: 52px; background: var(--heroe); }
-.burbuja--3 { width: 26px; height: 26px; background: var(--azul-claro); }
+.burbuja--1 { width: 34px; height: 34px; background: #DDE4E3; }
+.burbuja--2 { width: 52px; height: 52px; background: #FFF773; }
+.burbuja--3 { width: 26px; height: 26px; background: #5495CF; }
 
 /* ── Campos ──────────────────────────────────────────────────────────── */
 
@@ -298,7 +335,7 @@
 .pastilla--exito { background: var(--exito-fondo); color: var(--exito); }
 .pastilla--aviso { background: var(--aviso-fondo); color: var(--aviso); }
 .pastilla--error { background: var(--error-fondo); color: var(--error); }
-.pastilla--neutra { background: var(--banda-paloma); color: var(--tinta-suave); }
+.pastilla--neutra { background: var(--banda-paloma); color: var(--texto); }
 .pastilla--acento { background: var(--banda-lima); color: var(--navy); }
 .punto { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
@@ -317,9 +354,11 @@
 .acceso:hover { border-color: var(--heroe); }
 .acceso__ico {
   width: 56px; height: 56px; border-radius: 50%;
-  background: var(--azul-claro); color: var(--navy);
+  background: var(--estructura); color: var(--sobre-estructura);
   display: grid; place-items: center;
 }
+/* El primero de la fila es el acento: limón con el icono en azul oscuro */
+.acceso:first-child .acceso__ico { background: var(--acento); color: var(--estructura); }
 .acceso__n { font-size: var(--t-menor); font-weight: 600; line-height: 1.3; }
 
 /* ── Tabla ───────────────────────────────────────────────────────────── */
@@ -359,3 +398,36 @@
 @media (prefers-reduced-motion: reduce) {
   .p *, .p *::before, .p *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Todo fondo celeste lleva el texto en blanco. Es una decisión expresa
+   del usuario del 6 de septiembre: blanco sobre #1FB1E6 mide 2,47:1 y no
+   alcanza el 4,5 de AA. Queda así por indicación suya. Ver DEC-025. */
+.banda--config h1, .banda--config h2, .banda--config h3, .banda--config h4,
+.banda--config .lead, .banda--config .etiqueta, .banda--config p,
+.banda--config .suave, .banda--config .tenue { color: var(--sobre-config); }
+
+/* ── Botón contra el fondo que lo rodea (DEC-015) ─────────────────────
+   Dos condiciones a la vez: 3:1 de separación y familias distintas.
+   Donde el color elegido no llega, no se cambia el color: se le pone
+   contorno azul oscuro, que sí separa y no altera la decisión.       */
+.cta--conversion { box-shadow: inset 0 0 0 1px var(--estructura); }
+
+/* Sobre azul oscuro y sobre el azul de Zúrich, el botón principal se
+   invierte: fondo blanco y texto azul oscuro. En azul sobre azul no se
+   distingue el botón del fondo. */
+.c-barra .cta--principal,
+.ed-barra--navy .cta--principal,
+.banda--estructura .cta--principal {
+  background: var(--sobre-estructura); color: var(--estructura);
+}
+/* Estas dos bandas cambian de color según el punto de partida, así que el
+   botón se define contra la propia banda y no contra un color fijo. */
+.banda--trabajo .cta--principal { background: var(--sobre-trabajo); color: var(--banda-trabajo); }
+.banda--b .cta--principal { background: var(--sobre-trabajo); color: var(--banda-b); }
+.c-barra .cta--principal:hover,
+.ed-barra--navy .cta--principal:hover,
+.banda--trabajo .cta--principal:hover,
+.banda--b .cta--principal:hover { opacity: .88; }
+
+/* Sobre el panel azul oscuro, el contorno del botón de cierre va en claro */
+.panel--oscuro .cta--conversion { box-shadow: inset 0 0 0 1px var(--sobre-estructura); }
