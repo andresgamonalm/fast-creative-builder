@@ -1,0 +1,42 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fast-creative-builder",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // El editor compilado se sirve como estáticos desde el mismo Worker.
+  // Una sola cosa que desplegar, y en local se comporta igual.
+  "assets": {
+    "directory": "../editor/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "BD",
+      "database_name": "fast-creative-builder",
+      "database_id": "PENDIENTE_CREAR"
+    }
+  ],
+
+  // Almacén de logos, imágenes y tipografías.
+  // Requiere activar R2 en la cuenta de Cloudflare.
+  "r2_buckets": [
+    {
+      "binding": "ARCHIVOS",
+      "bucket_name": "fast-creative-builder-archivos"
+    }
+  ],
+
+  "vars": {
+    "URL_SITIO": "http://localhost:8787",
+    "CORREO_REMITENTE": "Fast Creative Builder <noreply@gamonal.app>",
+    "CORREO_ADMINISTRADOR": "hola@andresgamonal.com"
+  }
+
+  // Secretos, definidos aparte (nunca aquí):
+  //   CLAVE_RESEND  → API de Resend para invitaciones y recuperación
+  // En local van en .dev.vars; en producción, como secretos del Worker.
+}

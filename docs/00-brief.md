@@ -501,3 +501,10 @@ La fase 3 es aproximadamente el 80% del trabajo. Se implementa y valida **una ca
 4. **Crear el repositorio privado en GitHub** y decirme el nombre, o autorizarme a crearlo con `gh`.
 
 Nada de esto bloquea la fase 0 salvo el punto 4. Los demás se pueden resolver sobre la marcha.
+
+---
+
+> **Nota sobre los archivos de este brief.** Este `.md` es el documento canónico:
+> es el que se edita y el que se versiona. `00-brief-v5-word.docx` es el mismo
+> contenido en Word, congelado en la versión 5, para compartir con quien no
+> lea Markdown. Si los dos difieren, manda el `.md`.

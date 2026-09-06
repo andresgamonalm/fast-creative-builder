@@ -1,0 +1,246 @@
+/* Estructura de la aplicación una vez dentro. */
+
+.marco {
+  display: grid;
+  grid-template-rows: var(--barra-superior) 1fr;
+  min-height: 100%;
+}
+
+/* ── Barra superior ───────────────────────────────────────────────────── */
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: var(--e4);
+  padding: 0 var(--e4);
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+}
+
+.barra__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--e2);
+  font-weight: 700;
+  font-size: var(--texto-base);
+  color: var(--texto);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.barra__nav {
+  display: flex;
+  gap: var(--e1);
+  margin-left: var(--e4);
+}
+
+.barra__enlace {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 var(--e3);
+  border-radius: var(--radio);
+  font-size: var(--texto-base);
+  font-weight: 500;
+  color: var(--texto-suave);
+  text-decoration: none;
+  transition:
+    background var(--transicion),
+    color var(--transicion);
+}
+
+.barra__enlace:hover {
+  background: var(--accion-tenue);
+  color: var(--texto);
+}
+
+/* El estado activo no se marca solo con color: lleva peso y subrayado. */
+.barra__enlace[aria-current='page'] {
+  background: var(--accion-tenue);
+  color: var(--accion);
+  font-weight: 700;
+  box-shadow: inset 0 -2px 0 var(--accion);
+}
+
+.barra__espacio {
+  flex: 1;
+}
+
+.barra__persona {
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  font-size: var(--texto-sm);
+  color: var(--texto-suave);
+}
+
+.barra__nombre {
+  font-weight: 600;
+  color: var(--texto);
+}
+
+/* ── Contenido ────────────────────────────────────────────────────────── */
+
+.contenido {
+  padding: var(--e8) var(--e6);
+}
+
+.contenido__ancho {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.pagina__cabecera {
+  margin-bottom: var(--e6);
+}
+
+.pagina__titulo {
+  font-size: var(--texto-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.pagina__bajada {
+  margin-top: var(--e2);
+  color: var(--texto-suave);
+  font-size: var(--texto-md);
+  max-width: 62ch;
+  line-height: 1.6;
+}
+
+/* ── Rejilla de accesos ───────────────────────────────────────────────── */
+
+.accesos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--e4);
+}
+
+.acceso-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e2);
+  padding: var(--e5);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--transicion),
+    box-shadow var(--transicion),
+    transform var(--transicion);
+}
+
+.acceso-tarjeta:hover {
+  border-color: var(--accion);
+  box-shadow: var(--sombra);
+  transform: translateY(-1px);
+}
+
+.acceso-tarjeta__titulo {
+  font-size: var(--texto-md);
+  font-weight: 700;
+}
+
+.acceso-tarjeta__texto {
+  font-size: var(--texto-sm);
+  color: var(--texto-suave);
+  line-height: 1.55;
+}
+
+/* ── Tabla ────────────────────────────────────────────────────────────── */
+
+.tabla-envoltorio {
+  overflow-x: auto;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--texto-base);
+}
+
+.tabla th,
+.tabla td {
+  padding: var(--e3) var(--e4);
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+  vertical-align: middle;
+}
+
+.tabla th {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--texto-tenue);
+  background: var(--superficie-tenue);
+}
+
+.tabla tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla__acciones {
+  display: flex;
+  gap: var(--e2);
+  justify-content: flex-end;
+}
+
+/* ── Estado vacío ─────────────────────────────────────────────────────── */
+
+.vacio {
+  padding: var(--e12) var(--e6);
+  text-align: center;
+  background: var(--superficie);
+  border: 1px dashed var(--borde-control);
+  border-radius: var(--radio-lg);
+}
+
+.vacio__titulo {
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  margin-bottom: var(--e2);
+}
+
+.vacio__texto {
+  color: var(--texto-suave);
+  max-width: 46ch;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Formulario en línea ──────────────────────────────────────────────── */
+
+.formulario-fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: var(--e3);
+  align-items: end;
+  padding: var(--e5);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  margin-bottom: var(--e5);
+}
+
+.selector {
+  min-height: 40px;
+  padding: 0 var(--e3);
+  background: var(--superficie);
+  border: 1px solid var(--borde-control);
+  border-radius: var(--radio);
+}
+
+@media (max-width: 720px) {
+  .formulario-fila {
+    grid-template-columns: 1fr;
+  }
+  .contenido {
+    padding: var(--e5) var(--e4);
+  }
+}

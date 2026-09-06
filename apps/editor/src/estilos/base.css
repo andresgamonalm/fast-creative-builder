@@ -1,0 +1,126 @@
+/*
+ * Estilos base de la interfaz del aplicativo.
+ *
+ * Ojo: esto NO es el reset del lienzo. El contenido que crea el usuario tiene
+ * su propio reset, encapsulado, que vive en el núcleo. Mezclar los dos es lo
+ * que hace que el editor y la pieza publicada dejen de parecerse.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#raiz {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fuente);
+  font-size: var(--texto-base);
+  line-height: 1.5;
+  color: var(--texto);
+  background: var(--superficie-fondo);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--accion);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* Un solo anillo de foco en toda la aplicación, siempre visible con teclado. */
+:focus-visible {
+  outline: 2px solid var(--borde-foco);
+  outline-offset: 2px;
+  border-radius: var(--radio-sm);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Utilidades mínimas ───────────────────────────────────────────────── */
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.saltar-al-contenido {
+  position: absolute;
+  left: var(--e4);
+  top: -100px;
+  z-index: 100;
+  padding: var(--e2) var(--e4);
+  background: var(--accion);
+  color: var(--accion-texto);
+  border-radius: var(--radio);
+  transition: top var(--transicion);
+}
+
+.saltar-al-contenido:focus {
+  top: var(--e4);
+}

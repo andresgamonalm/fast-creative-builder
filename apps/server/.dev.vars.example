@@ -1,0 +1,6 @@
+# Copia este archivo a .dev.vars para desarrollo local.
+# .dev.vars está en .gitignore y no se sube nunca.
+
+# API de Resend, para enviar invitaciones y recuperación de acceso.
+# Sin esta clave, el servidor imprime el enlace en la consola en vez de enviarlo.
+CLAVE_RESEND=re_pega_aqui_tu_clave

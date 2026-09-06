@@ -1,0 +1,71 @@
+/* Pantallas de acceso: entrar, invitación y recuperación. */
+
+.acceso {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  padding: var(--e6);
+  background: var(--superficie-fondo);
+}
+
+.acceso__caja {
+  width: 100%;
+  max-width: 400px;
+}
+
+.acceso__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--e3);
+  margin-bottom: var(--e8);
+}
+
+.acceso__logo {
+  width: 40px;
+  height: 40px;
+}
+
+.acceso__nombre {
+  font-size: var(--texto-md);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.acceso__lema {
+  font-size: var(--texto-xs);
+  color: var(--texto-tenue);
+}
+
+.acceso__panel {
+  padding: var(--e8);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra);
+}
+
+.acceso__titulo {
+  font-size: var(--texto-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--e2);
+}
+
+.acceso__intro {
+  font-size: var(--texto-base);
+  color: var(--texto-suave);
+  line-height: 1.6;
+  margin-bottom: var(--e6);
+}
+
+.acceso__campos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e4);
+}
+
+.acceso__pie {
+  margin-top: var(--e5);
+  text-align: center;
+  font-size: var(--texto-sm);
+}

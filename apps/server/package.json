@@ -1,0 +1,17 @@
+{
+  "name": "@fcb/servidor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "API y persistencia de Fast Creative Builder. Cloudflare Workers, D1 y R2.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "bd:local": "wrangler d1 execute fast-creative-builder --local --file=../../esquema/0001_inicial.sql",
+    "bd:remoto": "wrangler d1 execute fast-creative-builder --remote --file=../../esquema/0001_inicial.sql"
+  },
+  "dependencies": {
+    "@fcb/nucleo": "*"
+  }
+}

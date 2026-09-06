@@ -1,0 +1,198 @@
+/* Componentes básicos de la interfaz. Todos usan tokens; ningún color suelto. */
+
+/* ── Botón ────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--e2);
+  min-height: 40px;
+  padding: 0 var(--e4);
+  border: 1px solid transparent;
+  border-radius: var(--radio);
+  font-size: var(--texto-base);
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background var(--transicion),
+    border-color var(--transicion),
+    color var(--transicion);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--primario {
+  background: var(--accion);
+  color: var(--accion-texto);
+}
+.btn--primario:hover:not(:disabled) {
+  background: var(--accion-hover);
+}
+.btn--primario:active:not(:disabled) {
+  background: var(--accion-activa);
+}
+
+.btn--secundario {
+  background: var(--superficie);
+  color: var(--texto);
+  border-color: var(--borde-control);
+}
+.btn--secundario:hover:not(:disabled) {
+  background: var(--accion-tenue);
+  border-color: var(--accion);
+}
+
+.btn--plano {
+  background: transparent;
+  color: var(--accion);
+}
+.btn--plano:hover:not(:disabled) {
+  background: var(--accion-tenue);
+}
+
+.btn--peligro {
+  background: transparent;
+  color: var(--error);
+  border-color: var(--borde-control);
+}
+.btn--peligro:hover:not(:disabled) {
+  background: var(--error-fondo);
+  border-color: var(--error);
+}
+
+.btn--pequeno {
+  min-height: 32px;
+  padding: 0 var(--e3);
+  font-size: var(--texto-sm);
+}
+
+.btn--ancho {
+  width: 100%;
+}
+
+/* ── Campo ────────────────────────────────────────────────────────────── */
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e2);
+}
+
+.campo__etiqueta {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--texto);
+}
+
+.campo__control {
+  min-height: 40px;
+  padding: 0 var(--e3);
+  background: var(--superficie);
+  border: 1px solid var(--borde-control);
+  border-radius: var(--radio);
+  transition: border-color var(--transicion);
+}
+
+.campo__control:hover:not(:disabled) {
+  border-color: var(--accion);
+}
+
+.campo__control[aria-invalid='true'] {
+  border-color: var(--error);
+}
+
+.campo__ayuda {
+  font-size: var(--texto-xs);
+  color: var(--texto-tenue);
+}
+
+.campo__error {
+  font-size: var(--texto-xs);
+  color: var(--error);
+  font-weight: 600;
+}
+
+/* ── Aviso ────────────────────────────────────────────────────────────── */
+
+.aviso {
+  display: flex;
+  gap: var(--e3);
+  padding: var(--e3) var(--e4);
+  border: 1px solid;
+  border-radius: var(--radio);
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+}
+
+.aviso--error {
+  background: var(--error-fondo);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.aviso--acierto {
+  background: var(--acierto-fondo);
+  border-color: var(--acierto);
+  color: var(--acierto);
+}
+
+.aviso--informacion {
+  background: var(--aviso-fondo);
+  border-color: var(--aviso-borde);
+  color: var(--texto);
+}
+
+/* ── Tarjeta ──────────────────────────────────────────────────────────── */
+
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+/* ── Etiqueta de estado ───────────────────────────────────────────────── */
+
+.pastilla {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e1);
+  padding: 2px var(--e2);
+  border-radius: var(--radio-pastilla);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+  border: 1px solid var(--borde-control);
+  color: var(--texto-suave);
+}
+
+.pastilla--activa {
+  background: var(--acierto-fondo);
+  border-color: var(--acierto);
+  color: var(--acierto);
+}
+
+.pastilla--pendiente {
+  background: var(--aviso-fondo);
+  border-color: var(--aviso-borde);
+  color: var(--texto);
+}
+
+.pastilla--bloqueada {
+  background: var(--error-fondo);
+  border-color: var(--error);
+  color: var(--error);
+}
+
+/* ── Cargando ─────────────────────────────────────────────────────────── */
+
+.cargando {
+  display: grid;
+  place-items: center;
+  min-height: 50vh;
+  color: var(--texto-tenue);
+  font-size: var(--texto-sm);
+}

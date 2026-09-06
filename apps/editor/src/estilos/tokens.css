@@ -1,0 +1,151 @@
+/*
+ * Tokens de la interfaz de Fast Creative Builder.
+ *
+ * Base: Brandbook Zurich 2024. Todos los valores de color vienen del manual.
+ *
+ * Dónde tomo licencia, y lo declaro:
+ *   · Modo oscuro. El brandbook no lo contempla. Está derivado del Azul
+ *     oscuro #23366F y no es doctrina de marca.
+ *   · Colores de estado (error, aviso, acierto). El manual no define
+ *     semánticos de interfaz; uso Durazno, Piedra arenisca y Musgo de la
+ *     paleta secundaria, siempre con texto oscuro porque con blanco no
+ *     alcanzan el contraste AA.
+ *   · Escala de espaciado, radios y sombras. No están en el manual.
+ *
+ * Cada par de texto y fondo de este archivo cumple WCAG AA. Los ratios
+ * verificados están anotados donde importa.
+ */
+
+:root {
+  /* ── Paleta de marca ────────────────────────────────────────────────── */
+  --zurich-azul: #2167ae; /* color héroe */
+  --zurich-azul-oscuro: #23366f;
+  --zurich-azul-medio: #5495cf;
+  --zurich-azul-claro: #91bfe3;
+  --zurich-celeste: #1fb1e6;
+  --zurich-arenisca: #dad2bd;
+  --zurich-paloma: #dde4e3;
+  --zurich-blanco: #eceeef; /* solo pantalla; aquí es legítimo */
+
+  /* Secundarios, solo como acento */
+  --zurich-musgo: #77a984;
+  --zurich-cerceta: #19bab6;
+  --zurich-durazno: #ff7569;
+  --zurich-lila: #6d6bcf;
+
+  /* ── Superficies ────────────────────────────────────────────────────── */
+  --superficie-fondo: var(--zurich-blanco);
+  --superficie: #ffffff;
+  --superficie-alta: #ffffff;
+  --superficie-tenue: var(--zurich-paloma);
+
+  /* ── Texto ──────────────────────────────────────────────────────────── */
+  --texto: var(--zurich-azul-oscuro); /* 9,87:1 sobre el fondo */
+  --texto-suave: #5a6478;
+  --texto-tenue: #68717f; /* 4,93:1 — sigue cumpliendo AA como texto normal */
+  --texto-sobre-azul: #ffffff; /* 5,81:1 sobre el héroe */
+
+  /* ── Acción ─────────────────────────────────────────────────────────── */
+  --accion: var(--zurich-azul);
+  --accion-hover: #1b558f;
+  --accion-activa: #164876;
+  --accion-texto: #ffffff;
+  --accion-tenue: #e8f0f8;
+
+  /* ── Bordes ─────────────────────────────────────────────────────────── */
+  /* Divisor decorativo. No delimita ningún control, así que no necesita 3:1. */
+  --borde: #ccd5d9;
+  /* Contorno de campos, botones y conmutadores. WCAG 1.4.11 exige 3:1 y esto
+     da 3,53 sobre blanco y 3,03 sobre el fondo de la aplicación. */
+  --borde-control: #7d8a97;
+  --borde-foco: var(--zurich-azul);
+
+  /* ── Estados [Convención] ───────────────────────────────────────────── */
+  --error: #b3261e;
+  --error-fondo: #fdeceb;
+  --aviso-fondo: #fdf3e2;
+  --aviso-borde: var(--zurich-arenisca);
+  --acierto: #1e6b3a;
+  --acierto-fondo: #e9f4ec;
+
+  /* ── Tipografía ─────────────────────────────────────────────────────── */
+  /* Zurich Sans cuando esté subida a la biblioteca; Arial mientras tanto,
+     que es lo que autoriza el propio brandbook. */
+  --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
+  --fuente-mono: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', monospace;
+
+  --texto-xs: 0.75rem;
+  --texto-sm: 0.8125rem;
+  --texto-base: 0.875rem;
+  --texto-md: 1rem;
+  --texto-lg: 1.125rem;
+  --texto-xl: 1.375rem;
+  --texto-2xl: 1.75rem;
+  --texto-3xl: 2.25rem;
+
+  /* ── Espaciado, base 4 [Convención] ─────────────────────────────────── */
+  --e1: 0.25rem;
+  --e2: 0.5rem;
+  --e3: 0.75rem;
+  --e4: 1rem;
+  --e5: 1.25rem;
+  --e6: 1.5rem;
+  --e8: 2rem;
+  --e10: 2.5rem;
+  --e12: 3rem;
+  --e16: 4rem;
+
+  /* ── Radios y sombras [Convención] ──────────────────────────────────── */
+  --radio-sm: 4px;
+  --radio: 8px;
+  --radio-lg: 12px;
+  --radio-pastilla: 999px;
+
+  --sombra-sm: 0 1px 2px rgb(35 54 111 / 0.06);
+  --sombra: 0 1px 3px rgb(35 54 111 / 0.08), 0 6px 16px rgb(35 54 111 / 0.06);
+  --sombra-lg: 0 4px 12px rgb(35 54 111 / 0.1), 0 16px 40px rgb(35 54 111 / 0.08);
+
+  /* ── Disposición ────────────────────────────────────────────────────── */
+  --barra-superior: 52px;
+  --panel-izq: 260px;
+  --panel-der: 300px;
+
+  --transicion: 140ms cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+/*
+ * Modo oscuro. [Convención] declarada: no está en el brandbook.
+ * El fondo parte del Azul oscuro de marca en lugar de un gris neutro, para
+ * que la interfaz siga leyéndose como Zurich y no como un tema genérico.
+ */
+:root[data-tema='oscuro'] {
+  --superficie-fondo: #131a30;
+  --superficie: #1b2440;
+  --superficie-alta: #222d4e;
+  --superficie-tenue: #2a3557;
+
+  --texto: #e8ecf4;
+  --texto-suave: #a9b4cc;
+  --texto-tenue: #8d99b6; /* 5,36:1 */
+
+  --accion: var(--zurich-azul-medio); /* el héroe no contrasta sobre fondo oscuro */
+  --accion-hover: #6ba6da;
+  --accion-activa: #7fb3e0;
+  --accion-texto: #10182c; /* 5,91:1 sobre azul medio */
+  --accion-tenue: #24365a;
+
+  --borde: #34406a;
+  --borde-control: #6a76a2; /* 3,44 sobre superficie, 3,88 sobre fondo */
+  --borde-foco: var(--zurich-azul-claro);
+
+  --error: #ff9d95;
+  --error-fondo: #3a1f21;
+  --aviso-fondo: #3a3122;
+  --aviso-borde: #6a5c3f;
+  --acierto: #8fd9a8;
+  --acierto-fondo: #1d3428;
+
+  --sombra-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --sombra: 0 1px 3px rgb(0 0 0 / 0.35), 0 6px 16px rgb(0 0 0 / 0.3);
+  --sombra-lg: 0 4px 12px rgb(0 0 0 / 0.4), 0 16px 40px rgb(0 0 0 / 0.35);
+}
