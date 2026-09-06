@@ -30,3 +30,6 @@ npm-debug.log*
 !.vscode/extensions.json
 .idea/
 .claude/settings.local.json
+
+# Sondas temporales que dejan los subagentes al verificar
+mockups/_*
