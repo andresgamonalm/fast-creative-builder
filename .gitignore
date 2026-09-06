@@ -29,7 +29,4 @@ npm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
-
-# Referencia temporal (se elimina al cerrar la fase 0)
-referencia-anterior/
 .claude/settings.local.json
