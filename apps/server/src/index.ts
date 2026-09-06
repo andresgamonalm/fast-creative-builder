@@ -64,6 +64,14 @@ const RUTAS: readonly Ruta[] = [
   ruta('DELETE', '/api/usuarios/:id', 'administrador', (c, p) => usuarios.eliminar(c, p['id'] ?? '')),
 ];
 
+function decodificarSegmento(valor: string): string | null {
+  try {
+    return decodeURIComponent(valor);
+  } catch {
+    return null;
+  }
+}
+
 function emparejar(
   metodo: string,
   segmentos: readonly string[],
@@ -79,7 +87,16 @@ function emparejar(
       const trozo = r.patron[i]!;
       const valor = segmentos[i]!;
       if (trozo.startsWith(':')) {
-        params[trozo.slice(1)] = decodeURIComponent(valor);
+        // decodeURIComponent lanza con cualquier escape inválido, y esto corre
+        // ANTES de resolver el permiso: `DELETE /api/usuarios/%` tumbaba la
+        // petición con un 500 sin necesidad de sesión. Un escape roto no es un
+        // fallo del servidor, es una ruta que no existe.
+        const decodificado = decodificarSegmento(valor);
+        if (decodificado === null) {
+          coincide = false;
+          break;
+        }
+        params[trozo.slice(1)] = decodificado;
       } else if (trozo !== valor) {
         coincide = false;
         break;

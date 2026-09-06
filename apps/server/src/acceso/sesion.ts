@@ -115,11 +115,31 @@ export async function usuarioDeLaPeticion(
   };
 }
 
-/** Limpieza de sesiones y tokens caducados. Barata y se ejecuta de fondo. */
+/**
+ * Limpieza de sesiones, tokens caducados y errores viejos.
+ *
+ * Corría en CADA petición a /api/*, tres DELETE que recorrían las tablas.
+ * Ahora se espacia: como mucho una vez cada cuarto de hora por instancia del
+ * Worker. Sigue ejecutándose de fondo, sin retrasar la respuesta.
+ */
+const CADA_MS = 15 * 60_000;
+const DIAS_DE_ERRORES = 30;
+let ultimaLimpieza = 0;
+
 export async function limpiarCaducados(entorno: Entorno): Promise<void> {
+  const marca = Date.now();
+  if (marca - ultimaLimpieza < CADA_MS) return;
+  ultimaLimpieza = marca;
+
   const t = ahora();
+  const horizonte = new Date(marca - DIAS_DE_ERRORES * 24 * 60 * 60_000).toISOString();
   await entorno.BD.batch([
     entorno.BD.prepare('DELETE FROM sesiones WHERE expira_en < ?').bind(t),
-    entorno.BD.prepare('DELETE FROM tokens_acceso WHERE expira_en < ? OR usado_en IS NOT NULL').bind(t),
+    entorno.BD.prepare(
+      'DELETE FROM tokens_acceso WHERE expira_en < ? OR usado_en IS NOT NULL',
+    ).bind(t),
+    // El registro de errores no se podaba nunca: cualquiera podía hacerlo
+    // crecer sin límite pidiendo rutas mal formadas.
+    entorno.BD.prepare('DELETE FROM registro_errores WHERE ocurrido_en < ?').bind(horizonte),
   ]);
 }

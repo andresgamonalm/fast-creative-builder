@@ -111,10 +111,15 @@ export async function cambiarEstado(c: Contexto, id: string): Promise<Response> 
   }
   if (id === c.usuario.id) return error('No puedes bloquearte a ti mismo.');
 
-  const fila = await c.entorno.BD.prepare('SELECT id FROM usuarios WHERE id = ? LIMIT 1')
+  const fila = await c.entorno.BD.prepare('SELECT id, rol FROM usuarios WHERE id = ? LIMIT 1')
     .bind(id)
-    .first<{ id: string }>();
+    .first<{ id: string; rol: string }>();
   if (!fila) return noEncontrado();
+
+  if (estado === 'bloqueado') {
+    const sinAdministrador = await dejariaSinAdministrador(c, id, fila.rol);
+    if (sinAdministrador) return sinAdministrador;
+  }
 
   await c.entorno.BD.prepare('UPDATE usuarios SET estado = ? WHERE id = ?').bind(estado, id).run();
 
@@ -127,18 +132,34 @@ export async function cambiarEstado(c: Contexto, id: string): Promise<Response> 
 export async function eliminar(c: Contexto, id: string): Promise<Response> {
   if (id === c.usuario.id) return error('No puedes eliminar tu propia cuenta.');
 
-  const proyectos = await c.entorno.BD.prepare(
-    'SELECT COUNT(*) AS total FROM proyectos WHERE propietario_id = ? AND eliminado_en IS NULL',
+  const fila = await c.entorno.BD.prepare('SELECT id, rol FROM usuarios WHERE id = ? LIMIT 1')
+    .bind(id)
+    .first<{ id: string; rol: string }>();
+  if (!fila) return noEncontrado();
+
+  const sinAdministrador = await dejariaSinAdministrador(c, id, fila.rol);
+  if (sinAdministrador) return sinAdministrador;
+
+  // Se cuentan TODOS los proyectos, también los de la papelera, y también los
+  // recursos: antes sólo se miraban los proyectos vivos, así que alguien con
+  // trabajo en la papelera pasaba el filtro y el DELETE reventaba con un 500
+  // por clave foránea.
+  const dependencias = await c.entorno.BD.prepare(
+    `SELECT (SELECT COUNT(*) FROM proyectos WHERE propietario_id = ?1) AS proyectos,
+            (SELECT COUNT(*) FROM recursos  WHERE propietario_id = ?1) AS recursos`,
   )
     .bind(id)
-    .first<{ total: number }>();
+    .first<{ proyectos: number; recursos: number }>();
 
-  // Borrar a alguien con trabajo vivo perdería sus proyectos sin aviso.
-  // Se bloquea la operación y se explica la alternativa.
-  if ((proyectos?.total ?? 0) > 0) {
+  const proyectos = dependencias?.proyectos ?? 0;
+  const recursos = dependencias?.recursos ?? 0;
+  if (proyectos > 0 || recursos > 0) {
+    const partes: string[] = [];
+    if (proyectos > 0) partes.push(`${proyectos} proyecto(s), contando la papelera`);
+    if (recursos > 0) partes.push(`${recursos} archivo(s) en la biblioteca`);
     return error(
-      `Esta persona tiene ${proyectos?.total} proyecto(s). Bloquea la cuenta en vez de eliminarla, ` +
-        'o mueve antes sus proyectos.',
+      `Esta persona tiene ${partes.join(' y ')}. Bloquea la cuenta en vez de eliminarla, ` +
+        'o traspasa antes su trabajo.',
       409,
     );
   }
@@ -146,4 +167,28 @@ export async function eliminar(c: Contexto, id: string): Promise<Response> {
   await cerrarTodasLasSesiones(c.entorno, id);
   await c.entorno.BD.prepare('DELETE FROM usuarios WHERE id = ?').bind(id).run();
   return json({ ok: true });
+}
+
+/**
+ * Devuelve una respuesta de error si quitar a esta persona dejaría el
+ * aplicativo sin ningún administrador activo. Sin administrador no hay forma
+ * de invitar a nadie ni de recuperar el control desde la propia interfaz.
+ */
+async function dejariaSinAdministrador(
+  c: Contexto,
+  id: string,
+  rol: string,
+): Promise<Response | null> {
+  if (rol !== 'administrador') return null;
+  const fila = await c.entorno.BD.prepare(
+    `SELECT COUNT(*) AS total FROM usuarios
+      WHERE rol = 'administrador' AND estado = 'activo' AND id <> ?`,
+  )
+    .bind(id)
+    .first<{ total: number }>();
+  if ((fila?.total ?? 0) > 0) return null;
+  return error(
+    'Es la única cuenta de administrador activa. Nombra antes a otra persona administradora.',
+    409,
+  );
 }

@@ -15,10 +15,11 @@ import {
 } from '../acceso/claves.js';
 import {
   LIMITE_ENTRADA,
+  LIMITE_ORIGEN,
   LIMITE_RECUPERACION,
+  anotarYComprobar,
   limpiarIntentos,
-  registrarIntento,
-  superaLimite,
+  origenDe,
 } from '../acceso/limite.js';
 import {
   cerrarSesion,
@@ -50,6 +51,19 @@ interface FilaUsuario {
 
 // ── Entrar ────────────────────────────────────────────────────────────────
 
+/**
+ * Credencial señuelo. Cuando el correo no existe se deriva igualmente contra
+ * ésta, para que el coste de la respuesta no dependa de si la cuenta existe.
+ * Sin esto, un correo desconocido respondía tras un SELECT indexado y uno
+ * conocido tras 210.000 iteraciones de PBKDF2: la diferencia de tiempo era
+ * un listado de cuentas.
+ */
+const SENUELO = {
+  hash: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=',
+  sal: 'AAAAAAAAAAAAAAAAAAAAAA==',
+  iteraciones: 210_000,
+};
+
 export async function entrar(peticion: Request, entorno: Entorno, url: URL): Promise<Response> {
   const cuerpo = await leerJson<{ correo?: string; clave?: string }>(peticion);
   const correo = normalizar(cuerpo?.correo);
@@ -57,8 +71,14 @@ export async function entrar(peticion: Request, entorno: Entorno, url: URL): Pro
 
   if (!correo || !clave) return error('Escribe tu correo y tu contraseña.');
 
-  if (await superaLimite(entorno, `entrar:${correo}`, LIMITE_ENTRADA)) {
-    return error('Demasiados intentos fallidos. Espera unos minutos y vuelve a probar.', 429);
+  const frenado = 'Demasiados intentos fallidos. Espera unos minutos y vuelve a probar.';
+  // Se anota antes de verificar, no después: así el contador refleja también
+  // las peticiones en vuelo.
+  if (await anotarYComprobar(entorno, `entrar-origen:${origenDe(peticion)}`, LIMITE_ORIGEN)) {
+    return error(frenado, 429);
+  }
+  if (await anotarYComprobar(entorno, `entrar:${correo}`, LIMITE_ENTRADA)) {
+    return error(frenado, 429);
   }
 
   const fila = await entorno.BD.prepare(
@@ -68,30 +88,26 @@ export async function entrar(peticion: Request, entorno: Entorno, url: URL): Pro
     .bind(correo)
     .first<FilaUsuario>();
 
-  // Mismo mensaje y mismo coste tanto si el correo no existe como si la
-  // contraseña falla: no revelamos quién tiene cuenta.
-  const credencialesMal = async (): Promise<Response> => {
-    await registrarIntento(entorno, `entrar:${correo}`);
-    return error('Correo o contraseña incorrectos.', 401);
-  };
+  const tieneClave = Boolean(fila?.clave_hash && fila.clave_sal && fila.clave_iteraciones);
+  const correcta = await verificarClave(
+    clave,
+    tieneClave
+      ? { hash: fila!.clave_hash!, sal: fila!.clave_sal!, iteraciones: fila!.clave_iteraciones! }
+      : SENUELO,
+  );
 
-  if (!fila || !fila.clave_hash || !fila.clave_sal || !fila.clave_iteraciones) {
-    return credencialesMal();
+  // Mismo mensaje y ahora también mismo coste, exista o no la cuenta.
+  if (!fila || !tieneClave || !correcta) {
+    return error('Correo o contraseña incorrectos.', 401);
   }
+
   // Este mensaje sí confirma que la cuenta existe, a diferencia del anterior.
   // Es deliberado: en una herramienta interna de quince personas, que alguien
-  // bloqueado sepa por qué no entra vale más que ocultar su existencia a un
-  // atacante que necesitaría igualmente su contraseña.
+  // bloqueado sepa por qué no entra vale más que ocultárselo. Va DESPUÉS de
+  // comprobar la contraseña, así que sólo lo ve quien ya la sabe.
   if (fila.estado !== 'activo') {
     return error('Esta cuenta está bloqueada. Habla con el administrador.', 403);
   }
-
-  const correcta = await verificarClave(clave, {
-    hash: fila.clave_hash,
-    sal: fila.clave_sal,
-    iteraciones: fila.clave_iteraciones,
-  });
-  if (!correcta) return credencialesMal();
 
   await limpiarIntentos(entorno, `entrar:${correo}`);
 
@@ -126,32 +142,51 @@ export async function recuperar(peticion: Request, entorno: Entorno): Promise<Re
   if (!correo) return error('Escribe tu correo.');
 
   // Respuesta idéntica exista o no la cuenta.
-  const respuestaNeutra = json({ ok: true });
+  const respuestaNeutra = (): Response => json({ ok: true });
 
-  if (await superaLimite(entorno, `recuperar:${correo}`, LIMITE_RECUPERACION)) {
-    return respuestaNeutra;
+  if (await anotarYComprobar(entorno, `recuperar-origen:${origenDe(peticion)}`, LIMITE_ORIGEN)) {
+    return respuestaNeutra();
   }
-  await registrarIntento(entorno, `recuperar:${correo}`);
+  if (await anotarYComprobar(entorno, `recuperar:${correo}`, LIMITE_RECUPERACION)) {
+    return respuestaNeutra();
+  }
 
   const fila = await entorno.BD.prepare(
     "SELECT id FROM usuarios WHERE correo = ? AND estado = 'activo' LIMIT 1",
   )
     .bind(correo)
     .first<{ id: string }>();
-  if (!fila) return respuestaNeutra;
+  if (!fila) return respuestaNeutra();
 
   const token = generarToken(32);
-  await entorno.BD.prepare(
-    `INSERT INTO tokens_acceso (id, usuario_id, proposito, token_hash, expira_en, creado_en)
-     VALUES (?, ?, 'recuperacion', ?, ?, ?)`,
-  )
-    .bind(uuid(), fila.id, await hashToken(token), enMinutos(MINUTOS_RECUPERACION), ahora())
-    .run();
+  // Sólo puede haber un enlace vivo por persona y propósito: pedir el enlace
+  // dos veces dejaba los dos sirviendo, y el primero seguía valiendo media
+  // hora en la bandeja de entrada aunque ya se hubiera usado el segundo.
+  await entorno.BD.batch([
+    entorno.BD.prepare(
+      `UPDATE tokens_acceso SET usado_en = ?
+        WHERE usuario_id = ? AND proposito = 'recuperacion' AND usado_en IS NULL`,
+    ).bind(ahora(), fila.id),
+    entorno.BD.prepare(
+      `INSERT INTO tokens_acceso (id, usuario_id, proposito, token_hash, expira_en, creado_en)
+       VALUES (?, ?, 'recuperacion', ?, ?, ?)`,
+    ).bind(uuid(), fila.id, await hashToken(token), enMinutos(MINUTOS_RECUPERACION), ahora()),
+  ]);
 
   const enlace = `${entorno.URL_SITIO}/recuperar/${token}`;
-  await enviar(entorno, correoRecuperacion(entorno, correo, enlace));
+  // Si el envío falla —clave caducada, cuota, dominio sin verificar— la
+  // excepción subía al catch general y devolvía un 500, pero SÓLO cuando la
+  // cuenta existía. Eso convertía la respuesta neutra en un delator.
+  try {
+    await enviar(entorno, correoRecuperacion(entorno, correo, enlace));
+  } catch (fallo) {
+    console.error(
+      '[recuperar] no se pudo enviar el correo:',
+      fallo instanceof Error ? fallo.message : String(fallo),
+    );
+  }
 
-  return respuestaNeutra;
+  return respuestaNeutra();
 }
 
 // ── Comprobar un token de invitación o recuperación ────────────────────────
@@ -219,7 +254,12 @@ export async function establecerClave(
           SET clave_hash = ?, clave_sal = ?, clave_iteraciones = ?, nombre = ?, ultimo_acceso = ?
         WHERE id = ?`,
     ).bind(guardada.hash, guardada.sal, guardada.iteraciones, nombre, ahora(), fila.usuario_id),
-    entorno.BD.prepare('UPDATE tokens_acceso SET usado_en = ? WHERE id = ?').bind(ahora(), fila.id),
+    // Se anulan TODOS los enlaces vivos de esa persona, no sólo el usado.
+    // Antes, si había pedido el enlace dos veces, el otro seguía sirviendo
+    // para volver a cambiar la contraseña.
+    entorno.BD.prepare(
+      'UPDATE tokens_acceso SET usado_en = ? WHERE usuario_id = ? AND usado_en IS NULL',
+    ).bind(ahora(), fila.usuario_id),
   ]);
 
   // Cambiar la contraseña invalida cualquier sesión previa.
@@ -239,14 +279,30 @@ export async function crearInvitacion(
   creadoPor: string,
 ): Promise<{ enlace: string; enviado: boolean }> {
   const token = generarToken(32);
-  await entorno.BD.prepare(
-    `INSERT INTO tokens_acceso (id, usuario_id, proposito, token_hash, expira_en, creado_por, creado_en)
-     VALUES (?, ?, 'invitacion', ?, ?, ?, ?)`,
-  )
-    .bind(uuid(), usuarioId, await hashToken(token), enDias(DIAS_INVITACION), creadoPor, ahora())
-    .run();
+  // Una sola invitación viva por persona: reinvitar anula la anterior en vez
+  // de dejar dos enlaces válidos siete días cada uno.
+  await entorno.BD.batch([
+    entorno.BD.prepare(
+      `UPDATE tokens_acceso SET usado_en = ?
+        WHERE usuario_id = ? AND proposito = 'invitacion' AND usado_en IS NULL`,
+    ).bind(ahora(), usuarioId),
+    entorno.BD.prepare(
+      `INSERT INTO tokens_acceso (id, usuario_id, proposito, token_hash, expira_en, creado_por, creado_en)
+       VALUES (?, ?, 'invitacion', ?, ?, ?, ?)`,
+    ).bind(uuid(), usuarioId, await hashToken(token), enDias(DIAS_INVITACION), creadoPor, ahora()),
+  ]);
 
   const enlace = `${entorno.URL_SITIO}/invitacion/${token}`;
-  const enviado = await enviar(entorno, correoInvitacion(entorno, correo, enlace));
+  // El enlace ya existe y es válido: que el envío falle no puede tirar la
+  // petición ni perderlo. Se devuelve igual para poder pasarlo a mano.
+  let enviado = false;
+  try {
+    enviado = await enviar(entorno, correoInvitacion(entorno, correo, enlace));
+  } catch (fallo) {
+    console.error(
+      '[invitacion] no se pudo enviar el correo:',
+      fallo instanceof Error ? fallo.message : String(fallo),
+    );
+  }
   return { enlace, enviado };
 }
