@@ -1,53 +1,63 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   Fast Creative Builder — sistema visual de las propuestas
+   Fast Creative Builder — sistema visual
    ───────────────────────────────────────────────────────────────────────
-   Dirección: lineamientos-marca-gamonal (estructura, composición,
-   personalidad, criterios de CTA y prohibiciones).
-   Color y tipografía: Brandbook Zurich 2024, mapeados a los roles Gamonal.
+   Dirección tomada de zurich.cl, que es la referencia que entregó el
+   usuario, leída así:
 
-   Reglas duras que este archivo cumple, y que la versión anterior incumplía:
-     · Radio único de 8 px en todo el sistema. Sin excepciones salvo el
-       avatar circular y el contenedor de imagen a sangre.
-     · Ninguna sombra cromática, ningún degradado, ningún brillo ni difuminado.
-     · Ningún color sobre su misma familia. Las superficies se separan con
-       fondos sólidos distintos, nunca con líneas ni filetes decorativos.
-     · Cuerpo a 16 px. Pesos 400, 500 y 600; nunca más.
-     · Área táctil mínima de 44 px en todo control.
+     · La página NO es azul sobre azul. Alterna BANDAS PASTEL a todo el
+       ancho —rosa, celeste, menta, ámbar, arenisca— con mucho aire.
+     · El azul saturado se reserva para los botones y los datos, no para
+       los fondos de sección.
+     · El lenguaje de formas son CÍRCULOS: foto enmascarada en círculo con
+       burbujas superpuestas detrás.
+     · Los botones son PÍLDORA, azul sólido con chevron. El coral es la
+       acción de conversión.
+     · Los titulares son grandes y de peso normal, no compactos y pesados.
+
+   Disciplina, jerarquía y prohibiciones: lineamientos-marca-gamonal.
+   Valores de color y tipografía: Brandbook Zurich 2024.
+
+   Contrastes verificados uno a uno, no estimados.
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* ── Mapa de color: rol Gamonal → valor Zurich ───────────────────────── */
-
 :root {
-  /* Identidad y estructura */
-  --heroe: #2167ae;            /* Azul de Zúrich. Color héroe, visibilidad constante */
-  --heroe-oscuro: #1b558f;     /* hover y active del héroe */
-  --estructura: #23366f;       /* Azul oscuro. Cabeceras, barras, texto principal */
-  --estructura-clara: #2c4287;
-
-  /* Interacción y datos */
-  --medio: #5495cf;            /* Azul medio */
-  --claro: #91bfe3;            /* Azul claro */
+  /* ── Azules de marca ─────────────────────────────────────────────────
+     El héroe manda en botones, enlaces y datos. El navy es el color del
+     texto y de los titulares sobre cualquier banda pastel. */
+  --heroe: #2167ae;
+  --heroe-hover: #1b558f;
+  --navy: #23366f;
+  --azul-medio: #5495cf;
+  --azul-claro: #91bfe3;
   --celeste: #1fb1e6;
 
-  /* Acentos. Equivalen al amarillo, turquesa y magenta de Gamonal */
-  --acento-calido: #fff773;    /* Lima. CTA sobre fondo azul */
-  --acento-frio: #19bab6;      /* Cerceta */
-  --acento-lila: #6d6bcf;      /* Lila */
+  /* ── Bandas de sección. Todas dan AA o AAA con titular navy ─────────
+     rosa 7,89 · celeste 5,89 · menta 8,13 · ámbar 5,97
+     arenisca 7,62 · paloma 8,90 · hueso 9,87 · lima 10,28            */
+  --banda-rosa: #ffc5ea;
+  --banda-celeste: #91bfe3;
+  --banda-menta: #a6e9ab;
+  --banda-ambar: #e4b273;
+  --banda-arenisca: #dad2bd;
+  --banda-paloma: #dde4e3;
+  --banda-hueso: #eceeef;
+  --banda-lima: #fff773;
 
-  /* Superficies */
+  /* Acción de conversión. El coral de campaña de Zurich es #F16F6D, que
+     con texto blanco da 2,90 y no cumple AA. Se oscurece a 4,82.
+     [Convención declarada] */
+  --coral: #cc4038;
+  --coral-hover: #b8362f;
+
   --papel: #ffffff;
-  --pagina: #eceeef;           /* Blanco de Zúrich. Solo pantalla, aquí es legítimo */
-  --paloma: #dde4e3;
-  --arenisca: #dad2bd;
+  --pagina: #f7f8f8;
 
-  /* Texto */
-  --tinta: #23366f;            /* 9,87:1 sobre --pagina */
-  --tinta-suave: #4a5570;      /* 7,26:1 sobre blanco */
-  --tinta-tenue: #68717f;      /* 4,93:1 sobre blanco */
-  --sobre-oscuro: #ffffff;
+  /* ── Texto ───────────────────────────────────────────────────────── */
+  --tinta: #23366f;
+  --tinta-suave: #4a5570;
+  --tinta-tenue: #68717f;
 
-  /* Estados. Zurich no define semánticos de interfaz: [Convención] declarada,
-     construida para cumplir AA sobre superficie clara. */
+  /* ── Estados ─────────────────────────────────────────────────────── */
   --exito: #1e6b3a;
   --exito-fondo: #e4f1e9;
   --aviso: #7a5a12;
@@ -55,55 +65,45 @@
   --error: #a52a20;
   --error-fondo: #fae9e7;
 
-  /* Contorno de control. Nunca decorativo: sólo campos, CTA secundario,
-     anillo de foco y separación de filas en tabla densa. */
-  --contorno: #7d8a97;         /* 3,53:1 sobre blanco. Cumple WCAG 1.4.11 */
-  --contorno-tenue: #c3cbd2;
+  /* Contorno de control. 3,53:1 sobre blanco, cumple WCAG 1.4.11 */
+  --contorno: #7d8a97;
+  --contorno-tenue: #dde1e5;
 
-  /* Forma */
+  /* ── Forma ───────────────────────────────────────────────────────────
+     8 px en cajas, campos y contenedores.
+     Los CTA van en píldora: es la firma reconocible de Zurich y entra en
+     la excepción funcional que permite Gamonal.                       */
   --radio: 8px;
+  --pildora: 999px;
 
-  /* Escala de 8 px */
-  --e1: 4px;
-  --e2: 8px;
-  --e3: 12px;
-  --e4: 16px;
-  --e5: 24px;
-  --e6: 32px;
-  --e7: 40px;
-  --e8: 48px;
-  --e9: 64px;
-  --e10: 80px;
-  --e11: 96px;
-  --e12: 128px;
+  /* ── Escala de 8 ─────────────────────────────────────────────────── */
+  --e1: 4px;  --e2: 8px;  --e3: 12px; --e4: 16px; --e5: 24px;
+  --e6: 32px; --e7: 40px; --e8: 48px; --e9: 64px; --e10: 80px;
+  --e11: 96px; --e12: 128px;
 
-  /* Tipografía. Zurich Sans cuando esté cargada; Arial es el respaldo que
-     autoriza el propio brandbook. Escala y pesos, de Gamonal. */
+  /* ── Tipografía ──────────────────────────────────────────────────── */
   --fuente: 'Zurich Sans', Arial, Helvetica, sans-serif;
   --t-micro: 12px;
   --t-menor: 14px;
   --t-cuerpo: 16px;
   --t-lead: 18px;
   --t-h4: 20px;
-  --t-h3: 24px;
-  --t-h2: 32px;
-  --t-h1: 44px;
-  --t-display: 56px;
+  --t-h3: 26px;
+  --t-h2: 34px;
+  --t-h1: 46px;
 
-  /* Cuadrícula de 12 columnas */
-  --columnas: 12;
   --canal: 24px;
-  --margen-pagina: 40px;
+  --margen: 48px;
 }
 
-/* ── Base compartida por las tres propuestas ─────────────────────────── */
+/* ── Base ────────────────────────────────────────────────────────────── */
 
 .p {
   font-family: var(--fuente);
   font-size: var(--t-cuerpo);
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--tinta);
-  background: var(--pagina);
+  background: var(--papel);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -111,86 +111,25 @@
   position: relative;
 }
 
-.p *,
-.p *::before,
-.p *::after {
-  box-sizing: border-box;
-}
+.p *, .p *::before, .p *::after { box-sizing: border-box; }
+.p h1, .p h2, .p h3, .p h4, .p p, .p ul, .p ol, .p figure { margin: 0; padding: 0; }
+.p ul, .p ol { list-style: none; }
+.p img { display: block; max-width: 100%; }
 
-.p h1,
-.p h2,
-.p h3,
-.p h4,
-.p p,
-.p ul,
-.p ol,
-.p figure {
-  margin: 0;
-  padding: 0;
-}
+/* Titulares grandes y de peso normal, como en la referencia */
+.p h1 { font-size: var(--t-h1); font-weight: 400; line-height: 1.12; letter-spacing: -0.015em; }
+.p h2 { font-size: var(--t-h2); font-weight: 400; line-height: 1.18; letter-spacing: -0.01em; }
+.p h3 { font-size: var(--t-h3); font-weight: 500; line-height: 1.25; }
+.p h4 { font-size: var(--t-h4); font-weight: 600; line-height: 1.35; }
 
-.p ul,
-.p ol {
-  list-style: none;
-}
+.etiqueta { font-size: var(--t-micro); font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; }
+.lead { font-size: var(--t-lead); line-height: 1.6; color: var(--tinta-suave); }
+.menor { font-size: var(--t-menor); }
+.micro { font-size: var(--t-micro); }
+.tenue { color: var(--tinta-tenue); }
+.suave { color: var(--tinta-suave); }
 
-.p img {
-  display: block;
-  max-width: 100%;
-}
-
-.p h1 {
-  font-size: var(--t-h1);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.p h2 {
-  font-size: var(--t-h2);
-  font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-}
-
-.p h3 {
-  font-size: var(--t-h3);
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-.p h4 {
-  font-size: var(--t-h4);
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.etiqueta {
-  font-size: var(--t-micro);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.lead {
-  font-size: var(--t-lead);
-  line-height: 1.55;
-  color: var(--tinta-suave);
-}
-
-.menor {
-  font-size: var(--t-menor);
-}
-
-.tenue {
-  color: var(--tinta-tenue);
-}
-
-.suave {
-  color: var(--tinta-suave);
-}
-
-/* ── CTA. Un solo sistema de tamaños, radios y estados ───────────────── */
+/* ── CTA en píldora ──────────────────────────────────────────────────── */
 
 .cta {
   display: inline-flex;
@@ -200,82 +139,116 @@
   height: 44px;
   padding: 0 var(--e5);
   border: 0;
-  border-radius: var(--radio);
+  border-radius: var(--pildora);
   font-family: inherit;
   font-size: var(--t-menor);
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, transform 100ms ease-out;
+}
+.cta:active { transform: scale(.985); }
+
+.cta--alto { height: 52px; padding: 0 var(--e6); font-size: var(--t-cuerpo); }
+.cta--bajo { height: 36px; padding: 0 var(--e4); }
+.cta--ancho { width: 100%; }
+
+.cta--principal { background: var(--heroe); color: #fff; }
+.cta--principal:hover { background: var(--heroe-hover); }
+
+/* Acción de conversión */
+.cta--conversion { background: var(--coral); color: #fff; }
+.cta--conversion:hover { background: var(--coral-hover); }
+
+.cta--secundario { background: var(--papel); color: var(--heroe); box-shadow: inset 0 0 0 1px var(--heroe); }
+.cta--secundario:hover { background: #eef4fa; }
+
+.cta--terciario { background: transparent; color: var(--heroe); padding: 0 var(--e2); }
+.cta--terciario:hover { color: var(--heroe-hover); }
+
+.cta--sobre-color { background: var(--navy); color: #fff; }
+.cta--peligro { background: var(--papel); color: var(--error); box-shadow: inset 0 0 0 1px var(--error); }
+
+.cta .ico { width: 16px; height: 16px; }
+
+/* ═══ Qué botón admite cada banda ═════════════════════════════════════
+   Tabla calculada, no estimada. Dos condiciones a la vez: separación de
+   3:1 como mínimo entre el botón y su fondo, y familias cromáticas
+   distintas, que es lo que prohíbe Gamonal.
+
+     banda        héroe #2167AE   navy #23366F   coral #CC4038
+     ─────────────────────────────────────────────────────────
+     ámbar        3,02 sí         5,97 sí        2,50 NO · misma familia
+     rosa         3,99 sí         7,89 sí        3,31 NO · misma familia
+     menta        4,11 sí         4,11 sí        3,41 sí
+     arenisca     3,85 sí         7,62 sí        3,20 NO · misma familia
+     celeste      2,98 NO         5,89 NO        2,47 NO
+     hueso        4,99 sí         9,87 sí        4,14 sí
+     blanco       5,81 sí        11,48 sí        4,82 sí
+
+   Consecuencia que conviene recordar: LA BANDA CELESTE NO ADMITE NINGÚN
+   BOTÓN. Sirve de fondo para texto y fotografía, nunca para una acción.
+   Y el coral sólo va sobre neutro, blanco o verde: sobre ámbar, rosa o
+   arenisca sería rojo sobre naranja.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Bandas de sección a todo el ancho ───────────────────────────────── */
+
+.banda { padding: var(--e11) var(--margen); }
+.banda--corta { padding: var(--e9) var(--margen); }
+
+.banda--rosa { background: var(--banda-rosa); }
+.banda--celeste { background: var(--banda-celeste); }
+.banda--menta { background: var(--banda-menta); }
+.banda--ambar { background: var(--banda-ambar); }
+.banda--arenisca { background: var(--banda-arenisca); }
+.banda--paloma { background: var(--banda-paloma); }
+.banda--hueso { background: var(--banda-hueso); }
+.banda--blanca { background: var(--papel); }
+.banda--navy { background: var(--navy); color: #fff; }
+.banda--navy h1, .banda--navy h2, .banda--navy h3 { color: #fff; }
+
+.contenedor { max-width: 1120px; margin: 0 auto; }
+
+/* ── Lenguaje de formas: círculo con burbujas ────────────────────────── */
+
+.circulo {
+  position: relative;
+  flex: none;
+  display: inline-block;
 }
 
-.cta--alto {
-  height: 52px;
-  padding: 0 var(--e6);
-  font-size: var(--t-cuerpo);
+.circulo__foto {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 2;
 }
 
-.cta--bajo {
-  height: 36px;
-  padding: 0 var(--e3);
-  font-size: var(--t-menor);
+.circulo__fondo {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 1;
 }
 
-.cta--ancho {
-  width: 100%;
+/* Burbujas del sistema Zurich, tres tamaños, siempre en azules */
+.burbuja {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 3;
 }
-
-/* Sobre superficie clara */
-.cta--principal {
-  background: var(--heroe);
-  color: #ffffff;
-}
-
-.cta--secundario {
-  background: var(--papel);
-  color: var(--heroe);
-  border: 1px solid var(--heroe);
-}
-
-.cta--terciario {
-  background: transparent;
-  color: var(--heroe);
-  padding: 0 var(--e2);
-}
-
-/* Sobre fondo azul: el CTA cambia de color para no caer en azul sobre azul */
-.cta--sobre-azul {
-  background: var(--acento-calido);
-  color: var(--estructura);
-}
-
-.cta--sobre-azul-secundario {
-  background: var(--papel);
-  color: var(--estructura);
-}
-
-.cta--peligro {
-  background: var(--papel);
-  color: var(--error);
-  border: 1px solid var(--error);
-}
+.burbuja--1 { width: 34px; height: 34px; background: var(--navy); }
+.burbuja--2 { width: 52px; height: 52px; background: var(--heroe); }
+.burbuja--3 { width: 26px; height: 26px; background: var(--azul-claro); }
 
 /* ── Campos ──────────────────────────────────────────────────────────── */
 
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--e2);
-}
-
-.campo__et {
-  font-size: var(--t-menor);
-  font-weight: 500;
-  color: var(--tinta);
-}
-
+.campo { display: flex; flex-direction: column; gap: var(--e2); }
+.campo__et { font-size: var(--t-menor); font-weight: 500; }
 .campo__in {
-  height: 48px;
-  padding: 0 var(--e3);
+  height: 52px;
+  padding: 0 var(--e4);
   background: var(--papel);
   border: 1px solid var(--contorno);
   border-radius: var(--radio);
@@ -284,165 +257,78 @@
   color: var(--tinta);
   width: 100%;
 }
+.campo__in--area { height: auto; min-height: 96px; padding: var(--e3) var(--e4); resize: none; }
+.campo__ayuda { font-size: var(--t-micro); color: var(--tinta-tenue); }
 
-.campo__in--area {
-  height: auto;
-  min-height: 96px;
-  padding: var(--e3);
-  resize: none;
-}
-
-.campo__ayuda {
-  font-size: var(--t-micro);
-  color: var(--tinta-tenue);
-}
-
-/* ── Pastillas de estado. Color más texto, nunca color solo ──────────── */
+/* ── Pastillas ───────────────────────────────────────────────────────── */
 
 .pastilla {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 24px;
-  padding: 0 var(--e2);
-  border-radius: var(--radio);
-  font-size: var(--t-micro);
-  font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 26px; padding: 0 var(--e3);
+  border-radius: var(--pildora);
+  font-size: var(--t-micro); font-weight: 600;
 }
+.pastilla--exito { background: var(--exito-fondo); color: var(--exito); }
+.pastilla--aviso { background: var(--aviso-fondo); color: var(--aviso); }
+.pastilla--error { background: var(--error-fondo); color: var(--error); }
+.pastilla--neutra { background: var(--banda-paloma); color: var(--tinta-suave); }
+.pastilla--acento { background: var(--banda-lima); color: var(--navy); }
+.punto { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-.pastilla--exito {
-  background: var(--exito-fondo);
-  color: var(--exito);
-}
-.pastilla--aviso {
-  background: var(--aviso-fondo);
-  color: var(--aviso);
-}
-.pastilla--error {
-  background: var(--error-fondo);
-  color: var(--error);
-}
-.pastilla--neutra {
-  background: var(--paloma);
-  color: var(--tinta-suave);
-}
-.pastilla--acento {
-  background: var(--acento-calido);
-  color: var(--estructura);
-}
+/* ── Tarjeta de acceso rápido, como la fila de iconos de la referencia ── */
 
-.punto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-/* ── Tabla densa. La línea entre filas es funcional, no decorativa ───── */
-
-.tabla {
-  width: 100%;
-  border-collapse: collapse;
+.acceso {
+  display: flex; flex-direction: column; align-items: center; gap: var(--e3);
+  padding: var(--e5) var(--e3);
   background: var(--papel);
+  border: 1px solid var(--contorno-tenue);
   border-radius: var(--radio);
-  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 140ms ease;
 }
+.acceso:hover { border-color: var(--heroe); }
+.acceso__ico {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--azul-claro); color: var(--navy);
+  display: grid; place-items: center;
+}
+.acceso__n { font-size: var(--t-menor); font-weight: 600; line-height: 1.3; }
 
+/* ── Tabla ───────────────────────────────────────────────────────────── */
+
+.tabla { width: 100%; border-collapse: collapse; background: var(--papel); border-radius: var(--radio); overflow: hidden; }
 .tabla th {
-  padding: var(--e3) var(--e4);
-  text-align: left;
-  font-size: var(--t-micro);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--tinta-tenue);
-  background: var(--paloma);
+  padding: var(--e3) var(--e4); text-align: left;
+  font-size: var(--t-micro); font-weight: 600; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--tinta-tenue); background: var(--banda-paloma);
 }
+.tabla td { padding: var(--e4); font-size: var(--t-menor); border-top: 1px solid var(--contorno-tenue); vertical-align: middle; }
+.tabla tr:first-child td { border-top: 0; }
+.tabla__miniatura { width: 56px; height: 40px; border-radius: var(--radio); object-fit: cover; background: var(--banda-paloma); }
 
-.tabla td {
-  padding: var(--e4);
-  font-size: var(--t-menor);
-  border-top: 1px solid var(--contorno-tenue);
-  vertical-align: middle;
-}
+/* ── Utilidades ──────────────────────────────────────────────────────── */
 
-.tabla tr:first-child td {
-  border-top: 0;
-}
+.fila { display: flex; align-items: center; }
+.col { display: flex; flex-direction: column; }
+.crece { flex: 1; min-width: 0; }
+.centro { text-align: center; }
+.g1{gap:var(--e1)} .g2{gap:var(--e2)} .g3{gap:var(--e3)} .g4{gap:var(--e4)}
+.g5{gap:var(--e5)} .g6{gap:var(--e6)} .g8{gap:var(--e8)} .g9{gap:var(--e9)}
 
-.tabla__miniatura {
-  width: 56px;
-  height: 40px;
-  border-radius: var(--radio);
-  object-fit: cover;
-  background: var(--paloma);
-}
+.rejilla12 { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--canal); }
 
-/* ── Utilidades de rejilla ───────────────────────────────────────────── */
+.cuadricula { position: absolute; inset: 0; pointer-events: none; display: none; padding: 0 var(--margen); z-index: 90; }
+.mostrar-cuadricula .cuadricula { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--canal); }
+.cuadricula span { background: rgba(204, 64, 56, .12); }
 
-.fila {
-  display: flex;
-  align-items: center;
-}
+/* ── Iconografía ─────────────────────────────────────────────────────── */
 
-.col {
-  display: flex;
-  flex-direction: column;
-}
-
-.crece {
-  flex: 1;
-  min-width: 0;
-}
-
-.g1 { gap: var(--e1); }
-.g2 { gap: var(--e2); }
-.g3 { gap: var(--e3); }
-.g4 { gap: var(--e4); }
-.g5 { gap: var(--e5); }
-.g6 { gap: var(--e6); }
-.g8 { gap: var(--e8); }
-
-.rejilla12 {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: var(--canal);
-}
-
-/* ── Superposición de cuadrícula, para revisión ──────────────────────── */
-
-.cuadricula {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  display: none;
-  padding: 0 var(--margen-pagina);
-  z-index: 90;
-}
-
-.mostrar-cuadricula .cuadricula {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: var(--canal);
-}
-
-.cuadricula span {
-  background: rgba(255, 118, 105, 0.16);
-}
-
-/* ── Iconografía. Una sola familia: trazo 1.5, esquinas redondeadas ──── */
-
-.ico {
-  width: 20px;
-  height: 20px;
-  flex: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-}
-
+.ico { width: 20px; height: 20px; flex: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 .ico--16 { width: 16px; height: 16px; }
 .ico--24 { width: 24px; height: 24px; }
 .ico--28 { width: 28px; height: 28px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .p *, .p *::before, .p *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

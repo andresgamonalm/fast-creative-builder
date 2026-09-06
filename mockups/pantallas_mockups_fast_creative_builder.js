@@ -1,431 +1,296 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   Fast Creative Builder — pantallas de las tres propuestas
+   Marcos de aplicación y pantalla de inicio
+   ───────────────────────────────────────────────────────────────────────
+   Correcciones aplicadas:
+     · «Azul, azul y más azul.» El inicio se resuelve con bandas pastel a
+       todo el ancho, como zurich.cl. El azul queda para botones y datos.
+     · «La repetición del Crear.» Antes aparecía cuatro veces en la misma
+       pantalla. Ahora hay UNA acción principal, en la barra superior.
+       Crear deja de ser un destino de navegación.
    ═══════════════════════════════════════════════════════════════════════ */
 
 var DESTINOS = [
   { id: 'inicio', n: 'Inicio', i: 'inicio', ruta: '/home' },
-  { id: 'crear', n: 'Crear', i: 'crear', ruta: '/crear' },
   { id: 'proyectos', n: 'Proyectos', i: 'proyectos', ruta: '/proyectos' },
   { id: 'biblioteca', n: 'Biblioteca', i: 'biblioteca', ruta: '/biblioteca/imagenes' },
   { id: 'config', n: 'Configuración', i: 'ajustes', ruta: '/configuracion/general' }
 ];
 
-/* ═══ Marcos de aplicación ══════════════════════════════════════════════ */
-
-function marcoA(activo, ruta, acciones, cuerpo) {
-  var destinos = DESTINOS.map(function (d) {
-    return (
-      '<li class="a-dest' + (d.id === activo ? ' a-dest--on' : '') + '">' +
-      ico(d.i) +
-      '<span>' + d.n + '</span>' +
-      '</li>'
-    );
-  }).join('');
-
-  return (
-    '<div class="a-marco">' +
-      '<aside class="a-lateral">' +
-        '<div class="a-marca">' +
-          LOGOS.a(32, '#ffffff', '#23366f') +
-          '<div><div class="a-marca__nombre">Fast Creative Builder</div>' +
-          '<div class="a-marca__lema">Web · Email · Libre</div></div>' +
-        '</div>' +
-        '<nav class="a-grupo"><span class="a-grupo__t">Trabajo</span><ul class="a-grupo">' +
-          destinos +
-        '</ul></nav>' +
-        '<div class="a-lateral__pie">' +
-          '<span class="a-avatar">AG</span>' +
-          '<div class="crece"><div style="font-size:14px;font-weight:500">Andrés Gamonal</div>' +
-          '<div style="font-size:12px;color:var(--claro)">Administrador</div></div>' +
-        '</div>' +
-      '</aside>' +
-      '<div class="a-principal">' +
-        '<header class="a-barra">' +
-          '<div class="crece fila g3">' + (acciones.izq || '') + '</div>' +
-          '<div class="fila g2">' + (acciones.der || '') + '</div>' +
-        '</header>' +
-        '<div class="a-ruta">' + ruta + '</div>' +
-        '<main class="a-cuerpo">' + cuerpo + '</main>' +
-        movilNav(activo) +
-      '</div>' +
-    '</div>'
-  );
-}
-
-function marcoB(activo, cabecera, cuerpo) {
-  var iconos = DESTINOS.map(function (d) {
-    return (
-      '<div class="b-icono' + (d.id === activo ? ' b-icono--on' : '') + '" title="' + d.n + '">' +
-      ico(d.i, 'ico--24') +
-      '</div>'
-    );
-  }).join('');
-
-  return (
-    '<div class="b-marco">' +
-      '<aside class="b-riel">' +
-        '<div class="b-riel__marca">' + LOGOS.b(40, '#ffffff', '#2167ae') + '</div>' +
-        iconos +
-        '<div class="b-riel__pie"><span class="a-avatar">AG</span></div>' +
-      '</aside>' +
-      '<div class="b-principal">' +
-        '<div class="b-cuerpo">' +
-          cabecera +
-          cuerpo +
-        '</div>' +
-        movilNav(activo) +
-      '</div>' +
-    '</div>'
-  );
-}
-
-function marcoC(activo, acciones, cuerpo) {
-  var secciones = DESTINOS.map(function (d) {
-    return (
-      '<div class="c-seccion' + (d.id === activo ? ' c-seccion--on' : '') + '">' +
-      ico(d.i, 'ico--16') + '<span>' + d.n + '</span>' +
-      '</div>'
-    );
-  }).join('');
-
-  return (
-    '<div class="c-marco">' +
-      '<header class="c-barra">' +
-        LOGOS.c(32, '#ffffff', '#23366f') +
-        '<div style="font-size:14px;font-weight:600">Fast Creative Builder</div>' +
-        '<div class="crece"></div>' +
-        (acciones || '') +
-        '<span class="a-avatar">AG</span>' +
-      '</header>' +
-      '<nav class="c-secciones">' + secciones + '</nav>' +
-      '<main class="c-cuerpo">' + cuerpo + '</main>' +
-      movilNav(activo) +
-    '</div>'
-  );
+/* La única acción principal de todo el aplicativo */
+function ctaCrear(alto) {
+  return '<button class="cta cta--principal' + (alto ? ' cta--alto' : '') + '">' +
+    ico('crear', 'ico--16') + 'Crear una pieza</button>';
 }
 
 function movilNav(activo) {
+  return '<nav class="movil-nav">' + DESTINOS.map(function (d) {
+    return '<div class="movil-nav__i' + (d.id === activo ? ' movil-nav__i--on' : '') + '">' +
+      ico(d.i, 'ico--24') + '<span>' + d.n + '</span></div>';
+  }).join('') + '</nav>';
+}
+
+/* ── A · Taller ──────────────────────────────────────────────────────── */
+
+function marcoA(activo, titulo, cuerpo, accion) {
   return (
-    '<nav class="movil-nav">' +
-    DESTINOS.slice(0, 4)
-      .map(function (d) {
-        return (
-          '<div class="movil-nav__i' + (d.id === activo ? ' movil-nav__i--on' : '') + '">' +
-          ico(d.i, 'ico--24') + '<span>' + d.n + '</span></div>'
-        );
-      })
-      .join('') +
-    '</nav>'
+    '<div class="a-marco">' +
+      '<aside class="a-lateral">' +
+        '<div class="a-marca">' + LOGOS.a(34, '#ffffff', '#23366f') +
+          '<div><div class="a-marca__n">Fast Creative Builder</div>' +
+          '<div class="a-marca__l">Web · Email · Libre</div></div></div>' +
+        '<nav class="a-grupo">' + DESTINOS.map(function (d) {
+          return '<div class="a-dest' + (d.id === activo ? ' a-dest--on' : '') + '">' +
+            ico(d.i) + '<span>' + d.n + '</span></div>';
+        }).join('') + '</nav>' +
+        '<div class="a-pie"><span class="avatar">AG</span>' +
+          '<div class="crece"><div class="menor" style="font-weight:500">Andrés Gamonal</div>' +
+          '<div class="micro" style="color:var(--azul-claro)">Administrador</div></div></div>' +
+      '</aside>' +
+      '<div class="a-principal">' +
+        '<header class="a-barra">' +
+          '<h4 class="crece">' + esc(titulo) + '</h4>' +
+          '<button class="cta cta--bajo cta--terciario">' + ico('buscar', 'ico--16') + 'Buscar</button>' +
+          (accion === false ? '' : ctaCrear()) +
+        '</header>' +
+        '<div class="a-cuerpo">' + cuerpo + '</div>' +
+        movilNav(activo) +
+      '</div>' +
+    '</div>'
   );
 }
 
-/* ═══ Piezas reutilizables ══════════════════════════════════════════════ */
+/* ── B · Lienzo ──────────────────────────────────────────────────────── */
 
-function tituloPagina(t, bajada, accion) {
+function marcoB(activo, cuerpo) {
   return (
-    '<div class="fila g5" style="align-items:flex-end;margin-bottom:var(--e6)">' +
-      '<div class="crece"><h2>' + esc(t) + '</h2>' +
-      (bajada ? '<p class="lead" style="margin-top:8px;max-width:60ch">' + esc(bajada) + '</p>' : '') +
-      '</div>' +
-      (accion || '') +
+    '<div class="b-marco">' +
+      '<aside class="b-riel">' +
+        '<div style="margin-bottom:var(--e4)">' + LOGOS.b(40, '#ffffff', '#23366f') + '</div>' +
+        DESTINOS.map(function (d) {
+          return '<div class="b-icono' + (d.id === activo ? ' b-icono--on' : '') + '" title="' + d.n + '">' +
+            ico(d.i, 'ico--24') + '</div>';
+        }).join('') +
+        '<div class="b-riel__pie"><span class="avatar">AG</span></div>' +
+      '</aside>' +
+      '<div class="b-principal"><div class="b-cuerpo">' + cuerpo + '</div>' + movilNav(activo) + '</div>' +
     '</div>'
   );
+}
+
+/* ── C · Escritorio ──────────────────────────────────────────────────── */
+
+function marcoC(activo, cuerpo) {
+  return (
+    '<div class="c-marco">' +
+      '<header class="c-barra">' + LOGOS.c(32, '#ffffff', '#23366f') +
+        '<div style="font-size:14px;font-weight:600">Fast Creative Builder</div>' +
+        '<div class="crece"></div>' + ctaCrear() + '<span class="avatar">AG</span></header>' +
+      '<nav class="c-secciones">' + DESTINOS.map(function (d) {
+        return '<div class="c-seccion' + (d.id === activo ? ' c-seccion--on' : '') + '">' +
+          ico(d.i, 'ico--16') + '<span>' + d.n + '</span></div>';
+      }).join('') + '</nav>' +
+      '<div class="c-cuerpo">' + cuerpo + '</div>' + movilNav(activo) +
+    '</div>'
+  );
+}
+
+/* ── Piezas compartidas ──────────────────────────────────────────────── */
+
+/* Foto en círculo con burbujas: el lenguaje de formas de la referencia */
+function circuloFoto(src, tam, fondo) {
+  var d = tam;
+  return (
+    '<div class="circulo" style="width:' + d + 'px;height:' + d + 'px">' +
+      (fondo ? '<span class="circulo__fondo" style="width:' + d + 'px;height:' + d + 'px;background:' + fondo + ';left:-14px;top:-14px"></span>' : '') +
+      '<img class="circulo__foto" src="' + src + '" alt="" style="width:' + d + 'px;height:' + d + 'px">' +
+      '<span class="burbuja burbuja--1" style="left:-6px;bottom:26px"></span>' +
+      '<span class="burbuja burbuja--2" style="left:14px;bottom:-16px"></span>' +
+      '<span class="burbuja burbuja--3" style="left:66px;bottom:-6px"></span>' +
+    '</div>'
+  );
+}
+
+/* Fila de accesos rápidos, como la de la referencia */
+function filaAccesos() {
+  var a = [
+    { i: 'crear', n: 'Nueva landing' }, { i: 'correo', n: 'Nuevo correo' },
+    { i: 'imagen', n: 'Nueva gráfica' }, { i: 'proyectos', n: 'En revisión' },
+    { i: 'biblioteca', n: 'Subir imagen' }, { i: 'fuente', n: 'Subir tipografía' }
+  ];
+  return '<div class="cuadro-accesos" style="display:grid;grid-template-columns:repeat(6,1fr);gap:var(--e3)">' +
+    a.map(function (x) {
+      return '<div class="acceso"><span class="acceso__ico">' + ico(x.i, 'ico--24') + '</span>' +
+        '<span class="acceso__n">' + x.n + '</span></div>';
+    }).join('') + '</div>';
 }
 
 function tablaProyectos(limite) {
-  var filas = PROYECTOS.slice(0, limite || PROYECTOS.length)
-    .map(function (p) {
-      return (
-        '<tr>' +
-          '<td><div class="fila g3">' +
-            (p.img
-              ? '<img class="tabla__miniatura" src="' + p.img + '" alt="">'
-              : '<span class="tabla__miniatura fila" style="justify-content:center;color:var(--tinta-tenue)">' + ico(p.m === 'Email' ? 'correo' : 'imagen', 'ico--16') + '</span>') +
-            '<div><div style="font-weight:500">' + esc(p.n) + '</div>' +
-            '<div class="menor tenue">' + esc(p.a) + '</div></div>' +
-          '</div></td>' +
-          '<td>' + esc(p.m) + '</td>' +
-          '<td><span class="pastilla pastilla--' + ESTADO_PASTILLA[p.e] + '"><span class="punto"></span>' + esc(p.e) + '</span></td>' +
-          '<td class="tenue">' + esc(p.f) + '</td>' +
-          '<td style="text-align:right"><button class="cta cta--terciario cta--bajo">Abrir' + ico('flecha', 'ico--16') + '</button></td>' +
-        '</tr>'
-      );
-    })
-    .join('');
-
-  return (
-    '<table class="tabla"><thead><tr>' +
-      '<th>Proyecto</th><th>Modo</th><th>Estado</th><th>Editado</th><th></th>' +
-    '</tr></thead><tbody>' + filas + '</tbody></table>'
-  );
-}
-
-function bandaCifras() {
-  return (
-    '<div class="banda banda--cifras">' +
-      '<div class="cifra"><div class="cifra__n">12</div><div class="cifra__e">Proyectos activos</div></div>' +
-      '<div class="cifra"><div class="cifra__n">3</div><div class="cifra__e">En revisión</div></div>' +
-      '<div class="cifra"><div class="cifra__n">28</div><div class="cifra__e">Piezas exportadas</div></div>' +
-      '<div class="cifra"><div class="cifra__n">2</div><div class="cifra__e">Personas con acceso</div></div>' +
-    '</div>'
-  );
+  var filas = PROYECTOS.slice(0, limite || PROYECTOS.length).map(function (p) {
+    return '<tr>' +
+      '<td data-et="Proyecto"><div class="fila g3">' +
+        (p.img ? '<img class="tabla__miniatura" src="' + p.img + '" alt="">'
+               : '<span class="tabla__miniatura fila" style="justify-content:center;color:var(--tinta-tenue)">' + ico(p.m === 'Email' ? 'correo' : 'imagen', 'ico--16') + '</span>') +
+        '<div><div style="font-weight:500">' + esc(p.n) + '</div>' +
+        '<div class="micro tenue">' + esc(p.a) + '</div></div></div></td>' +
+      '<td data-et="Modo">' + esc(p.m) + '</td>' +
+      '<td data-et="Estado"><span class="pastilla pastilla--' + ESTADO_PASTILLA[p.e] + '"><span class="punto"></span>' + esc(p.e) + '</span></td>' +
+      '<td data-et="Editado" class="tenue">' + esc(p.f) + '</td>' +
+      '<td><button class="cta cta--bajo cta--secundario">Abrir</button></td>' +
+    '</tr>';
+  }).join('');
+  return '<table class="tabla"><thead><tr><th>Proyecto</th><th>Modo</th><th>Estado</th><th>Editado</th><th></th></tr></thead>' +
+    '<tbody>' + filas + '</tbody></table>';
 }
 
 function selectorModos() {
   return (
-    '<div class="modos">' +
-      '<div class="modo modo--web">' +
-        ico('escritorio', 'ico--28') +
-        '<div class="modo__n">Web</div>' +
-        '<p class="modo__d">Landing pages y páginas de campaña. Contenedores flexibles, superposición e interacción. Sale en HTML, JPG, PNG y fragmento para Sitecore.</p>' +
-        '<button class="cta cta--sobre-azul">Empezar en web</button>' +
-      '</div>' +
-      '<div class="modo modo--email">' +
-        ico('correo', 'ico--28') +
-        '<div class="modo__n">Email</div>' +
-        '<p class="modo__d">Piezas de correo con estructura segura, 600 px de ancho y respaldo elegido para cada bloque interactivo. Sale en HTML con estilos en línea.</p>' +
-        '<button class="cta cta--sobre-azul-secundario">Empezar en email</button>' +
-      '</div>' +
-      '<div class="modo modo--libre">' +
-        ico('imagen', 'ico--28') +
-        '<div class="modo__n">Estilo libre</div>' +
-        '<p class="modo__d">Key visuals y gráficas para redes. Mesa de trabajo, capas, guías y recorte. Formatos 1080×1080, 1080×1350, 1200×628 y personalizado.</p>' +
-        '<button class="cta cta--principal">Empezar en libre</button>' +
-      '</div>' +
+    '<div class="modos cuadro-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--e4)">' +
+      '<div class="modo" style="background:var(--banda-paloma)">' +
+        '<span class="acceso__ico" style="background:var(--papel)">' + ico('escritorio', 'ico--24') + '</span>' +
+        '<h3>Web</h3><p class="menor suave">Landing pages y páginas de campaña. Sale en HTML, JPG, PNG y fragmento para el gestor de contenidos.</p>' +
+        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
+      '<div class="modo" style="background:var(--banda-rosa)">' +
+        '<span class="acceso__ico" style="background:var(--papel)">' + ico('correo', 'ico--24') + '</span>' +
+        '<h3>Email</h3><p class="menor suave">Piezas de correo de 600 px, con estructura segura y un respaldo elegido para cada bloque interactivo.</p>' +
+        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
+      '<div class="modo" style="background:var(--banda-menta)">' +
+        '<span class="acceso__ico" style="background:var(--papel)">' + ico('imagen', 'ico--24') + '</span>' +
+        '<h3>Estilo libre</h3><p class="menor suave">Key visuals y gráficas. Mesa de trabajo con capas, guías y reglas en píxeles reales.</p>' +
+        '<button class="cta cta--principal" style="align-self:flex-start">Empezar</button></div>' +
     '</div>'
   );
 }
 
-/* ═══ Login ═════════════════════════════════════════════════════════════ */
-
-function formularioAcceso(titulo, intro, campos, botonTexto, pie, logo) {
-  return (
-    '<div class="login__forma">' +
-      '<div style="margin-bottom:var(--e4)">' + logo + '</div>' +
-      '<h2>' + esc(titulo) + '</h2>' +
-      '<p class="suave" style="margin-bottom:var(--e2)">' + esc(intro) + '</p>' +
-      campos +
-      '<button class="cta cta--principal cta--alto cta--ancho" style="margin-top:var(--e2)">' + esc(botonTexto) + '</button>' +
-      (pie || '') +
-    '</div>'
-  );
-}
-
-function campo(et, tipo, valor, ayuda) {
-  return (
-    '<label class="campo"><span class="campo__et">' + esc(et) + '</span>' +
-    '<input class="campo__in" type="' + tipo + '" value="' + esc(valor || '') + '">' +
-    (ayuda ? '<span class="campo__ayuda">' + esc(ayuda) + '</span>' : '') +
-    '</label>'
-  );
-}
-
-var LOGIN = {
-  a: function () {
-    return (
-      '<div class="login login--a">' +
-        '<div class="login__panel">' +
-          formularioAcceso(
-            'Entrar',
-            'Escribe tu correo y tu contraseña.',
-            campo('Correo', 'email', 'andres@zurich.cl') + campo('Contraseña', 'password', '••••••••••'),
-            'Entrar',
-            '<p class="menor" style="text-align:center;margin-top:var(--e3)"><a href="#" style="color:var(--heroe)">¿Olvidaste tu contraseña?</a></p>',
-            LOGOS.a(44, '#2167ae', '#ffffff')
-          ) +
-        '</div>' +
-        '<div class="login__visual">' +
-          '<img class="login__foto" src="' + FOTO.loginA + '" alt="Persona trabajando en su puesto de trabajo">' +
-          '<div class="login__mensaje">' +
-            '<span class="etiqueta">Una pieza, tres salidas</span>' +
-            '<p>Diseña una vez y expórtalo en web, correo y gráfica sin rehacer nada.</p>' +
-          '</div>' +
-        '</div>' +
-      '</div>'
-    );
-  },
-  b: function () {
-    return (
-      '<div class="login login--b">' +
-        '<div class="login__visual">' +
-          '<img class="login__foto" src="' + FOTO.loginB + '" alt="Dos personas trabajando juntas junto a la ventana">' +
-          '<div class="login__mensaje" style="max-width:480px">' +
-            '<span class="etiqueta">Del boceto a la campaña</span>' +
-            '<p>Un solo lugar para las landings, los correos y las gráficas de todo el equipo.</p>' +
-          '</div>' +
-        '</div>' +
-        '<div class="login__panel">' +
-          formularioAcceso(
-            'Bienvenido de vuelta',
-            'Entra con la cuenta que te invitaron a crear.',
-            campo('Correo', 'email', 'andres@zurich.cl') + campo('Contraseña', 'password', '••••••••••'),
-            'Entrar',
-            '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--heroe)">¿Olvidaste tu contraseña?</a></p>',
-            LOGOS.b(44, '#2167ae', '#ffffff')
-          ) +
-        '</div>' +
-      '</div>'
-    );
-  },
-  c: function () {
-    return (
-      '<div class="login login--c">' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;overflow:hidden">' +
-          '<div class="login__panel" style="padding:var(--e11) var(--e10)">' +
-            formularioAcceso(
-              'Acceso al equipo',
-              'Fast Creative Builder es de uso interno. Si no tienes cuenta, pídesela al administrador.',
-              campo('Correo', 'email', 'andres@zurich.cl') + campo('Contraseña', 'password', '••••••••••'),
-              'Entrar',
-              '<p class="menor" style="margin-top:var(--e3)"><a href="#" style="color:var(--heroe)">¿Olvidaste tu contraseña?</a></p>',
-              LOGOS.c(44, '#2167ae', '#ffffff')
-            ) +
-          '</div>' +
-          '<div class="login__visual">' +
-            '<img class="login__foto" src="' + FOTO.loginC + '" alt="Mesa de trabajo con bocetos">' +
-          '</div>' +
-        '</div>' +
-        '<div style="background:var(--estructura);color:#fff;padding:var(--e5) var(--e10);display:flex;gap:var(--e9)">' +
-          '<div><div style="font-size:24px;font-weight:600;color:var(--acento-calido)">HTML</div>' +
-          '<div class="menor" style="color:var(--claro)">Web, correo y fragmento para el gestor de contenidos</div></div>' +
-          '<div><div style="font-size:24px;font-weight:600;color:var(--acento-calido)">JPG · PNG</div>' +
-          '<div class="menor" style="color:var(--claro)">Escritorio, tableta y móvil en un solo paso</div></div>' +
-          '<div><div style="font-size:24px;font-weight:600;color:var(--acento-calido)">65</div>' +
-          '<div class="menor" style="color:var(--claro)">Componentes con todas sus variantes</div></div>' +
-        '</div>' +
-      '</div>'
-    );
-  }
-};
-
-/* ═══ Home ══════════════════════════════════════════════════════════════ */
+/* ═══ Inicio ════════════════════════════════════════════════════════════ */
 
 var HOME = {
-  // A · apertura con banda editorial y acceso directo a la acción
+  /* A · abre con una banda ámbar y la foto en círculo */
   a: function () {
     var cuerpo =
-      '<section class="banda" style="margin-bottom:var(--e6)">' +
-        '<div class="banda__texto">' +
-          '<span class="etiqueta">Buenos días, Andrés</span>' +
-          '<h1>¿Qué vas a crear hoy?</h1>' +
-          '<p>Elige el modo y empieza. La pieza se adapta sola a escritorio, tableta y móvil, y sale en los tres formatos.</p>' +
-          '<div class="fila g3" style="margin-top:var(--e2)">' +
-            '<button class="cta cta--sobre-azul cta--alto">' + ico('crear', 'ico--16') + 'Crear una pieza</button>' +
-            '<button class="cta cta--sobre-azul-secundario cta--alto">Ver mis proyectos</button>' +
+      '<section class="banda banda--ambar">' +
+        '<div class="contenedor fila g9 fila--apila hero-split" style="display:grid;grid-template-columns:7fr 5fr;align-items:center">' +
+          '<div class="col g4">' +
+            '<span class="etiqueta">Martes 6 de septiembre</span>' +
+            '<h1>Buenos días, Andrés</h1>' +
+            '<p class="lead" style="color:var(--navy);max-width:46ch">Tienes tres piezas esperando revisión y dos campañas en borrador.</p>' +
+            '<div class="fila g3" style="margin-top:var(--e2)">' +
+              '<button class="cta cta--principal cta--alto">Revisar pendientes</button>' +
+              '<button class="cta cta--secundario cta--alto">Ver proyectos</button>' +
+            '</div>' +
           '</div>' +
+          '<div style="justify-self:center">' + circuloFoto(FOTO.home, 240, 'var(--banda-lima)') + '</div>' +
         '</div>' +
-        '<img class="banda__foto" src="' + FOTO.home + '" alt="Equipo trabajando en la oficina">' +
       '</section>' +
-      '<section style="margin-bottom:var(--e6)">' + bandaCifras() + '</section>' +
-      '<section>' +
-        '<div class="fila g4" style="margin-bottom:var(--e4)">' +
-          '<h3 class="crece">Continúa donde lo dejaste</h3>' +
-          '<button class="cta cta--terciario cta--bajo">Ver todos' + ico('flecha', 'ico--16') + '</button>' +
+
+      '<section class="banda banda--corta banda--blanca">' +
+        '<div class="contenedor">' + filaAccesos() + '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--hueso">' +
+        '<div class="contenedor">' +
+          '<div class="fila g4" style="margin-bottom:var(--e5)"><h3 class="crece">Continúa donde lo dejaste</h3>' +
+          '<button class="cta cta--terciario">Ver todos' + ico('chevron', 'ico--16') + '</button></div>' +
+          tablaProyectos(4) +
         '</div>' +
-        tablaProyectos(4) +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--menta">' +
+        '<div class="contenedor centro">' +
+          '<h2 style="margin-bottom:var(--e3)">Una pieza, tres salidas</h2>' +
+          '<p class="lead" style="color:var(--navy);max-width:56ch;margin:0 auto var(--e6)">Diseña una vez y expórtalo en web, correo y gráfica sin rehacer nada.</p>' +
+          '<button class="cta cta--secundario cta--alto">Ver los tres modos</button>' +
+        '</div>' +
       '</section>';
 
-    return marcoA(
-      'inicio',
-      '<strong>Inicio</strong>',
-      {
-        izq: '<h4>Inicio</h4>',
-        der:
-          '<button class="cta cta--secundario">' + ico('buscar', 'ico--16') + 'Buscar</button>' +
-          '<button class="cta cta--principal">' + ico('crear', 'ico--16') + 'Crear</button>'
-      },
-      cuerpo
-    );
+    return marcoA('inicio', 'Inicio', cuerpo);
   },
 
-  // B · apertura por búsqueda, listado en filas, foto lateral
+  /* B · abre por búsqueda sobre banda rosa */
   b: function () {
-    var cabecera =
-      '<div class="b-cabecera">' +
-        '<div class="crece">' +
-          '<span class="etiqueta tenue">Martes 6 de septiembre</span>' +
-          '<h1 style="margin:8px 0 var(--e4)">Hola, Andrés</h1>' +
-          '<div class="b-buscador">' + ico('buscar') + '<span>Busca un proyecto, una imagen o una tipografía</span></div>' +
-        '</div>' +
-        '<button class="cta cta--principal cta--alto">' + ico('crear', 'ico--16') + 'Crear una pieza</button>' +
-      '</div>';
-
     var cuerpo =
-      '<div class="b-seccion">' +
-        '<div class="rejilla12" style="margin-bottom:var(--e6)">' +
+      '<section class="banda banda--rosa">' +
+        '<div class="contenedor">' +
+          '<h1 style="margin-bottom:var(--e5)">Hola, Andrés</h1>' +
+          '<div class="b-buscador" style="max-width:620px">' + ico('buscar') +
+            '<span>Busca un proyecto, una imagen o una tipografía</span></div>' +
+          '<div class="fila g2" style="margin-top:var(--e4);flex-wrap:wrap">' +
+            '<span class="pastilla pastilla--neutra">Últimos 7 días</span>' +
+            '<span class="pastilla pastilla--neutra">En revisión</span>' +
+            '<span class="pastilla pastilla--neutra">Solo web</span>' +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--blanca">' +
+        '<div class="contenedor rejilla12">' +
           '<div style="grid-column:span 8">' +
-            '<div class="fila g4" style="margin-bottom:var(--e4)">' +
-              '<h3 class="crece">Recientes</h3>' +
-              '<button class="cta cta--terciario cta--bajo">Ver todos' + ico('flecha', 'ico--16') + '</button>' +
-            '</div>' +
+            '<div class="fila g4" style="margin-bottom:var(--e4)"><h3 class="crece">Recientes</h3>' +
+            '<button class="cta cta--terciario">Ver todos' + ico('chevron', 'ico--16') + '</button></div>' +
             tablaProyectos(4) +
           '</div>' +
-          '<div style="grid-column:span 4;display:flex;flex-direction:column;gap:var(--e4)">' +
-            '<div style="border-radius:var(--radio);overflow:hidden">' +
-              '<img src="' + FOTO.home + '" alt="Equipo trabajando" style="width:100%;height:200px;object-fit:cover">' +
-            '</div>' +
-            '<div style="background:var(--estructura);color:#fff;padding:var(--e5);border-radius:var(--radio)">' +
-              '<span class="etiqueta" style="color:var(--acento-calido)">Pendiente</span>' +
-              '<p style="margin:8px 0 var(--e4);font-size:18px;font-weight:500">Tienes 3 piezas esperando tu revisión.</p>' +
-              '<button class="cta cta--sobre-azul">Revisarlas ahora</button>' +
-            '</div>' +
-            '<div style="background:var(--arenisca);padding:var(--e5);border-radius:var(--radio)">' +
+          '<div style="grid-column:span 4" class="col g4">' +
+            '<div style="background:var(--banda-paloma);border-radius:var(--radio);padding:var(--e6)">' +
+              '<span class="etiqueta">Pendiente</span>' +
+              '<h4 style="margin:var(--e2) 0 var(--e4);font-weight:400;font-size:22px">Tres piezas esperan tu revisión</h4>' +
+              '<button class="cta cta--principal">Revisarlas</button></div>' +
+            '<div style="background:var(--banda-arenisca);border-radius:var(--radio);padding:var(--e6)">' +
               '<span class="etiqueta">Biblioteca</span>' +
-              '<p class="menor" style="margin:8px 0 var(--e4)">18 imágenes, 4 logos y 2 tipografías subidas.</p>' +
-              '<button class="cta cta--secundario cta--bajo">Abrir biblioteca</button>' +
-            '</div>' +
+              '<p class="menor" style="margin:var(--e2) 0 var(--e4)">18 imágenes, 4 logos y 3 tipografías subidas.</p>' +
+              '<button class="cta cta--secundario cta--bajo">Abrir biblioteca</button></div>' +
           '</div>' +
         '</div>' +
-      '</div>';
+      '</section>' +
 
-    return marcoB('inicio', cabecera, cuerpo);
+      '<section class="banda banda--corta banda--hueso">' +
+        '<div class="contenedor">' + filaAccesos() + '</div>' +
+      '</section>';
+
+    return marcoB('inicio', cuerpo);
   },
 
-  // C · resumen operativo primero, en banda sólida de color
+  /* C · abre con el resumen operativo sobre banda celeste */
   c: function () {
     var cuerpo =
-      '<div style="background:var(--heroe);color:#fff;padding:var(--e7) var(--margen-pagina)">' +
-        '<div class="fila g5" style="align-items:flex-end;margin-bottom:var(--e6)">' +
-          '<div class="crece">' +
-            '<span class="etiqueta" style="color:var(--acento-calido)">Resumen de hoy</span>' +
-            '<h1 style="color:#fff;margin-top:8px">12 proyectos activos</h1>' +
+      '<section class="banda banda--arenisca">' +
+        '<div class="contenedor">' +
+          '<div class="fila g5 fila--apila" style="align-items:flex-end;margin-bottom:var(--e7)">' +
+            '<div class="crece"><span class="etiqueta">Resumen de hoy</span>' +
+            '<h1 style="margin-top:var(--e2)">12 proyectos activos</h1></div>' +
+            '<button class="cta cta--principal cta--alto">Revisar pendientes</button>' +
           '</div>' +
-          '<button class="cta cta--sobre-azul cta--alto">' + ico('crear', 'ico--16') + 'Crear una pieza</button>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e4)">' +
-          '<div style="background:var(--papel);padding:var(--e5);border-radius:var(--radio)">' +
-            '<div style="font-size:32px;font-weight:600;color:var(--estructura)">3</div>' +
-            '<div class="menor suave">En revisión</div></div>' +
-          '<div style="background:var(--papel);padding:var(--e5);border-radius:var(--radio)">' +
-            '<div style="font-size:32px;font-weight:600;color:var(--estructura)">5</div>' +
-            '<div class="menor suave">Borradores</div></div>' +
-          '<div style="background:var(--papel);padding:var(--e5);border-radius:var(--radio)">' +
-            '<div style="font-size:32px;font-weight:600;color:var(--estructura)">28</div>' +
-            '<div class="menor suave">Exportadas este mes</div></div>' +
-          '<div style="background:var(--papel);padding:var(--e5);border-radius:var(--radio)">' +
-            '<div style="font-size:32px;font-weight:600;color:var(--estructura)">2</div>' +
-            '<div class="menor suave">Personas con acceso</div></div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="c-ancho">' +
-        '<div class="rejilla12" style="margin-bottom:var(--e7)">' +
-          '<div style="grid-column:span 7;border-radius:var(--radio);overflow:hidden">' +
-            '<img src="' + FOTO.home + '" alt="Equipo trabajando" style="width:100%;height:260px;object-fit:cover">' +
-          '</div>' +
-          '<div style="grid-column:span 5;background:var(--estructura);color:#fff;padding:var(--e6);border-radius:var(--radio);display:flex;flex-direction:column;justify-content:center;gap:var(--e3)">' +
-            '<span class="etiqueta" style="color:var(--acento-calido)">Empieza aquí</span>' +
-            '<h3 style="color:#fff">Web, correo o gráfica</h3>' +
-            '<p style="color:var(--claro)">Los tres modos comparten el mismo catálogo de componentes y las mismas exportaciones.</p>' +
-            '<button class="cta cta--sobre-azul" style="align-self:flex-start;margin-top:var(--e2)">Elegir modo</button>' +
+          '<div class="cuadro-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--e4)">' +
+            [['3','En revisión'],['5','Borradores'],['28','Exportadas este mes'],['3','Personas con acceso']]
+              .map(function (c) {
+                return '<div style="background:var(--papel);padding:var(--e5);border-radius:var(--radio)">' +
+                  '<div style="font-size:34px;font-weight:600;color:var(--heroe);line-height:1">' + c[0] + '</div>' +
+                  '<div class="menor suave" style="margin-top:var(--e2)">' + c[1] + '</div></div>';
+              }).join('') +
           '</div>' +
         '</div>' +
-        '<div class="fila g4" style="margin-bottom:var(--e4)">' +
-          '<h3 class="crece">Últimos movimientos</h3>' +
-          '<button class="cta cta--terciario cta--bajo">Ver todos' + ico('flecha', 'ico--16') + '</button>' +
-        '</div>' +
-        tablaProyectos(5) +
-      '</div>';
+      '</section>' +
 
-    return marcoC('inicio', '<button class="cta cta--sobre-azul">' + ico('crear', 'ico--16') + 'Crear</button>', cuerpo);
+      '<section class="banda banda--corta banda--blanca">' +
+        '<div class="contenedor">' + filaAccesos() + '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--rosa">' +
+        '<div class="contenedor fila g8 fila--apila hero-split" style="display:grid;grid-template-columns:5fr 7fr;align-items:center">' +
+          '<div style="justify-self:center">' + circuloFoto(FOTO.pieza2, 220, 'var(--papel)') + '</div>' +
+          '<div class="col g4"><span class="etiqueta">Empieza aquí</span>' +
+            '<h2>Web, correo o gráfica</h2>' +
+            '<p class="lead" style="color:var(--navy);max-width:48ch">Los tres modos comparten el mismo catálogo de componentes y las mismas exportaciones.</p>' +
+            '<button class="cta cta--principal cta--alto" style="align-self:flex-start">Elegir modo</button></div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="banda banda--corta banda--hueso">' +
+        '<div class="contenedor">' +
+          '<div class="fila g4" style="margin-bottom:var(--e5)"><h3 class="crece">Últimos movimientos</h3>' +
+          '<button class="cta cta--terciario">Ver todos' + ico('chevron', 'ico--16') + '</button></div>' +
+          tablaProyectos(5) +
+        '</div>' +
+      '</section>';
+
+    return marcoC('inicio', cuerpo);
   }
 };
